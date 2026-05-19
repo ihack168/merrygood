@@ -10,7 +10,7 @@ import {
 const contacts = [
   {
     label: "LINE 線上諮詢",
-    description: "加入 LINE 立即預約與療程諮詢",
+    description: "加入 LINE 預約減肥門診與減重諮詢",
     href: "https://line.me/R/ti/p/@你的LINEID",
     icon: <MessageCircle size={28} />,
   },
@@ -22,13 +22,13 @@ const contacts = [
   },
   {
     label: "Instagram",
-    description: "追蹤最新療程與案例分享",
+    description: "追蹤最新減肥資訊與減重文章",
     href: "https://instagram.com/",
     icon: <Instagram size={28} />,
   },
   {
     label: "診所位置",
-    description: "台北市｜預約制諮詢服務",
+    description: "台北市｜採預約制減重諮詢",
     href: "https://maps.google.com",
     icon: <MapPin size={28} />,
   },
@@ -44,7 +44,7 @@ export function ContactSection() {
       <div className="absolute left-1/2 top-0 h-[300px] w-[300px] -translate-x-1/2 rounded-full bg-primary/10 blur-[100px]" />
 
       <div className="relative mx-auto max-w-6xl">
-        
+
         {/* 標題 */}
         <div className="mx-auto mb-14 max-w-2xl text-center">
           <p className="mb-3 text-sm font-medium tracking-[0.2em] text-primary">
@@ -52,12 +52,13 @@ export function ContactSection() {
           </p>
 
           <h2 className="text-3xl font-bold tracking-tight text-foreground md:text-5xl">
-            預約專業諮詢
+            預約減重諮詢
           </h2>
 
           <p className="mt-5 text-base leading-8 text-muted-foreground">
-            歡迎透過 LINE、Instagram 或 Email 與我們聯繫，
-            由專人提供療程建議與預約安排。
+            美麗好診所提供減肥診所與減重管理諮詢服務，
+            歡迎透過 LINE、Instagram 或 Email 與我們聯絡，
+            由專人協助安排預約與相關諮詢。
           </p>
         </div>
 
@@ -86,7 +87,7 @@ export function ContactSection() {
               <div className="absolute right-0 top-0 h-28 w-28 rounded-full bg-primary/10 blur-3xl opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
 
               <div className="relative z-10 flex items-start gap-5">
-                
+
                 {/* icon */}
                 <div
                   className="
@@ -118,6 +119,7 @@ export function ContactSection() {
                     </span>
                   </div>
                 </div>
+
               </div>
             </a>
           ))}
@@ -142,9 +144,25 @@ export function ContactSection() {
               hover:shadow-[0_18px_44px_rgba(217,143,143,0.42)]
             "
           >
-            加入 LINE 預約諮詢
+            加入 LINE 預約減重諮詢
           </a>
         </div>
+
+        {/* SEO 語意文字 */}
+        <div className="sr-only">
+          <h3>減肥診所聯絡方式</h3>
+
+          <p>
+            美麗好診所提供減肥、減重診所、體重管理與熱門減重商品諮詢服務，
+            包含猛健樂、週纖達與瑞倍適等相關資訊。
+          </p>
+
+          <p>
+            若您正在尋找減肥診所、減重診所或專業減重管理，
+            歡迎透過 LINE 與美麗好診所預約諮詢。
+          </p>
+        </div>
+
       </div>
     </section>
   )

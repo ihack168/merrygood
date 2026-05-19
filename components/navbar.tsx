@@ -5,10 +5,8 @@ import { useState, useEffect } from "react"
 import { usePathname } from "next/navigation"
 
 const navLinks = [
-  { label: "首頁", href: "/" },
-  //{ label: "療程介紹", href: "/#services" },
-  { label: "最新文章", href: "/blog" },
-  //{ label: "聯絡我們", href: "/#contact" },
+  { label: "文章列表", href: "/blog" },
+  { label: "聯絡方式", href: "/#contact" },
 ]
 
 export function Navbar() {
@@ -58,7 +56,7 @@ export function Navbar() {
           <Link href="/" className="relative z-[60] flex items-center gap-3">
             <img
               src="/images/logo.png"
-              alt="美麗好診所 Logo"
+              alt="美麗好診所 減肥診所 Logo"
               className="h-10 w-10 rounded-full border border-primary/20 bg-white object-cover shadow-sm"
             />
 
@@ -68,7 +66,7 @@ export function Navbar() {
               </span>
 
               <span className="hidden text-xs tracking-[0.18em] text-muted-foreground md:block">
-                AESTHETIC CLINIC
+                WEIGHT LOSS CLINIC
               </span>
             </div>
           </Link>
@@ -94,26 +92,6 @@ export function Navbar() {
                 <span className="absolute -bottom-2 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-primary opacity-0 transition-all duration-300 group-hover:opacity-100" />
               </Link>
             ))}
-
-            <a
-              href="https://line.me/R/ti/p/@你的LINEID"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="
-                rounded-full
-                bg-primary
-                px-6 py-3
-                text-sm md:text-base
-                font-semibold
-                text-primary-foreground
-                shadow-[0_10px_30px_rgba(217,143,143,0.28)]
-                transition-all
-                hover:-translate-y-0.5
-                hover:shadow-[0_14px_36px_rgba(217,143,143,0.38)]
-              "
-            >
-              LINE 諮詢
-            </a>
           </div>
 
           {/* 手機漢堡按鈕 */}
@@ -145,11 +123,15 @@ export function Navbar() {
 
           <div className="mb-8">
             <p className="text-sm tracking-[0.24em] text-muted-foreground">
-              AESTHETIC CLINIC
+              WEIGHT LOSS CLINIC
             </p>
 
             <p className="mt-2 text-2xl font-bold text-foreground">
               美麗好診所
+            </p>
+
+            <p className="mt-3 text-sm leading-7 text-muted-foreground">
+              專業減肥診所｜減重管理｜體重控制諮詢
             </p>
           </div>
 
@@ -171,24 +153,9 @@ export function Navbar() {
             ))}
           </div>
 
-          <a
-            href="https://line.me/R/ti/p/@你的LINEID"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="
-              mt-8 flex h-14 items-center justify-center
-              rounded-full bg-primary
-              text-base font-semibold
-              text-primary-foreground
-              shadow-[0_14px_36px_rgba(217,143,143,0.32)]
-            "
-          >
-            加入 LINE 預約諮詢
-          </a>
-
           <div className="mt-auto pb-8 text-sm leading-7 text-muted-foreground">
-            <p>專業醫美療程｜肌膚管理｜微整形諮詢</p>
-            <p>自然、細緻、安心的美麗體驗</p>
+            <p>美麗好診所｜減肥診所｜減重診所</p>
+            <p>猛健樂｜週纖達｜瑞倍適 減重諮詢</p>
           </div>
         </div>
       )}
