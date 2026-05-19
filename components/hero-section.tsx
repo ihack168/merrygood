@@ -14,21 +14,26 @@ export function HeroSection() {
         <div className="overflow-hidden rounded-[2rem] border border-[#d4a373]/15 bg-white shadow-[0_25px_80px_rgba(0,0,0,0.08)] md:rounded-[2.5rem]">
 
           {/* 圖片區 */}
-          <div className="relative h-[360px] md:h-[620px]">
+          <div className="relative h-[360px] bg-[#fff7ef] md:h-[720px]">
+
             <Image
               src="/images/hero.png"
               alt="美麗好診所 減肥診所"
               fill
               priority
               sizes="100vw"
-              className="object-cover object-center"
+              className="
+                object-cover object-center
+                md:object-contain
+              "
             />
 
             {/* 電腦版遮罩 */}
-            <div className="hidden md:block absolute inset-0 bg-gradient-to-r from-black/45 via-black/15 to-transparent" />
+            <div className="absolute inset-0 hidden bg-gradient-to-r from-black/25 via-black/5 to-transparent md:block" />
 
             {/* 電腦版文字 */}
             <div className="absolute bottom-0 left-0 z-10 hidden max-w-3xl p-12 md:block">
+
               <div className="inline-flex rounded-full border border-white/20 bg-white/10 px-4 py-2 text-xs font-medium tracking-[0.2em] text-white backdrop-blur-md">
                 WEIGHT LOSS CLINIC
               </div>
@@ -47,6 +52,7 @@ export function HeroSection() {
                 協助打造更健康、更理想的體態。
               </p>
 
+              {/* 熱門項目 */}
               <div className="mt-7 flex flex-wrap gap-3">
                 {["猛健樂", "週纖達", "瑞倍適"].map((item) => (
                   <div
@@ -57,6 +63,7 @@ export function HeroSection() {
                   </div>
                 ))}
               </div>
+
             </div>
           </div>
 
@@ -80,21 +87,33 @@ export function HeroSection() {
               依個人狀況規劃適合的減重方向。
             </p>
 
+            {/* 手機熱門項目 */}
             <div className="mt-6 flex flex-wrap justify-center gap-2">
+
               {["猛健樂", "週纖達", "瑞倍適"].map((item) => (
                 <div
                   key={item}
-                  className="rounded-full border border-[#d4a373]/30 bg-[#fff7ef] px-4 py-2 text-sm font-medium text-[#6b4423]"
+                  className="
+                    rounded-full
+                    border border-[#d4a373]/30
+                    bg-[#fff7ef]
+                    px-4 py-2
+                    text-sm font-medium
+                    text-[#6b4423]
+                  "
                 >
                   {item}
                 </div>
               ))}
+
             </div>
+
           </div>
 
         </div>
 
       </div>
+
     </section>
   )
 }
