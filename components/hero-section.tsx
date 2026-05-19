@@ -4,113 +4,78 @@ import Image from "next/image"
 
 export function HeroSection() {
   return (
-    <section className="flex flex-col items-center justify-center px-6 text-center">
+    <section className="relative overflow-hidden px-6 pt-8 md:px-10">
 
-      <div className="relative group cursor-pointer">
+      {/* 背景柔光 */}
+      <div className="absolute left-1/2 top-0 h-[500px] w-[500px] -translate-x-1/2 rounded-full bg-[#d4a373]/10 blur-[120px]" />
 
-        {/* 柔光背景 */}
-        <div className="absolute -inset-10 rounded-full bg-[#d4a373]/10 blur-[80px] transition-all duration-1000 animate-pulse group-hover:bg-[#d4a373]/20"></div>
+      <div className="relative mx-auto max-w-7xl">
 
-        <div className="absolute inset-0 rounded-full bg-[#d4a373]/5 blur-[40px] opacity-0 transition-opacity duration-700 group-hover:opacity-100"></div>
+        {/* Hero 大圖 */}
+        <div className="relative overflow-hidden rounded-[2.5rem] border border-[#d4a373]/15 bg-white shadow-[0_25px_80px_rgba(0,0,0,0.08)]">
 
-        <div className="relative z-10">
-          <Image
-            src="/images/hero.png"
-            alt="美麗好診所 減肥診所"
-            width={500}
-            height={200}
-            className="
-              h-auto w-56 md:w-[360px]
-              transition-all duration-700
-              drop-shadow-[0_0_15px_rgba(212,163,115,0.18)]
-              group-hover:scale-105
-              group-hover:drop-shadow-[0_0_35px_rgba(212,163,115,0.45)]
-            "
-            priority
-          />
-        </div>
+          {/* 圖片 */}
+          <div className="relative">
 
-        {/* 底部光條 */}
-        <div
-          className="
-            mx-auto mt-4 h-[3px] w-20
-            bg-gradient-to-r from-transparent via-[#b07b45] to-transparent
-            shadow-[0_0_15px_#b07b45]
-            transition-all duration-700
-            group-hover:w-40
-          "
-        />
-      </div>
+            <Image
+              src="/images/hero.png"
+              alt="美麗好診所 減肥診所"
+              width={1600}
+              height={900}
+              priority
+              className="
+                h-auto w-full object-cover
+              "
+            />
 
-      {/* 主標題 */}
-      <div className="mt-8">
+            {/* 漸層遮罩 */}
+            <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-black/10 to-transparent" />
 
-        <h1 className="text-3xl font-black tracking-tight text-gray-900 md:text-5xl">
-          美麗好診所
-        </h1>
+            {/* 左下文字 */}
+            <div className="absolute bottom-0 left-0 z-10 p-6 md:p-12">
 
-        <p className="mt-4 text-lg font-semibold text-[#8b5e34] md:text-2xl">
-          專業減肥診所・減重管理諮詢
-        </p>
+              <div className="inline-flex rounded-full border border-white/20 bg-white/10 px-4 py-2 text-xs font-medium tracking-[0.2em] text-white backdrop-blur-md">
+                WEIGHT LOSS CLINIC
+              </div>
 
-        <p className="mx-auto mt-5 max-w-2xl text-sm leading-8 text-gray-600 md:text-base">
-          美麗好診所專注於減肥、減重與體重管理，
-          提供個人化減重諮詢與專業評估，
-          協助您打造更健康、更理想的體態。
-        </p>
+              <h1 className="mt-5 text-3xl font-black leading-tight text-white md:text-6xl">
+                美麗好診所
+              </h1>
 
-      </div>
+              <p className="mt-4 text-lg font-semibold text-[#ffe0ba] md:text-2xl">
+                專業減肥診所・減重管理諮詢
+              </p>
 
-      {/* 熱門項目 */}
-      <div className="mt-10 flex flex-wrap justify-center gap-3">
+              <p className="mt-5 max-w-2xl text-sm leading-8 text-white/90 md:text-base">
+                美麗好診所專注於減肥、減重與體重管理，
+                提供個人化減重評估與專業諮詢，
+                協助打造更健康、更理想的體態。
+              </p>
 
-        <div
-          className="
-            rounded-full
-            border border-[#d4a373]/30
-            bg-[#fff7ef]
-            px-5 py-2
-            text-sm font-medium
-            text-[#6b4423]
-            shadow-sm
-            backdrop-blur-sm
-          "
-        >
-          猛健樂
-        </div>
+              {/* 熱門項目 */}
+              <div className="mt-7 flex flex-wrap gap-3">
 
-        <div
-          className="
-            rounded-full
-            border border-[#d4a373]/30
-            bg-[#fff7ef]
-            px-5 py-2
-            text-sm font-medium
-            text-[#6b4423]
-            shadow-sm
-            backdrop-blur-sm
-          "
-        >
-          週纖達
-        </div>
+                <div className="rounded-full bg-white/15 px-5 py-2 text-sm font-medium text-white backdrop-blur-md">
+                  猛健樂
+                </div>
 
-        <div
-          className="
-            rounded-full
-            border border-[#d4a373]/30
-            bg-[#fff7ef]
-            px-5 py-2
-            text-sm font-medium
-            text-[#6b4423]
-            shadow-sm
-            backdrop-blur-sm
-          "
-        >
-          瑞倍適
+                <div className="rounded-full bg-white/15 px-5 py-2 text-sm font-medium text-white backdrop-blur-md">
+                  週纖達
+                </div>
+
+                <div className="rounded-full bg-white/15 px-5 py-2 text-sm font-medium text-white backdrop-blur-md">
+                  瑞倍適
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
         </div>
 
       </div>
-
     </section>
   )
 }
