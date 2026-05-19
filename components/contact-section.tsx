@@ -15,21 +15,8 @@ const contacts = [
     icon: <MessageCircle size={28} />,
   },
   {
-    label: "Email 聯絡",
-    description: "clinic@example.com",
-    href: "mailto:clinic@example.com",
-    icon: <Mail size={28} />,
-  },
-  {
-    label: "Instagram",
-    description: "追蹤最新減肥資訊與減重文章",
-    href: "https://instagram.com/",
-    icon: <Instagram size={28} />,
-  },
-  {
     label: "診所位置",
-    description: "台北市｜採預約制減重諮詢",
-    href: "https://maps.google.com",
+    description: "台北市中山區南京東路南京東路一段42號3樓｜採預約制",
     icon: <MapPin size={28} />,
   },
 ]
