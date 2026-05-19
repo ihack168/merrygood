@@ -15,7 +15,7 @@ export function HeroSection() {
 
         <div className="relative z-10">
           <Image
-            src="/images/logo.png"
+            src="/images/hero.png"
             alt="美麗好診所 減肥診所"
             width={500}
             height={200}
