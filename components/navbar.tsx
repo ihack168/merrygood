@@ -41,23 +41,22 @@ export function Navbar() {
 
   return (
     <>
-      <nav className="fixed left-0 right-0 top-0 z-[50] flex justify-center pointer-events-none">
+      <nav className="pointer-events-none fixed left-0 right-0 top-0 z-[50] flex justify-center">
         <div
           className={`
             pointer-events-auto flex items-center justify-between transition-all duration-500
             ${
               scrolled
-                ? "mt-4 h-16 w-[92%] max-w-6xl rounded-full border border-border/70 bg-white/85 px-5 shadow-[0_18px_50px_rgba(120,80,70,0.12)] backdrop-blur-xl md:w-[86%] md:px-7"
-                : "h-20 w-full border-b border-border/60 bg-white/75 px-5 backdrop-blur-xl md:px-10"
+                ? "mt-4 h-16 w-[92%] max-w-6xl rounded-full border border-border/70 bg-card/85 px-5 shadow-[0_18px_50px_rgba(111,119,66,0.12)] backdrop-blur-xl md:w-[86%] md:px-7"
+                : "h-20 w-full border-b border-border/60 bg-card/75 px-5 backdrop-blur-xl md:px-10"
             }
           `}
         >
-          {/* Logo */}
           <Link href="/" className="relative z-[60] flex items-center gap-3">
             <img
               src="/images/logo.png"
               alt="美麗好診所 減肥診所 Logo"
-              className="h-10 w-10 rounded-full border border-primary/20 bg-white object-cover shadow-sm"
+              className="h-10 w-10 rounded-full border border-primary/20 bg-card object-cover shadow-sm"
             />
 
             <div className="leading-tight">
@@ -71,21 +70,12 @@ export function Navbar() {
             </div>
           </Link>
 
-          {/* 電腦版選單 */}
           <div className="hidden items-center gap-10 md:flex">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="
-                  group relative
-                  text-[15px] md:text-base
-                  font-semibold
-                  tracking-wide
-                  text-muted-foreground
-                  transition-colors
-                  hover:text-foreground
-                "
+                className="group relative text-[15px] font-semibold tracking-wide text-muted-foreground transition-colors hover:text-foreground md:text-base"
               >
                 {link.label}
 
@@ -94,11 +84,10 @@ export function Navbar() {
             ))}
           </div>
 
-          {/* 手機漢堡按鈕 */}
           <button
             onClick={toggleMenu}
             aria-label="開啟選單"
-            className="relative z-[60] flex h-11 w-11 flex-col items-center justify-center gap-1.5 rounded-full border border-border bg-white shadow-sm md:hidden"
+            className="relative z-[60] flex h-11 w-11 flex-col items-center justify-center gap-1.5 rounded-full border border-border bg-card shadow-sm md:hidden"
           >
             <span className="h-0.5 w-5 rounded-full bg-foreground" />
             <span className="h-0.5 w-5 rounded-full bg-foreground" />
@@ -107,13 +96,12 @@ export function Navbar() {
         </div>
       </nav>
 
-      {/* 手機全螢幕選單 */}
       {mobileOpen && (
-        <div className="fixed inset-0 z-[100] flex flex-col bg-background px-7 pt-24 md:hidden animate-in fade-in duration-300">
+        <div className="fixed inset-0 z-[100] flex animate-in flex-col bg-background px-7 pt-24 duration-300 fade-in md:hidden">
           <button
             onClick={toggleMenu}
             aria-label="關閉選單"
-            className="absolute right-6 top-6 z-[110] flex h-12 w-12 items-center justify-center rounded-full border border-border bg-white shadow-sm"
+            className="absolute right-6 top-6 z-[110] flex h-12 w-12 items-center justify-center rounded-full border border-border bg-card shadow-sm"
           >
             <div className="relative h-6 w-6">
               <span className="absolute left-0 top-1/2 h-0.5 w-full rotate-45 rounded-full bg-foreground" />
