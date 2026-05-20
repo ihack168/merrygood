@@ -74,7 +74,9 @@ function BlogPageContent() {
           { start, end, selectedTag },
           { cache: "no-store" }
         )
+
         console.log("Sanity posts result:", result)
+
         const processedPosts = result.map((post: any) => {
           let extractedImg = ""
           let extractedDesc = post.description || ""
@@ -154,8 +156,9 @@ function BlogPageContent() {
       <Navbar />
 
       <main className="relative overflow-hidden px-6 pb-24 pt-32">
-        <div className="absolute left-1/2 top-20 -z-10 h-[360px] w-[360px] -translate-x-1/2 rounded-full bg-primary/10 blur-[110px]" />
-        <div className="absolute right-0 top-80 -z-10 h-[260px] w-[260px] rounded-full bg-accent/10 blur-[100px]" />
+        <div className="absolute left-1/2 top-20 -z-10 h-[380px] w-[380px] -translate-x-1/2 rounded-full bg-primary/18 blur-[120px]" />
+        <div className="absolute right-0 top-80 -z-10 h-[280px] w-[280px] rounded-full bg-accent/14 blur-[110px]" />
+        <div className="absolute left-0 bottom-20 -z-10 h-[220px] w-[220px] rounded-full bg-secondary/70 blur-[90px]" />
 
         <div className="mx-auto max-w-6xl">
           <div className="mb-12 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
@@ -175,7 +178,7 @@ function BlogPageContent() {
               </p>
             </header>
 
-            <p className="rounded-full border border-border bg-white/70 px-5 py-2 text-sm text-muted-foreground shadow-sm backdrop-blur">
+            <p className="rounded-full border border-border bg-card/80 px-5 py-2 text-sm text-muted-foreground shadow-sm backdrop-blur">
               共 {totalPosts} 篇文章
             </p>
           </div>
@@ -187,8 +190,8 @@ function BlogPageContent() {
                 onClick={() => handleTagClick(tag)}
                 className={`rounded-full border px-4 py-2 text-sm font-medium transition-all ${
                   selectedTag === tag
-                    ? "border-primary bg-primary text-primary-foreground shadow-[0_10px_30px_rgba(217,143,143,0.28)]"
-                    : "border-border bg-white/70 text-muted-foreground hover:border-primary/40 hover:text-primary"
+                    ? "border-primary bg-primary text-primary-foreground shadow-[0_10px_30px_rgba(190,195,125,0.32)]"
+                    : "border-border bg-card/75 text-muted-foreground hover:border-primary/50 hover:bg-secondary/70 hover:text-accent"
                 }`}
               >
                 #{tag}
@@ -207,7 +210,7 @@ function BlogPageContent() {
                   {posts.map((post) => (
                     <article
                       key={post.id}
-                      className="group overflow-hidden rounded-[2rem] border border-border/70 bg-white/80 shadow-[0_10px_40px_rgba(120,80,70,0.08)] backdrop-blur transition-all duration-500 hover:-translate-y-1.5 hover:border-primary/30 hover:shadow-[0_20px_60px_rgba(217,143,143,0.14)]"
+                      className="group overflow-hidden rounded-[2rem] border border-border/80 bg-card/85 shadow-[0_10px_40px_rgba(111,119,66,0.10)] backdrop-blur transition-all duration-500 hover:-translate-y-1.5 hover:border-primary/45 hover:shadow-[0_20px_60px_rgba(190,195,125,0.20)]"
                     >
                       <div className="relative h-56 w-full overflow-hidden bg-muted">
                         {activeVideo === post.id && post.videoId ? (
@@ -244,7 +247,7 @@ function BlogPageContent() {
                                     e.stopPropagation()
                                     setActiveVideo(post.id)
                                   }}
-                                  className="pointer-events-auto flex h-12 w-16 cursor-pointer items-center justify-center rounded-2xl bg-white/90 shadow-xl backdrop-blur transition-transform duration-300 group-hover:scale-110"
+                                  className="pointer-events-auto flex h-12 w-16 cursor-pointer items-center justify-center rounded-2xl bg-card/90 shadow-xl backdrop-blur transition-transform duration-300 group-hover:scale-110"
                                 >
                                   <div className="ml-1 border-y-[10px] border-l-[16px] border-y-transparent border-l-primary" />
                                 </div>
@@ -263,7 +266,7 @@ function BlogPageContent() {
                               className={`rounded-full border px-3 py-1 text-xs font-medium transition-all ${
                                 selectedTag === tag
                                   ? "border-primary bg-primary text-primary-foreground"
-                                  : "border-primary/20 bg-primary/5 text-primary hover:bg-primary hover:text-primary-foreground"
+                                  : "border-primary/25 bg-primary/8 text-accent hover:bg-primary hover:text-primary-foreground"
                               }`}
                             >
                               #{tag}
@@ -272,7 +275,7 @@ function BlogPageContent() {
                         </div>
 
                         <Link href={`/blog/${post.slug}`}>
-                          <h2 className="line-clamp-2 text-xl font-bold leading-snug text-foreground transition-colors group-hover:text-primary">
+                          <h2 className="line-clamp-2 text-xl font-bold leading-snug text-foreground transition-colors group-hover:text-accent">
                             {post.title}
                           </h2>
                         </Link>
@@ -284,7 +287,7 @@ function BlogPageContent() {
                         <div className="mt-auto pt-6">
                           <Link
                             href={`/blog/${post.slug}`}
-                            className="inline-flex items-center text-sm font-semibold text-primary"
+                            className="inline-flex items-center text-sm font-semibold text-primary transition-colors hover:text-accent"
                           >
                             閱讀文章
                             <span className="ml-2 transition-transform group-hover:translate-x-1">
@@ -297,7 +300,7 @@ function BlogPageContent() {
                   ))}
                 </div>
               ) : (
-                <div className="rounded-[2rem] border border-dashed border-border bg-white/60 py-32 text-center shadow-sm backdrop-blur">
+                <div className="rounded-[2rem] border border-dashed border-border bg-card/70 py-32 text-center shadow-sm backdrop-blur">
                   <p className="text-xl font-bold text-foreground">
                     暫時沒有相關文章
                   </p>
@@ -309,7 +312,7 @@ function BlogPageContent() {
                   {selectedTag !== "全部" && (
                     <button
                       onClick={() => handleTagClick("全部")}
-                      className="mt-6 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground"
+                      className="mt-6 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-[0_10px_30px_rgba(190,195,125,0.32)] transition-all hover:bg-accent"
                     >
                       查看全部文章
                     </button>
@@ -322,7 +325,7 @@ function BlogPageContent() {
                   <button
                     onClick={() => setPage((p) => Math.max(1, p - 1))}
                     disabled={page === 1}
-                    className="mr-2 rounded-full border border-border bg-white/70 px-6 py-3 text-sm font-medium text-muted-foreground transition-all hover:border-primary/40 hover:text-primary disabled:opacity-30"
+                    className="mr-2 rounded-full border border-border bg-card/75 px-6 py-3 text-sm font-medium text-muted-foreground transition-all hover:border-primary/50 hover:bg-secondary/70 hover:text-accent disabled:opacity-30"
                   >
                     上一頁
                   </button>
@@ -334,8 +337,8 @@ function BlogPageContent() {
                         onClick={() => setPage(num)}
                         className={`h-11 w-11 rounded-full border text-sm font-semibold transition-all ${
                           page === num
-                            ? "border-primary bg-primary text-primary-foreground shadow-[0_10px_30px_rgba(217,143,143,0.28)]"
-                            : "border-border bg-white/70 text-muted-foreground hover:border-primary/40 hover:text-primary"
+                            ? "border-primary bg-primary text-primary-foreground shadow-[0_10px_30px_rgba(190,195,125,0.32)]"
+                            : "border-border bg-card/75 text-muted-foreground hover:border-primary/50 hover:bg-secondary/70 hover:text-accent"
                         }`}
                       >
                         {num}
@@ -348,7 +351,7 @@ function BlogPageContent() {
                       setPage((p) => Math.min(totalPages, p + 1))
                     }
                     disabled={page >= totalPages}
-                    className="ml-2 rounded-full border border-border bg-white/70 px-6 py-3 text-sm font-medium text-muted-foreground transition-all hover:border-primary/40 hover:text-primary disabled:opacity-30"
+                    className="ml-2 rounded-full border border-border bg-card/75 px-6 py-3 text-sm font-medium text-muted-foreground transition-all hover:border-primary/50 hover:bg-secondary/70 hover:text-accent disabled:opacity-30"
                   >
                     下一頁
                   </button>
