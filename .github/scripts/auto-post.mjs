@@ -9,7 +9,7 @@ const SHEET_NAME = 'merrygood';
 
 // Google Apps Script 網址
 const GOOGLE_SCRIPT_BASE_URL =
-  'https://script.google.com/macros/s/AKfycbzJO4OjtVfURgK-s5KT9v4zVtUbwFFyzpmeSNBDlMg2Ka155-wSztYr7PJ4ZwH2VOtC/exec';
+  'https://script.google.com/macros/s/AKfycbwFpZDhMveHhdOYdDkh02JpWk28jUCBqikyM-Urg_6Uw2jTH7d8ZluKxinKTWh5_20N/exec';
 
 const GOOGLE_SCRIPT_URL =
   `${GOOGLE_SCRIPT_BASE_URL}?sheet=${encodeURIComponent(SHEET_NAME)}`;
@@ -104,10 +104,26 @@ function getSafePostCount(value) {
 }
 
 function parseSanityImageUrl(imageRaw) {
-  if (!imageRaw || !imageRaw.includes(',')) return null;
+  if (!imageRaw) return null;
 
-  const parts = imageRaw.split(',');
-  const imageAssetId = parts[1].trim().replace(/^image-/, '');
+  const raw = String(imageRaw).trim();
+
+  if (!raw) return null;
+
+  // 如果 F 欄本身就是圖片網址，直接使用
+  if (raw.startsWith('http://') || raw.startsWith('https://')) {
+    return raw;
+  }
+
+  // F 欄格式：
+  // line-ai-bot-61.png, image-xxxxx-1672x941-png
+  const parts = raw.split(',');
+  const assetPart =
+    parts.length > 1
+      ? parts[1].trim()
+      : parts[0].trim();
+
+  const imageAssetId = assetPart.replace(/^image-/, '');
   const lastDashIndex = imageAssetId.lastIndexOf('-');
 
   if (lastDashIndex === -1) return null;
@@ -132,6 +148,9 @@ async function createPost(title, htmlContent, tags, imageRaw) {
 
   let finalHtml = htmlContent || '';
   const imageUrl = parseSanityImageUrl(imageRaw);
+
+  console.log(`🖼️ F欄原始圖片資料：${imageRaw || '(空)'}`);
+  console.log(`🖼️ 解析後圖片網址：${imageUrl || '(無圖片)'}`);
 
   if (imageUrl) {
     finalHtml = `<img src="${imageUrl}" alt="${title}">\n` + finalHtml;
@@ -214,7 +233,6 @@ async function main() {
   console.log(`🚀 本次實際預計發 ${postCount} 篇`);
 
   for (let i = 0; i < postCount; i++) {
-
     console.log(`\n====================`);
     console.log(`🚀 第 ${i + 1} 篇 / 共 ${postCount} 篇`);
     console.log(`====================`);
@@ -232,12 +250,14 @@ async function main() {
 
     console.log(`📄 目前 sheet：${post.sheetName || SHEET_NAME}`);
     console.log(`📌 目前列號：${post.row}`);
-    console.log(`📌 A4 指定列：${post.a4}`);
 
-const title = String(post.title || '').trim();
-const html = String(post.html || '').trim();
-const tags = String(post.tags || '').trim();
-const imageRaw = String(post.image || '').trim();
+    const title = String(post.title || '').trim();
+    const html = String(post.html || '').trim();
+    const tags = String(post.tags || '').trim();
+    const imageRaw = String(post.image || '').trim();
+
+    console.log(`📌 標題：${title}`);
+    console.log(`🏷️ Tags：${tags || '(空)'}`);
 
     if (!title || !html) {
       console.log('⚠️ 標題或 HTML 內容是空的，停止發文');
