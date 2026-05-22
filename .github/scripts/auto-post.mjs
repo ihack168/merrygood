@@ -4,7 +4,7 @@ const SANITY_PROJECT_ID = 'oo1n2doq';
 const SANITY_DATASET = 'production';
 const SANITY_TOKEN = process.env.SANITY_TOKEN;
 
-// 只要改這裡，就能切換不同 sheet
+// 只要改這裡，就能切換不同 sheet a
 const SHEET_NAME = 'merrygood';
 
 // Google Apps Script 網址
