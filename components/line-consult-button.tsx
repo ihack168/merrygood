@@ -1,230 +1,270 @@
-"use client";
+"use client"
 
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import { client } from "@/lib/sanity";
+import { ReactNode, useEffect, useState } from "react"
+import { createPortal } from "react-dom"
 
-interface Post {
-  id: string;
-  title: string;
-  slug: string;
-  description: string;
-  thumbnail: string;
-  videoId?: string;
-  tags: string[];
-  publishedAt: string;
-  htmlContent?: string;
+const GOOGLE_SCRIPT_URL =
+  "https://script.google.com/macros/s/AKfycbwFpZDhMveHhdOYdDkh02JpWk28jUCBqikyM-Urg_6Uw2jTH7d8ZluKxinKTWh5_20N/exec"
+
+const LINE_ADD_URL = "https://line.me/R/ti/p/@gwp4644s"
+
+const VENDOR_ID = "linkrich"
+const VENDOR_NAME = "社會住宅包租代管資訊站"
+
+interface LineConsultButtonProps {
+  children: ReactNode
+  className?: string
+  onClick?: () => void
 }
 
-export function LatestPostsSection() {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [loadingPosts, setLoadingPosts] = useState(true);
-  const [activeVideo, setActiveVideo] = useState<string | null>(null);
+export function LineConsultButton({
+  children,
+  className = "",
+  onClick,
+}: LineConsultButtonProps) {
+  const [mounted, setMounted] = useState(false)
+  const [showModal, setShowModal] = useState(false)
+  const [modalStep, setModalStep] = useState<"role" | "form">("role")
+  const [role, setRole] = useState("")
+  const [lastName, setLastName] = useState("")
+  const [phoneLast3, setPhoneLast3] = useState("")
+  const [tenantBlocked, setTenantBlocked] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    async function fetchLatestPosts() {
-      setLoadingPosts(true);
+    setMounted(true)
+  }, [])
 
-      try {
-        const result = await client.fetch(
-          `*[_type == "post"] | order(_createdAt desc) [0...6] {
-            "id": _id,
-            title,
-            "slug": slug.current,
-            description,
-            "imageUrl": imageUrl,
-            "mainImage": mainImage.asset->url,
-            htmlContent,
-            "videoId": youtubeVideoId,
-            "tags": tags,
-            "publishedAt": coalesce(publishedAt, _createdAt)
-          }`,
-          {},
-          { cache: "no-store" }
-        );
+  const resetModal = () => {
+    setShowModal(false)
+    setModalStep("role")
+    setRole("")
+    setLastName("")
+    setPhoneLast3("")
+    setTenantBlocked(false)
+    setLoading(false)
+  }
 
-        const processedPosts = result.map((post: any) => {
-          let extractedImg = "";
-          let extractedDesc = post.description || "";
+  const handleOpenModal = () => {
+    setShowModal(true)
+    setModalStep("role")
+    setRole("")
+    setLastName("")
+    setPhoneLast3("")
+    setTenantBlocked(false)
+  }
 
-          if (post.htmlContent) {
-            const imgMatch = post.htmlContent.match(/<img[^>]+src="([^">]+)"/);
+  const handleSelectRole = (selectedRole: string) => {
+    setRole(selectedRole)
 
-            if (imgMatch && imgMatch[1]) {
-              extractedImg = imgMatch[1];
-            }
-
-            if (!extractedDesc || extractedDesc === "點擊閱讀詳情...") {
-              const pureText = post.htmlContent
-                .replace(/<[^>]*>?/gm, "")
-                .trim();
-
-              extractedDesc =
-                pureText.substring(0, 100) +
-                (pureText.length > 100 ? "..." : "");
-            }
-          }
-
-          if (!extractedDesc) extractedDesc = "點擊閱讀詳情...";
-
-          const youtubeThumb = post.videoId
-            ? `https://img.youtube.com/vi/${post.videoId}/maxresdefault.jpg`
-            : "";
-
-          return {
-            ...post,
-            thumbnail:
-              extractedImg ||
-              youtubeThumb ||
-              post.imageUrl ||
-              post.mainImage ||
-              "",
-            description: extractedDesc,
-            tags: Array.isArray(post.tags) ? post.tags : [],
-          };
-        });
-
-        setPosts(processedPosts);
-      } catch (err) {
-        console.error("首頁文章抓取失敗:", err);
-      } finally {
-        setLoadingPosts(false);
-      }
+    if (selectedRole === "tenant") {
+      setTenantBlocked(true)
+      return
     }
 
-    fetchLatestPosts();
-  }, []);
+    setTenantBlocked(false)
+    setModalStep("form")
+  }
+
+  const handleSubmitLineConsult = async () => {
+    const cleanLastName = lastName.trim()
+    const cleanPhoneLast3 = phoneLast3.trim()
+
+    if (role !== "landlord") {
+      alert("請先選擇房東")
+      return
+    }
+
+    if (!cleanLastName) {
+      alert("請輸入貴姓")
+      return
+    }
+
+    if (!/^\d{3}$/.test(cleanPhoneLast3)) {
+      alert("請輸入手機末 3 碼")
+      return
+    }
+
+    try {
+      setLoading(true)
+
+      const res = await fetch(GOOGLE_SCRIPT_URL, {
+        method: "POST",
+        body: JSON.stringify({
+          action: "lineConsult",
+          vendorId: VENDOR_ID,
+          vendorName: VENDOR_NAME,
+          role,
+          lastName: cleanLastName,
+          phoneLast3: cleanPhoneLast3,
+          sourcePage: window.location.href,
+        }),
+      })
+
+      const result = await res.json()
+
+      if (!result.success) {
+        alert(result.message || "送出失敗，請稍後再試")
+        return
+      }
+
+      resetModal()
+
+      window.open(LINE_ADD_URL, "_blank", "noopener,noreferrer")
+    } catch (error) {
+      alert("送出失敗，請稍後再試")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const modalContent = (
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center overflow-y-auto bg-black/50 px-4 py-8">
+      <div className="my-auto w-full max-w-sm rounded-2xl bg-white p-6 text-left shadow-xl">
+        {modalStep === "role" && (
+          <>
+            <h3 className="text-center text-3xl font-black tracking-wide text-red-600 animate-pulse">
+              你是房東還是房客？
+            </h3>
+
+            <div className="mt-8 grid grid-cols-2 gap-4">
+              <label
+                className={`flex cursor-pointer items-center justify-center gap-2 rounded-2xl border px-4 py-5 text-lg font-black transition-all ${
+                  role === "landlord"
+                    ? "border-primary bg-primary/10 text-primary"
+                    : "border-border text-foreground"
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="role-line-consult"
+                  checked={role === "landlord"}
+                  onChange={() => handleSelectRole("landlord")}
+                  className="h-5 w-5"
+                />
+                房東
+              </label>
+
+              <label
+                className={`flex cursor-pointer items-center justify-center gap-2 rounded-2xl border px-4 py-5 text-lg font-black transition-all ${
+                  role === "tenant"
+                    ? "border-red-600 bg-red-100 text-red-700 shadow-md"
+                    : "border-border text-foreground"
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="role-line-consult"
+                  checked={role === "tenant"}
+                  onChange={() => handleSelectRole("tenant")}
+                  className="h-5 w-5"
+                />
+                房客
+              </label>
+            </div>
+
+            {tenantBlocked && (
+              <p className="mt-5 rounded-2xl border-2 border-red-500 bg-red-50 px-4 py-4 text-center text-base font-black text-red-700 shadow-sm">
+                很抱歉，我們僅提供房東咨詢
+              </p>
+            )}
+
+            <button
+              type="button"
+              onClick={resetModal}
+              className="mt-6 w-full rounded-xl border border-border px-4 py-3 text-sm font-semibold text-foreground"
+            >
+              取消
+            </button>
+          </>
+        )}
+
+        {modalStep === "form" && (
+          <>
+            <h3 className="text-xl font-black text-foreground">
+              LINE 免費諮詢
+            </h3>
+
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">
+              請留下貴姓與手機末 3 碼，送出後會自動開啟 LINE 加好友。
+            </p>
+
+            <div className="mt-5">
+              <label className="text-sm font-semibold text-foreground">
+                貴姓
+              </label>
+
+              <input
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                placeholder="例如：王"
+                className="mt-2 w-full rounded-xl border border-border px-4 py-3 text-sm outline-none focus:border-primary"
+              />
+            </div>
+
+            <div className="mt-4">
+              <label className="text-sm font-semibold text-foreground">
+                手機末 3 碼
+              </label>
+
+              <input
+                value={phoneLast3}
+                onChange={(e) => {
+                  const value = e.target.value.replace(/\D/g, "").slice(0, 3)
+                  setPhoneLast3(value)
+                }}
+                placeholder="例如：168"
+                inputMode="numeric"
+                maxLength={3}
+                className="mt-2 w-full rounded-xl border border-border px-4 py-3 text-sm outline-none focus:border-primary"
+              />
+            </div>
+
+            <div className="mt-6 flex gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setModalStep("role")
+                  setRole("")
+                  setLastName("")
+                  setPhoneLast3("")
+                  setTenantBlocked(false)
+                }}
+                disabled={loading}
+                className="flex-1 rounded-xl border border-border px-4 py-3 text-sm font-semibold text-foreground"
+              >
+                上一步
+              </button>
+
+              <button
+                type="button"
+                onClick={handleSubmitLineConsult}
+                disabled={loading}
+                className="flex-1 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground"
+              >
+                {loading ? "送出中..." : "送出並加 LINE"}
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  )
 
   return (
-    <section className="mx-auto max-w-6xl px-6 py-16">
-      <div className="mb-10 flex flex-col gap-4 text-center md:flex-row md:items-end md:justify-between md:text-left">
-        <div>
-          <p className="text-sm font-semibold tracking-[0.2em] text-primary">
-            LATEST ARTICLES
-          </p>
+    <>
+      <button
+        type="button"
+        onClick={() => {
+          onClick?.()
+          handleOpenModal()
+        }}
+        className={className}
+      >
+        {children}
+      </button>
 
-          <h2 className="mt-3 text-2xl font-black text-foreground md:text-4xl">
-            最新文章
-          </h2>
-
-          <p className="mt-4 max-w-2xl text-base leading-8 text-muted-foreground">
-            整理社會住宅包租代管、房東出租、租屋補助與租務管理相關資訊。
-          </p>
-        </div>
-
-        <Link
-          href="/blog"
-          className="inline-flex justify-center rounded-full border border-border bg-white/70 px-6 py-3 text-sm font-semibold text-muted-foreground shadow-sm transition-all hover:border-primary/40 hover:text-primary"
-        >
-          查看全部文章 →
-        </Link>
-      </div>
-
-      {loadingPosts ? (
-        <div className="flex justify-center py-24">
-          <div className="h-12 w-12 animate-spin rounded-full border-2 border-primary/20 border-t-primary" />
-        </div>
-      ) : posts.length > 0 ? (
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-          {posts.map((post) => (
-            <article
-              key={post.id}
-              className="group overflow-hidden rounded-[2rem] border border-border/70 bg-white/80 shadow-[0_10px_40px_rgba(120,80,70,0.08)] backdrop-blur transition-all duration-500 hover:-translate-y-1.5 hover:border-primary/30 hover:shadow-[0_20px_60px_rgba(217,143,143,0.14)]"
-            >
-              <div className="relative aspect-video w-full overflow-hidden bg-muted">
-                {activeVideo === post.id && post.videoId ? (
-                  <iframe
-                    src={`https://www.youtube.com/embed/${post.videoId}?autoplay=1`}
-                    className="h-full w-full border-none"
-                    allow="autoplay; encrypted-media"
-                    allowFullScreen
-                  />
-                ) : (
-                  <div className="relative h-full w-full">
-                    <Link
-                      href={`/blog/${post.slug}`}
-                      className="block h-full w-full overflow-hidden"
-                    >
-                      {post.thumbnail ? (
-                        <img
-                          src={post.thumbnail}
-                          alt={post.title}
-                          className="h-full w-full object-cover transition-all duration-700 group-hover:scale-105"
-                        />
-                      ) : (
-                        <div className="flex h-full w-full items-center justify-center bg-secondary text-sm text-muted-foreground">
-                          暫無圖片
-                        </div>
-                      )}
-                    </Link>
-
-                    {post.videoId && (
-                      <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-                        <div
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            setActiveVideo(post.id);
-                          }}
-                          className="pointer-events-auto flex h-12 w-16 cursor-pointer items-center justify-center rounded-2xl bg-white/90 shadow-xl backdrop-blur transition-transform duration-300 group-hover:scale-110"
-                        >
-                          <div className="ml-1 border-y-[10px] border-l-[16px] border-y-transparent border-l-primary" />
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-
-              <div className="flex min-h-[260px] flex-col p-6">
-                <div className="mb-4 flex flex-wrap gap-2">
-                  {post.tags?.map((tag) => (
-                    <Link
-                      key={tag}
-                      href={`/blog?tag=${encodeURIComponent(tag)}`}
-                      className="rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-medium text-primary transition-all hover:bg-primary hover:text-primary-foreground"
-                    >
-                      #{tag}
-                    </Link>
-                  ))}
-                </div>
-
-                <Link href={`/blog/${post.slug}`}>
-                  <h2 className="line-clamp-2 text-xl font-bold leading-snug text-foreground transition-colors group-hover:text-primary">
-                    {post.title}
-                  </h2>
-                </Link>
-
-                <p className="mt-4 line-clamp-3 text-sm leading-7 text-muted-foreground">
-                  {post.description}
-                </p>
-
-                <div className="mt-auto pt-6">
-                  <Link
-                    href={`/blog/${post.slug}`}
-                    className="inline-flex items-center text-sm font-semibold text-primary"
-                  >
-                    閱讀文章
-                    <span className="ml-2 transition-transform group-hover:translate-x-1">
-                      →
-                    </span>
-                  </Link>
-                </div>
-              </div>
-            </article>
-          ))}
-        </div>
-      ) : (
-        <div className="rounded-[2rem] border border-dashed border-border bg-white/60 py-24 text-center shadow-sm backdrop-blur">
-          <p className="text-xl font-bold text-foreground">
-            暫時沒有最新文章
-          </p>
-
-          <p className="mt-3 text-sm text-muted-foreground">
-            之後會陸續分享社會住宅、包租代管與租屋補助相關內容。
-          </p>
-        </div>
-      )}
-    </section>
-  );
+      {mounted && showModal && createPortal(modalContent, document.body)}
+    </>
+  )
 }
