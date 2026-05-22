@@ -93,6 +93,16 @@ async function markAsPublishedOnSheet(rowNumber) {
   });
 }
 
+function getSafePostCount(value) {
+  const count = Number(value);
+
+  if (!count || isNaN(count) || count < 1) {
+    return 1;
+  }
+
+  return Math.floor(count);
+}
+
 function parseSanityImageUrl(imageRaw) {
   if (!imageRaw || !imageRaw.includes(',')) return null;
 
@@ -111,7 +121,11 @@ function parseSanityImageUrl(imageRaw) {
 }
 
 async function createPost(title, htmlContent, tags, imageRaw) {
-  const cleanTitle = title.toLowerCase().replace(/[^\u4e00-\u9fa5a-z0-9]/g, '');
+  const cleanTitle =
+    title
+      .toLowerCase()
+      .replace(/[^\u4e00-\u9fa5a-z0-9]/g, '');
+
   const shortTitle = cleanTitle.substring(0, 15);
   const uniqueId = Math.floor(Date.now() / 1000).toString().slice(-6);
   const finalSlug = encodeURIComponent(shortTitle) + `-${uniqueId}`;
@@ -186,38 +200,69 @@ async function createPost(title, htmlContent, tags, imageRaw) {
 async function main() {
   console.log(`📥 從 Apps Script 讀取 sheet：${SHEET_NAME}`);
 
-  const post = await fetchNextPost();
+  const firstPost = await fetchNextPost();
 
-  if (!post || post.error) {
+  if (!firstPost || firstPost.error) {
     console.log('✅ 無待處理文章');
-    console.log(post);
+    console.log(firstPost);
     return;
   }
 
-  console.log(`📄 目前 sheet：${post.sheetName || SHEET_NAME}`);
-  console.log(`📌 目前列號：${post.row}`);
+  const postCount = getSafePostCount(firstPost.postCount);
 
-  const title = post.tabb?.trim();
-  const html = post.tabc || '';
-  const tags = post.tabd || '';
-  const imageRaw = post.tabe || '';
+  console.log(`📝 A6 設定本次發文數量：${firstPost.postCount}`);
+  console.log(`🚀 本次實際預計發 ${postCount} 篇`);
 
-  if (!title || !html) {
-    console.log('⚠️ 標題或 HTML 內容是空的，停止發文');
-    console.log(post);
-    return;
-  }
+  for (let i = 0; i < postCount; i++) {
 
-  console.log(`🚀 發布: ${title}`);
+    console.log(`\n====================`);
+    console.log(`🚀 第 ${i + 1} 篇 / 共 ${postCount} 篇`);
+    console.log(`====================`);
 
-  const result = await createPost(title, html, tags, imageRaw);
+    const post =
+      i === 0
+        ? firstPost
+        : await fetchNextPost();
 
-  if (result.results || result.mutations) {
-    console.log('✅ Sanity 成功，執行回填...');
-    await markAsPublishedOnSheet(post.row);
-    console.log('✅ Google Sheet 回填完成');
-  } else {
-    console.warn('⚠️ Sanity 回傳異常:', JSON.stringify(result));
+    if (!post || post.error) {
+      console.log('✅ 無待處理文章');
+      console.log(post);
+      break;
+    }
+
+    console.log(`📄 目前 sheet：${post.sheetName || SHEET_NAME}`);
+    console.log(`📌 目前列號：${post.row}`);
+    console.log(`📌 A4 指定列：${post.a4}`);
+
+    const title = String(post.a4title || '').trim();
+    const html = String(post.a4html || '').trim();
+    const tags = String(post.a4tags || '').trim();
+    const imageRaw = String(post.a4image || '').trim();
+
+    if (!title || !html) {
+      console.log('⚠️ 標題或 HTML 內容是空的，停止發文');
+      console.log(post);
+      break;
+    }
+
+    console.log(`🚀 發布: ${title}`);
+
+    const result =
+      await createPost(
+        title,
+        html,
+        tags,
+        imageRaw
+      );
+
+    if (result.results || result.mutations) {
+      console.log('✅ Sanity 成功，執行回填...');
+      await markAsPublishedOnSheet(post.row);
+      console.log('✅ Google Sheet 回填完成');
+    } else {
+      console.warn('⚠️ Sanity 回傳異常:', JSON.stringify(result));
+      break;
+    }
   }
 }
 
