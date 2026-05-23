@@ -143,26 +143,6 @@ export function Footer() {
             All rights reserved.
           </p>
 
-          <div className="flex items-center gap-5 text-xs text-muted-foreground">
-
-            <a
-              href="/blog"
-              className="transition-colors hover:text-primary"
-            >
-              Blog
-            </a>
-
-            <span className="h-1 w-1 rounded-full bg-border" />
-
-            <a
-              href="/#contact"
-              className="transition-colors hover:text-primary"
-            >
-              Contact
-            </a>
-
-          </div>
-
         </div>
 
       </div>
