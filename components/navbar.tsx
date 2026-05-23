@@ -82,7 +82,7 @@ export function Navbar() {
             </div>
 
             <div className="leading-tight">
-              <span className="block text-lg font-black tracking-tight text-foreground md:text-xl">
+              <span className="block text-2xl font-black tracking-tight text-foreground md:text-xl">
                 美麗好診所
               </span>
 
@@ -100,7 +100,7 @@ export function Navbar() {
                 href={link.href}
                 className="
                   group relative
-                  text-[15px] font-semibold tracking-wide
+                  text-[20px] font-semibold tracking-wide
                   text-muted-foreground
                   transition-all duration-300
                   hover:text-foreground
@@ -133,7 +133,7 @@ export function Navbar() {
                 rounded-full
                 bg-primary
                 px-5 py-2.5
-                text-sm font-semibold
+                text-base font-bold
                 text-white
                 shadow-[0_10px_30px_rgba(129,216,208,0.35)]
                 transition-all duration-300
