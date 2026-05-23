@@ -97,7 +97,7 @@ export function LatestPostsSection() {
   }, [])
 
   return (
-    <section className="relative overflow-hidden px-6 py-24">
+    <section className="relative overflow-hidden px-6 py-16">
       <div className="absolute left-1/2 top-0 h-[360px] w-[360px] -translate-x-1/2 rounded-full bg-primary/15 blur-[120px]" />
       <div className="absolute -right-24 bottom-10 h-[260px] w-[260px] rounded-full bg-accent/10 blur-[100px]" />
 
@@ -128,7 +128,7 @@ export function LatestPostsSection() {
         </div>
 
         {loadingPosts ? (
-          <div className="flex justify-center py-24">
+          <div className="flex justify-center py-16">
             <div className="h-12 w-12 animate-spin rounded-full border-2 border-primary/20 border-t-primary" />
           </div>
         ) : posts.length > 0 ? (
@@ -224,7 +224,7 @@ export function LatestPostsSection() {
             ))}
           </div>
         ) : (
-          <div className="rounded-[2.5rem] border border-dashed border-primary/25 bg-white/60 px-6 py-24 text-center shadow-[0_18px_50px_rgba(129,216,208,0.12)] backdrop-blur">
+          <div className="rounded-[2.5rem] border border-dashed border-primary/25 bg-white/60 px-6 py-16 text-center shadow-[0_18px_50px_rgba(129,216,208,0.12)] backdrop-blur">
             <p className="text-xl font-black text-foreground">
               暫時沒有最新文章
             </p>

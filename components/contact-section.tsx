@@ -27,7 +27,7 @@ export function ContactSection() {
   return (
     <section
       id="contact"
-      className="relative overflow-hidden px-6 py-24"
+      className="relative overflow-hidden px-6 py-16"
     >
       {/* 背景柔光 */}
       <div className="absolute left-1/2 top-0 h-[360px] w-[360px] -translate-x-1/2 rounded-full bg-primary/15 blur-[120px]" />
