@@ -7,53 +7,68 @@
   --font-sans: 'Noto Sans TC', 'Geist', sans-serif;
   --font-mono: 'Geist Mono', 'Geist Mono Fallback';
 
-  --color-background: #fbfaf2;
-  --color-foreground: #2e3122;
+  /* Base */
+  --color-background: #f8fdfd;
+  --color-foreground: #1f2937;
 
+  /* Card */
   --color-card: #ffffff;
-  --color-card-foreground: #2e3122;
+  --color-card-foreground: #1f2937;
 
+  /* Popover */
   --color-popover: #ffffff;
-  --color-popover-foreground: #2e3122;
+  --color-popover-foreground: #1f2937;
 
-  --color-primary: #bec37d;
+  /* Tiffany Primary */
+  --color-primary: #81d8d0;
   --color-primary-foreground: #ffffff;
 
-  --color-secondary: #f1f3df;
-  --color-secondary-foreground: #555b32;
+  /* Soft Secondary */
+  --color-secondary: #e8f7f5;
+  --color-secondary-foreground: #3b5f5b;
 
-  --color-muted: #f6f6ec;
-  --color-muted-foreground: #7c8261;
+  /* Muted */
+  --color-muted: #f2fbfa;
+  --color-muted-foreground: #6b7280;
 
-  --color-accent: #8f9855;
+  /* Accent */
+  --color-accent: #5fc9bf;
   --color-accent-foreground: #ffffff;
 
+  /* Error */
   --color-destructive: #dc2626;
   --color-destructive-foreground: #ffffff;
 
-  --color-border: #e3e6c9;
-  --color-input: #dfe3be;
-  --color-ring: #bec37d;
+  /* Borders / Inputs */
+  --color-border: #d7efec;
+  --color-input: #cfe9e5;
+  --color-ring: #81d8d0;
 
-  --color-chart-1: #bec37d;
-  --color-chart-2: #8f9855;
-  --color-chart-3: #d7db9d;
-  --color-chart-4: #c7b88a;
-  --color-chart-5: #6f7742;
+  /* Charts */
+  --color-chart-1: #81d8d0;
+  --color-chart-2: #5fc9bf;
+  --color-chart-3: #b7ebe5;
+  --color-chart-4: #6fd6cd;
+  --color-chart-5: #42b7ab;
 
+  /* Radius */
   --radius-sm: 0.375rem;
   --radius-md: 0.625rem;
   --radius-lg: 0.875rem;
   --radius-xl: 1.25rem;
 
+  /* Sidebar */
   --color-sidebar: #ffffff;
-  --color-sidebar-foreground: #2e3122;
-  --color-sidebar-primary: #bec37d;
+  --color-sidebar-foreground: #1f2937;
+
+  --color-sidebar-primary: #81d8d0;
   --color-sidebar-primary-foreground: #ffffff;
-  --color-sidebar-accent: #f1f3df;
-  --color-sidebar-accent-foreground: #555b32;
-  --color-sidebar-border: #e3e6c9;
-  --color-sidebar-ring: #bec37d;
+
+  --color-sidebar-accent: #e8f7f5;
+  --color-sidebar-accent-foreground: #3b5f5b;
+
+  --color-sidebar-border: #d7efec;
+  --color-sidebar-ring: #81d8d0;
 }
 
 @layer base {
@@ -70,7 +85,7 @@
   }
 
   ::selection {
-    background: #dfe3a8;
-    color: #2e3122;
+    background: #81d8d0;
+    color: #ffffff;
   }
 }
