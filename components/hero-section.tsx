@@ -71,20 +71,6 @@ export function HeroSection() {
                   加入 LINE 免費諮詢
                 </a>
 
-                <a
-                  href="#services"
-                  className="
-                    inline-flex items-center justify-center
-                    rounded-full border border-primary/25
-                    bg-white/70 px-8 py-4
-                    text-sm font-bold text-accent
-                    shadow-sm backdrop-blur
-                    transition-all duration-300
-                    hover:-translate-y-1 hover:bg-white hover:text-primary
-                  "
-                >
-                  查看減重服務
-                </a>
               </div>
 
               {/* 信任標籤 */}
