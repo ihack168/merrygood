@@ -142,42 +142,6 @@ export default function Home() {
           </p>
         </section>
 
-        {/* FAQ 區塊：給 AEO / Google 摘要使用 */}
-        <section className="mx-auto max-w-5xl px-6 py-16">
-          <div className="mb-8 text-center">
-            <p className="text-sm font-medium text-primary">FAQ</p>
-            <h2 className="mt-2 text-2xl font-bold md:text-3xl">
-              減肥診所常見問題
-            </h2>
-            <p className="mt-3 text-muted-foreground">
-              關於減肥、減重診所與熱門減重商品的常見疑問。
-            </p>
-          </div>
-
-          <div className="grid gap-4 md:grid-cols-3">
-            <article className="rounded-2xl border bg-card p-6 shadow-sm">
-              <h3 className="font-semibold">減肥診所適合誰？</h3>
-              <p className="mt-3 text-sm leading-7 text-muted-foreground">
-                適合想減肥、控制體重、改善體態，或需要專業評估減重方式的人。
-              </p>
-            </article>
-
-            <article className="rounded-2xl border bg-card p-6 shadow-sm">
-              <h3 className="font-semibold">減重診所會怎麼評估？</h3>
-              <p className="mt-3 text-sm leading-7 text-muted-foreground">
-                通常會依照個人體重、生活習慣、飲食狀況與減重目標，提供合適建議。
-              </p>
-            </article>
-
-            <article className="rounded-2xl border bg-card p-6 shadow-sm">
-              <h3 className="font-semibold">猛健樂、週纖達、瑞倍適是什麼？</h3>
-              <p className="mt-3 text-sm leading-7 text-muted-foreground">
-                屬於目前熱門的減重相關商品，是否適合使用需由醫師評估後決定。
-              </p>
-            </article>
-          </div>
-        </section>
-
         {/* 聯絡我們 */}
         <div id="contact">
           <ContactSection />
