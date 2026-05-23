@@ -8,6 +8,7 @@ import {
   Activity,
   HeartPulse,
   ShieldCheck,
+  Sparkles,
 } from "lucide-react"
 
 interface ServiceItem {
@@ -62,19 +63,20 @@ export function ServicesSection() {
       id="services"
       className="relative overflow-hidden px-6 py-24"
     >
-      {/* 背景光暈 */}
-      <div className="absolute left-0 top-20 h-[240px] w-[240px] rounded-full bg-primary/10 blur-[90px]" />
-      <div className="absolute right-0 bottom-0 h-[280px] w-[280px] rounded-full bg-accent/10 blur-[100px]" />
+      {/* 背景柔光 */}
+      <div className="absolute left-1/2 top-0 h-[360px] w-[360px] -translate-x-1/2 rounded-full bg-primary/12 blur-[120px]" />
+      <div className="absolute -left-24 top-32 h-[260px] w-[260px] rounded-full bg-primary/10 blur-[100px]" />
+      <div className="absolute -right-24 bottom-10 h-[280px] w-[280px] rounded-full bg-accent/10 blur-[100px]" />
 
       <div className="relative mx-auto max-w-6xl">
-
         {/* 標題 */}
         <div className="mx-auto mb-14 max-w-2xl text-center">
-          <p className="mb-3 text-sm font-medium tracking-[0.2em] text-primary">
+          <div className="mx-auto mb-5 inline-flex items-center gap-2 rounded-full border border-primary/25 bg-white/60 px-4 py-2 text-[11px] font-bold tracking-[0.2em] text-accent shadow-sm backdrop-blur">
+            <Sparkles size={14} />
             WEIGHT LOSS CLINIC
-          </p>
+          </div>
 
-          <h2 className="text-3xl font-bold tracking-tight text-foreground md:text-5xl">
+          <h2 className="text-3xl font-black tracking-tight text-foreground md:text-5xl">
             專業減肥診所
             <span className="block text-primary">
               個人化減重管理
@@ -92,20 +94,45 @@ export function ServicesSection() {
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {services.map((service) => {
             const CardContent = (
-              <div className="group relative h-full overflow-hidden rounded-[2rem] border border-border/70 bg-white/80 p-7 shadow-[0_10px_40px_rgba(120,80,70,0.08)] backdrop-blur transition-all duration-500 hover:-translate-y-1.5 hover:border-primary/30 hover:shadow-[0_20px_60px_rgba(217,143,143,0.14)]">
-
+              <div
+                className="
+                  group relative h-full overflow-hidden rounded-[2rem]
+                  border border-white/50
+                  bg-white/70
+                  p-7
+                  shadow-[0_12px_40px_rgba(129,216,208,0.12)]
+                  backdrop-blur
+                  transition-all duration-500
+                  hover:-translate-y-1.5
+                  hover:border-primary/35
+                  hover:bg-white/90
+                  hover:shadow-[0_24px_70px_rgba(129,216,208,0.22)]
+                "
+              >
                 {/* hover 光暈 */}
-                <div className="absolute right-0 top-0 h-28 w-28 rounded-full bg-primary/10 blur-3xl opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                <div className="absolute right-0 top-0 h-32 w-32 rounded-full bg-primary/12 blur-3xl opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
 
                 <div className="relative z-10">
-
                   {/* icon */}
-                  <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                  <div
+                    className="
+                      mb-5 flex h-14 w-14 items-center justify-center
+                      rounded-2xl
+                      border border-primary/15
+                      bg-primary/10
+                      text-primary
+                      shadow-[0_12px_30px_rgba(129,216,208,0.10)]
+                      transition-all duration-500
+                      group-hover:scale-110
+                      group-hover:bg-primary
+                      group-hover:text-white
+                    "
+                  >
                     {service.icon}
                   </div>
 
                   {/* title */}
-                  <h3 className="text-xl font-bold text-foreground">
+                  <h3 className="text-xl font-black text-foreground">
                     {service.title}
                   </h3>
 
@@ -115,13 +142,12 @@ export function ServicesSection() {
                   </p>
 
                   {/* arrow */}
-                  <div className="mt-6 flex items-center text-sm font-medium text-primary">
+                  <div className="mt-6 flex items-center text-sm font-bold text-primary">
                     了解更多
                     <span className="ml-2 transition-transform duration-300 group-hover:translate-x-1">
                       →
                     </span>
                   </div>
-
                 </div>
               </div>
             )
@@ -131,7 +157,7 @@ export function ServicesSection() {
                 <Link
                   key={service.title}
                   href={service.link}
-                  className="block"
+                  className="block h-full"
                 >
                   {CardContent}
                 </Link>
@@ -139,7 +165,7 @@ export function ServicesSection() {
             }
 
             return (
-              <div key={service.title}>
+              <div key={service.title} className="h-full">
                 {CardContent}
               </div>
             )
