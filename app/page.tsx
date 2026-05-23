@@ -2,6 +2,7 @@
 
 import { Navbar } from "@/components/navbar";
 import { HeroSection } from "@/components/hero-section";
+import { LatestPostsSection } from "@/components/latest-posts-section";
 import { ServicesSection } from "@/components/services-section";
 import { ContactSection } from "@/components/contact-section";
 import { Footer } from "@/components/footer";
@@ -24,8 +25,8 @@ export default function Home() {
           "@type": "MedicalTherapy",
           name: "減肥門診",
           description:
-            "提供體重管理、減肥諮詢、生活型態調整與個人化減重建議。"
-        }
+            "提供體重管理、減肥諮詢、生活型態調整與個人化減重建議。",
+        },
       },
       {
         "@type": "Offer",
@@ -33,8 +34,8 @@ export default function Home() {
           "@type": "MedicalTherapy",
           name: "減重診所諮詢",
           description:
-            "由專業團隊評估個人狀況，規劃適合的減重方向與追蹤方式。"
-        }
+            "由專業團隊評估個人狀況，規劃適合的減重方向與追蹤方式。",
+        },
       },
       {
         "@type": "Offer",
@@ -42,10 +43,10 @@ export default function Home() {
           "@type": "Drug",
           name: "猛健樂 週纖達 瑞倍適",
           description:
-            "熱門減重相關商品諮詢，實際使用方式需經醫師評估後依個人狀況建議。"
-        }
-      }
-    ]
+            "熱門減重相關商品諮詢，實際使用方式需經醫師評估後依個人狀況建議。",
+        },
+      },
+    ],
   };
 
   const faqJsonLd = {
@@ -58,8 +59,8 @@ export default function Home() {
         acceptedAnswer: {
           "@type": "Answer",
           text:
-            "美麗好診所是以減肥、減重管理與體重控制諮詢為主的減肥診所，協助民眾了解適合自己的減重方式。"
-        }
+            "美麗好診所是以減肥、減重管理與體重控制諮詢為主的減肥診所，協助民眾了解適合自己的減重方式。",
+        },
       },
       {
         "@type": "Question",
@@ -67,8 +68,8 @@ export default function Home() {
         acceptedAnswer: {
           "@type": "Answer",
           text:
-            "減肥診所通常會依照個人身體狀況、體重目標與生活習慣，提供減重評估、飲食建議、追蹤管理與醫療諮詢。"
-        }
+            "減肥診所通常會依照個人身體狀況、體重目標與生活習慣，提供減重評估、飲食建議、追蹤管理與醫療諮詢。",
+        },
       },
       {
         "@type": "Question",
@@ -76,10 +77,10 @@ export default function Home() {
         acceptedAnswer: {
           "@type": "Answer",
           text:
-            "猛健樂、週纖達、瑞倍適屬於減重相關熱門商品，是否適合使用仍需經由專業醫師評估，並依個人狀況給予建議。"
-        }
-      }
-    ]
+            "猛健樂、週纖達、瑞倍適屬於減重相關熱門商品，是否適合使用仍需經由專業醫師評估，並依個人狀況給予建議。",
+        },
+      },
+    ],
   };
 
   return (
@@ -98,9 +99,12 @@ export default function Home() {
 
       <main>
         {/* Hero */}
-        <section className="pt-24 md:pt-36 pb-10">
+        <section className="pt-24 pb-6 md:pt-36 md:pb-8">
           <HeroSection />
         </section>
+
+        {/* 最新文章 */}
+        <LatestPostsSection />
 
         {/* 主要服務 */}
         <ServicesSection />
