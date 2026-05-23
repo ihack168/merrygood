@@ -1,54 +1,13 @@
-"use client";
+"use client"
 
-import { Navbar } from "@/components/navbar";
-import { HeroSection } from "@/components/hero-section";
-import { LatestPostsSection } from "@/components/latest-posts-section";
-import { ServicesSection } from "@/components/services-section";
-import { ContactSection } from "@/components/contact-section";
-import { Footer } from "@/components/footer";
+import { Navbar } from "@/components/navbar"
+import { HeroSection } from "@/components/hero-section"
+import { LatestPostsSection } from "@/components/latest-posts-section"
+import { ServicesSection } from "@/components/services-section"
+import { ContactSection } from "@/components/contact-section"
+import { Footer } from "@/components/footer"
 
 export default function Home() {
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "MedicalClinic",
-    name: "美麗好診所",
-    url: "https://www.example.com",
-    description:
-      "美麗好診所是專注於減肥、減重管理與體重控制諮詢的減肥診所，提供個人化減重評估與專業醫療諮詢服務。",
-    medicalSpecialty: ["Weight Loss", "Obesity Medicine", "Nutrition"],
-    areaServed: "TW",
-    keywords: ["減肥診所", "減肥", "減重診所", "減重", "體重管理"],
-    makesOffer: [
-      {
-        "@type": "Offer",
-        itemOffered: {
-          "@type": "MedicalTherapy",
-          name: "減肥門診",
-          description:
-            "提供體重管理、減肥諮詢、生活型態調整與個人化減重建議。",
-        },
-      },
-      {
-        "@type": "Offer",
-        itemOffered: {
-          "@type": "MedicalTherapy",
-          name: "減重診所諮詢",
-          description:
-            "由專業團隊評估個人狀況，規劃適合的減重方向與追蹤方式。",
-        },
-      },
-      {
-        "@type": "Offer",
-        itemOffered: {
-          "@type": "Drug",
-          name: "猛健樂 週纖達 瑞倍適",
-          description:
-            "熱門減重相關商品諮詢，實際使用方式需經醫師評估後依個人狀況建議。",
-        },
-      },
-    ],
-  };
-
   const faqJsonLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -77,19 +36,23 @@ export default function Home() {
         acceptedAnswer: {
           "@type": "Answer",
           text:
-            "猛健樂、週纖達、瑞倍適屬於減重相關熱門商品，是否適合使用仍需經由專業醫師評估，並依個人狀況給予建議。",
+            "猛健樂、週纖達、瑞倍適屬於減重相關熱門商品，是否適合使用仍需由專業醫師評估，並依個人狀況給予建議。",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "減肥診所適合哪些人諮詢？",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text:
+            "適合想減肥、控制體重、改善體態、了解減重商品或需要體重管理建議的人，透過專業評估了解適合自己的減重方向。",
         },
       },
     ],
-  };
+  }
 
   return (
-    <div className="min-h-screen bg-background text-foreground selection:bg-primary/20">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-
+    <div className="min-h-screen overflow-hidden bg-background text-foreground selection:bg-primary/20">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
@@ -99,7 +62,7 @@ export default function Home() {
 
       <main>
         {/* Hero */}
-        <section className="pt-24 pb-6 md:pt-36 md:pb-8">
+        <section className="pt-24 pb-4 md:pt-32 md:pb-6">
           <HeroSection />
         </section>
 
@@ -127,7 +90,7 @@ export default function Home() {
 
           <p>
             美麗好診所目前熱門減重相關商品包含猛健樂、週纖達與瑞倍適。
-            實際是否適合使用，仍需經由專業醫師評估後，依個人狀況提供建議。
+            實際是否適合使用，仍需由專業醫師評估後，依個人狀況提供建議。
           </p>
 
           <h2>減肥診所常見服務</h2>
@@ -147,12 +110,10 @@ export default function Home() {
         </section>
 
         {/* 聯絡我們 */}
-        <div id="contact">
-          <ContactSection />
-        </div>
+        <ContactSection />
       </main>
 
       <Footer />
     </div>
-  );
+  )
 }
