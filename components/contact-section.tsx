@@ -3,7 +3,6 @@
 import {
   MessageCircle,
   MapPin,
-  CalendarCheck,
   Sparkles,
 } from "lucide-react"
 
@@ -56,6 +55,7 @@ export function ContactSection() {
 
         {/* 主卡片 */}
         <div className="overflow-hidden rounded-[2.5rem] border border-white/40 bg-white/55 p-4 shadow-[0_25px_90px_rgba(129,216,208,0.16)] backdrop-blur-2xl md:p-6">
+          
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
             {contacts.map((contact) => (
               <a
@@ -80,6 +80,7 @@ export function ContactSection() {
                 <div className="absolute right-0 top-0 h-32 w-32 rounded-full bg-primary/12 blur-3xl opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
 
                 <div className="relative z-10 flex items-start gap-5">
+                  
                   <div
                     className="
                       flex h-16 w-16 flex-shrink-0 items-center justify-center
@@ -108,50 +109,18 @@ export function ContactSection() {
 
                     <div className="mt-6 flex items-center text-sm font-bold text-primary">
                       {contact.action}
+
                       <span className="ml-2 transition-transform duration-300 group-hover:translate-x-1">
                         →
                       </span>
                     </div>
                   </div>
+
                 </div>
               </a>
             ))}
           </div>
 
-          {/* 底部提示 */}
-          <div className="mt-5 rounded-[1.75rem] border border-primary/15 bg-gradient-to-r from-primary/10 via-white/60 to-primary/10 p-6 text-center">
-            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-white/75 text-primary shadow-sm">
-              <CalendarCheck size={24} />
-            </div>
-
-            <p className="text-lg font-black text-foreground">
-              採預約制，建議先加入 LINE 詢問時段
-            </p>
-
-            <p className="mt-2 text-sm leading-7 text-muted-foreground">
-              由專人協助了解需求、安排減重諮詢，讓每一次評估都更安心。
-            </p>
-
-            <a
-              href="https://line.me/R/ti/p/@你的LINEID"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="
-                mt-6 inline-flex items-center justify-center
-                rounded-full
-                bg-primary
-                px-8 py-4
-                text-sm font-bold
-                text-white
-                shadow-[0_18px_45px_rgba(129,216,208,0.35)]
-                transition-all duration-300
-                hover:-translate-y-1
-                hover:shadow-[0_24px_60px_rgba(129,216,208,0.42)]
-              "
-            >
-              加入 LINE 預約減重諮詢
-            </a>
-          </div>
         </div>
 
         {/* SEO 語意文字 */}
