@@ -3,7 +3,6 @@
 import { Navbar } from "@/components/navbar"
 import { HeroSection } from "@/components/hero-section"
 import { LatestPostsSection } from "@/components/latest-posts-section"
-import { ServicesSection } from "@/components/services-section"
 import { ContactSection } from "@/components/contact-section"
 import { Footer } from "@/components/footer"
 
@@ -61,15 +60,12 @@ export default function Home() {
       <Navbar />
 
       <main>
-        {/* Hero */}
         <section className="pt-24 pb-4 md:pt-32 md:pb-6">
           <HeroSection />
         </section>
 
-        {/* 最新文章 */}
         <LatestPostsSection />
 
-        {/* 聯絡我們 */}
         <ContactSection />
       </main>
 
