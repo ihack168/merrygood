@@ -1,7 +1,7 @@
 import { MetadataRoute } from "next"
 import { client } from "@/lib/sanity"
 
-export const revalidate = 0
+export const revalidate =3600
 export const dynamic = "force-dynamic"
 
 const baseUrl = "https://news.merrygood.com.tw"

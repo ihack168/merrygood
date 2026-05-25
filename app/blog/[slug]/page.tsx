@@ -3,6 +3,7 @@ import { createImageUrlBuilder } from "@sanity/image-url"
 import { PortableText } from "@portabletext/react"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
+import { LineConsultButton } from "@/components/line-consult-button"
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import type { Metadata } from "next"
@@ -149,11 +150,15 @@ export default async function PostPage({
             <Link href="/" className="transition-colors hover:text-primary">
               首頁
             </Link>
+
             <span>/</span>
+
             <Link href="/blog" className="transition-colors hover:text-primary">
               最新文章
             </Link>
+
             <span>/</span>
+
             <span className="max-w-xs truncate text-foreground">
               {post.title}
             </span>
@@ -285,19 +290,27 @@ export default async function PostPage({
               ← 返回文章列表
             </Link>
 
-            <Link
-              href="/#contact"
-              className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-[0_14px_36px_rgba(217,143,143,0.32)] transition-all hover:-translate-y-0.5"
+            <LineConsultButton
+              className="
+                inline-flex items-center gap-2
+                rounded-full
+                bg-primary
+                px-6 py-3
+                text-sm font-semibold
+                text-primary-foreground
+                shadow-[0_14px_36px_rgba(217,143,143,0.32)]
+                transition-all
+                hover:-translate-y-0.5
+              "
             >
               預約專業諮詢 →
-            </Link>
+            </LineConsultButton>
           </div>
         </div>
-  </main>
+      </main>
 
       {/* 浮動諮詢按鈕 */}
-      <Link
-        href="/#contact"
+      <LineConsultButton
         className="
           fixed bottom-6 right-6 z-[9999]
           flex items-center gap-3
@@ -315,7 +328,6 @@ export default async function PostPage({
           hover:shadow-[0_22px_60px_rgba(217,143,143,0.5)]
         "
       >
-        {/* 呼吸動畫 */}
         <span className="relative flex h-3 w-3">
           <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-60"></span>
           <span className="relative inline-flex h-3 w-3 rounded-full bg-white"></span>
@@ -323,10 +335,10 @@ export default async function PostPage({
 
         <span>立即諮詢</span>
 
-        <span className="transition-transform group-hover:translate-x-1">
+        <span>
           →
         </span>
-      </Link>
+      </LineConsultButton>
 
       <Footer />
     </div>

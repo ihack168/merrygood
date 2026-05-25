@@ -2,14 +2,15 @@
 
 import Link from "next/link"
 import { useState, useEffect } from "react"
-import { usePathname, useRouter } from "next/navigation"
+import { usePathname } from "next/navigation"
+
+import { LineConsultButton } from "@/components/line-consult-button"
 
 export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
 
   const pathname = usePathname()
-  const router = useRouter()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -26,41 +27,6 @@ export function Navbar() {
     setMobileOpen(false)
     document.body.style.overflow = "unset"
   }, [pathname])
-
-  const scrollToContact = () => {
-    setMobileOpen(false)
-    document.body.style.overflow = "unset"
-
-    // 如果不在首頁，先跳首頁
-    if (pathname !== "/") {
-      router.push("/")
-
-      setTimeout(() => {
-        const contact = document.getElementById("contact")
-
-        if (contact) {
-          window.scrollTo({
-            top: contact.offsetTop - 90,
-            behavior: "smooth",
-          })
-        }
-      }, 700)
-
-      return
-    }
-
-    // 在首頁直接滑動
-    setTimeout(() => {
-      const contact = document.getElementById("contact")
-
-      if (contact) {
-        window.scrollTo({
-          top: contact.offsetTop - 90,
-          behavior: "smooth",
-        })
-      }
-    }, 150)
-  }
 
   const toggleMenu = () => {
     const nextState = !mobileOpen
@@ -148,37 +114,8 @@ export function Navbar() {
               />
             </Link>
 
-            <button
-              type="button"
-              onClick={scrollToContact}
-              className="
-                group relative
-                text-[18px] font-bold tracking-wide
-                text-muted-foreground
-                transition-all duration-300
-                hover:text-foreground
-              "
-            >
-              聯絡方式
-
-              <span
-                className="
-                  absolute -bottom-2 left-1/2
-                  h-[3px] w-0
-                  -translate-x-1/2
-                  rounded-full
-                  bg-primary
-                  transition-all duration-300
-                  group-hover:w-6
-                "
-              />
-            </button>
-
             {/* CTA */}
-            <a
-              href="https://line.me/R/ti/p/@你的LINEID"
-              target="_blank"
-              rel="noopener noreferrer"
+            <LineConsultButton
               className="
                 inline-flex items-center justify-center
                 rounded-full
@@ -193,7 +130,7 @@ export function Navbar() {
               "
             >
               LINE 免費諮詢
-            </a>
+            </LineConsultButton>
           </div>
 
           {/* Mobile button */}
@@ -298,33 +235,11 @@ export function Navbar() {
                 →
               </span>
             </Link>
-
-            <button
-              type="button"
-              onClick={scrollToContact}
-              className="
-                group
-                flex items-center justify-between
-                border-b border-border/60
-                py-6
-                text-left text-xl font-semibold
-                text-foreground
-              "
-            >
-              聯絡方式
-
-              <span className="text-primary">
-                →
-              </span>
-            </button>
           </div>
 
           {/* CTA */}
           <div className="relative mt-10">
-            <a
-              href="https://line.me/R/ti/p/@你的LINEID"
-              target="_blank"
-              rel="noopener noreferrer"
+            <LineConsultButton
               className="
                 flex items-center justify-center
                 rounded-2xl
@@ -336,7 +251,7 @@ export function Navbar() {
               "
             >
               加入 LINE 免費諮詢
-            </a>
+            </LineConsultButton>
           </div>
 
           {/* Footer */}

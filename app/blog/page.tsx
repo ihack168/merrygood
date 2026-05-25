@@ -173,7 +173,7 @@ function BlogPageContent() {
 
               <p className="mt-4 text-muted-foreground">
                 {selectedTag === "全部"
-                  ? "醫美療程、肌膚保養與術後照護知識"
+                  ? "減重管理、體重控制與熱門減重商品資訊"
                   : `目前分類：${selectedTag}`}
               </p>
             </header>
@@ -306,7 +306,7 @@ function BlogPageContent() {
                   </p>
 
                   <p className="mt-3 text-sm text-muted-foreground">
-                    之後會陸續分享醫美療程、保養與術後照護內容。
+                    之後會陸續分享減重管理、體重控制與熱門減重商品相關內容。
                   </p>
 
                   {selectedTag !== "全部" && (

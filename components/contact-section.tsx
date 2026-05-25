@@ -6,13 +6,15 @@ import {
   Sparkles,
 } from "lucide-react"
 
+import { LineConsultButton } from "@/components/line-consult-button"
+
 const contacts = [
   {
     label: "LINE 線上諮詢",
     description: "加入 LINE 預約減肥門診與減重諮詢，由專人協助安排。",
-    href: "https://line.me/R/ti/p/@你的LINEID",
     icon: <MessageCircle size={28} />,
     action: "立即加入 LINE",
+    isLine: true,
   },
   {
     label: "診所位置",
@@ -20,6 +22,7 @@ const contacts = [
     href: "https://www.google.com/maps/search/?api=1&query=台北市中山區南京東路一段42號3樓",
     icon: <MapPin size={28} />,
     action: "查看診所位置",
+    isLine: false,
   },
 ]
 
@@ -57,68 +60,133 @@ export function ContactSection() {
         <div className="overflow-hidden rounded-[2.5rem] border border-white/40 bg-white/55 p-4 shadow-[0_25px_90px_rgba(129,216,208,0.16)] backdrop-blur-2xl md:p-6">
           
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-            {contacts.map((contact) => (
-              <a
-                key={contact.label}
-                href={contact.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="
-                  group relative overflow-hidden rounded-[2rem]
-                  border border-white/50
-                  bg-white/70
-                  p-7
-                  shadow-[0_12px_40px_rgba(129,216,208,0.12)]
-                  backdrop-blur
-                  transition-all duration-500
-                  hover:-translate-y-1.5
-                  hover:border-primary/35
-                  hover:bg-white/90
-                  hover:shadow-[0_24px_70px_rgba(129,216,208,0.22)]
-                "
-              >
-                <div className="absolute right-0 top-0 h-32 w-32 rounded-full bg-primary/12 blur-3xl opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-
-                <div className="relative z-10 flex items-start gap-5">
-                  
-                  <div
+            {contacts.map((contact) => {
+              if (contact.isLine) {
+                return (
+                  <LineConsultButton
+                    key={contact.label}
                     className="
-                      flex h-16 w-16 flex-shrink-0 items-center justify-center
-                      rounded-2xl
-                      border border-primary/15
-                      bg-primary/10
-                      text-primary
-                      shadow-[0_12px_30px_rgba(129,216,208,0.12)]
+                      group relative overflow-hidden rounded-[2rem]
+                      border border-white/50
+                      bg-white/70
+                      p-7
+                      text-left
+                      shadow-[0_12px_40px_rgba(129,216,208,0.12)]
+                      backdrop-blur
                       transition-all duration-500
-                      group-hover:scale-110
-                      group-hover:bg-primary
-                      group-hover:text-white
+                      hover:-translate-y-1.5
+                      hover:border-primary/35
+                      hover:bg-white/90
+                      hover:shadow-[0_24px_70px_rgba(129,216,208,0.22)]
                     "
                   >
-                    {contact.icon}
-                  </div>
+                    <div className="absolute right-0 top-0 h-32 w-32 rounded-full bg-primary/12 blur-3xl opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
 
-                  <div className="flex-1">
-                    <h3 className="text-xl font-black text-foreground">
-                      {contact.label}
-                    </h3>
+                    <div className="relative z-10 flex items-start gap-5">
+                      
+                      <div
+                        className="
+                          flex h-16 w-16 flex-shrink-0 items-center justify-center
+                          rounded-2xl
+                          border border-primary/15
+                          bg-primary/10
+                          text-primary
+                          shadow-[0_12px_30px_rgba(129,216,208,0.12)]
+                          transition-all duration-500
+                          group-hover:scale-110
+                          group-hover:bg-primary
+                          group-hover:text-white
+                        "
+                      >
+                        {contact.icon}
+                      </div>
 
-                    <p className="mt-3 text-sm leading-7 text-muted-foreground">
-                      {contact.description}
-                    </p>
+                      <div className="flex-1">
+                        <h3 className="text-xl font-black text-foreground">
+                          {contact.label}
+                        </h3>
 
-                    <div className="mt-6 flex items-center text-sm font-bold text-primary">
-                      {contact.action}
+                        <p className="mt-3 text-sm leading-7 text-muted-foreground">
+                          {contact.description}
+                        </p>
 
-                      <span className="ml-2 transition-transform duration-300 group-hover:translate-x-1">
-                        →
-                      </span>
+                        <div className="mt-6 flex items-center text-sm font-bold text-primary">
+                          {contact.action}
+
+                          <span className="ml-2 transition-transform duration-300 group-hover:translate-x-1">
+                            →
+                          </span>
+                        </div>
+                      </div>
+
                     </div>
-                  </div>
+                  </LineConsultButton>
+                )
+              }
 
-                </div>
-              </a>
-            ))}
+              return (
+                <a
+                  key={contact.label}
+                  href={contact.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="
+                    group relative overflow-hidden rounded-[2rem]
+                    border border-white/50
+                    bg-white/70
+                    p-7
+                    shadow-[0_12px_40px_rgba(129,216,208,0.12)]
+                    backdrop-blur
+                    transition-all duration-500
+                    hover:-translate-y-1.5
+                    hover:border-primary/35
+                    hover:bg-white/90
+                    hover:shadow-[0_24px_70px_rgba(129,216,208,0.22)]
+                  "
+                >
+                  <div className="absolute right-0 top-0 h-32 w-32 rounded-full bg-primary/12 blur-3xl opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+
+                  <div className="relative z-10 flex items-start gap-5">
+                    
+                    <div
+                      className="
+                        flex h-16 w-16 flex-shrink-0 items-center justify-center
+                        rounded-2xl
+                        border border-primary/15
+                        bg-primary/10
+                        text-primary
+                        shadow-[0_12px_30px_rgba(129,216,208,0.12)]
+                        transition-all duration-500
+                        group-hover:scale-110
+                        group-hover:bg-primary
+                        group-hover:text-white
+                      "
+                    >
+                      {contact.icon}
+                    </div>
+
+                    <div className="flex-1">
+                      <h3 className="text-xl font-black text-foreground">
+                        {contact.label}
+                      </h3>
+
+                      <p className="mt-3 text-sm leading-7 text-muted-foreground">
+                        {contact.description}
+                      </p>
+
+                      <div className="mt-6 flex items-center text-sm font-bold text-primary">
+                        {contact.action}
+
+                        <span className="ml-2 transition-transform duration-300 group-hover:translate-x-1">
+                          →
+                        </span>
+                      </div>
+                    </div>
+
+                  </div>
+                </a>
+              )
+            })}
           </div>
 
         </div>

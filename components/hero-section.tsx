@@ -7,6 +7,8 @@ import {
   CheckCircle2,
 } from "lucide-react"
 
+import { LineConsultButton } from "@/components/line-consult-button"
+
 export function HeroSection() {
   return (
     <section className="relative overflow-hidden px-5 pt-6 md:px-10">
@@ -70,10 +72,7 @@ export function HeroSection() {
 
               {/* CTA */}
               <div className="mt-9 flex flex-col items-center gap-4 sm:flex-row sm:justify-center lg:justify-start">
-                <a
-                  href="https://line.me/R/ti/p/@你的LINEID"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <LineConsultButton
                   className="
                     inline-flex items-center justify-center gap-2
                     rounded-full
@@ -90,8 +89,7 @@ export function HeroSection() {
                 >
                   <MessageCircle size={18} />
                   加入 LINE 免費諮詢
-                </a>
-
+                </LineConsultButton>
               </div>
 
               {/* trust */}

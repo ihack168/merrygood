@@ -1,3 +1,5 @@
+import { LineConsultButton } from "@/components/line-consult-button"
+
 export function Footer() {
   return (
     <footer
@@ -87,10 +89,7 @@ export function Footer() {
               專業減重管理與體重控制建議
             </p>
 
-            <a
-              href="https://line.me/R/ti/p/@你的LINEID"
-              target="_blank"
-              rel="noopener noreferrer"
+            <LineConsultButton
               className="
                 mt-7 inline-flex items-center justify-center
                 rounded-full
@@ -106,7 +105,7 @@ export function Footer() {
               "
             >
               加入官方 LINE
-            </a>
+            </LineConsultButton>
           </div>
         </div>
 
