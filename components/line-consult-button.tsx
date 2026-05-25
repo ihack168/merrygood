@@ -6,7 +6,10 @@ import { createPortal } from "react-dom"
 const GOOGLE_SCRIPT_URL =
   "https://script.google.com/macros/s/AKfycbwFpZDhMveHhdOYdDkh02JpWk28jUCBqikyM-Urg_6Uw2jTH7d8ZluKxinKTWh5_20N/exec"
 
-const LINE_ADD_URL = "https://line.me/R/ti/p/@gwp4644s"
+const LINE_ADD_URL_MAP = {
+  taipei: "https://line.me/R/ti/p/@merrygood",
+  hsinchu: "https://line.me/R/ti/p/@merrygoodhc",
+}
 
 const VENDOR_ID = "merrygood"
 const VENDOR_NAME = "減肥診所"
@@ -24,6 +27,7 @@ export function LineConsultButton({
 }: LineConsultButtonProps) {
   const [mounted, setMounted] = useState(false)
   const [showModal, setShowModal] = useState(false)
+  const [clinicArea, setClinicArea] = useState<"taipei" | "hsinchu">("taipei")
   const [lastName, setLastName] = useState("")
   const [phoneLast3, setPhoneLast3] = useState("")
   const [loading, setLoading] = useState(false)
@@ -34,6 +38,7 @@ export function LineConsultButton({
 
   const resetModal = () => {
     setShowModal(false)
+    setClinicArea("taipei")
     setLastName("")
     setPhoneLast3("")
     setLoading(false)
@@ -41,6 +46,7 @@ export function LineConsultButton({
 
   const handleOpenModal = () => {
     setShowModal(true)
+    setClinicArea("taipei")
     setLastName("")
     setPhoneLast3("")
   }
@@ -48,6 +54,11 @@ export function LineConsultButton({
   const handleSubmitLineConsult = async () => {
     const cleanLastName = lastName.trim()
     const cleanPhoneLast3 = phoneLast3.trim()
+
+    if (!clinicArea) {
+      alert("請選擇院區")
+      return
+    }
 
     if (!cleanLastName) {
       alert("請輸入貴姓")
@@ -59,6 +70,9 @@ export function LineConsultButton({
       return
     }
 
+    const clinicAreaName =
+      clinicArea === "taipei" ? "台北院區" : "新竹院區"
+
     try {
       setLoading(true)
 
@@ -69,6 +83,8 @@ export function LineConsultButton({
           vendorId: VENDOR_ID,
           vendorName: VENDOR_NAME,
           serviceType: "weightLossClinic",
+          clinicArea,
+          clinicAreaName,
           lastName: cleanLastName,
           phoneLast3: cleanPhoneLast3,
           sourcePage: window.location.href,
@@ -82,9 +98,11 @@ export function LineConsultButton({
         return
       }
 
+      const lineAddUrl = LINE_ADD_URL_MAP[clinicArea]
+
       resetModal()
 
-      window.open(LINE_ADD_URL, "_blank", "noopener,noreferrer")
+      window.open(lineAddUrl, "_blank", "noopener,noreferrer")
     } catch (error) {
       alert("送出失敗，請稍後再試")
     } finally {
@@ -100,8 +118,50 @@ export function LineConsultButton({
         </h3>
 
         <p className="mt-2 text-sm leading-6 text-muted-foreground">
-          請留下貴姓與手機末 3 碼，送出後會自動開啟 LINE 加好友，由專人為您說明減重療程與諮詢安排。
+          請選擇院區，並留下貴姓與手機末 3 碼，送出後會自動開啟對應院區 LINE 加好友。
         </p>
+
+        <div className="mt-5">
+          <label className="text-sm font-semibold text-foreground">
+            選擇院區
+          </label>
+
+          <div className="mt-3 grid grid-cols-2 gap-3">
+            <label
+              className={`flex cursor-pointer items-center justify-center gap-2 rounded-xl border px-4 py-3 text-sm font-bold transition-all ${
+                clinicArea === "taipei"
+                  ? "border-primary bg-primary/10 text-primary"
+                  : "border-border text-foreground"
+              }`}
+            >
+              <input
+                type="radio"
+                name="clinicArea"
+                checked={clinicArea === "taipei"}
+                onChange={() => setClinicArea("taipei")}
+                className="h-4 w-4"
+              />
+              台北院區
+            </label>
+
+            <label
+              className={`flex cursor-pointer items-center justify-center gap-2 rounded-xl border px-4 py-3 text-sm font-bold transition-all ${
+                clinicArea === "hsinchu"
+                  ? "border-primary bg-primary/10 text-primary"
+                  : "border-border text-foreground"
+              }`}
+            >
+              <input
+                type="radio"
+                name="clinicArea"
+                checked={clinicArea === "hsinchu"}
+                onChange={() => setClinicArea("hsinchu")}
+                className="h-4 w-4"
+              />
+              新竹院區
+            </label>
+          </div>
+        </div>
 
         <div className="mt-5">
           <label className="text-sm font-semibold text-foreground">
