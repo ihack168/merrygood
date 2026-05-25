@@ -54,13 +54,6 @@ export default function LinePage() {
             👨‍⚕️ 專業醫師協助・免費減重諮詢
           </div>
 
-          {/* 說明 */}
-          <p className="mx-auto mt-6 max-w-md text-sm leading-8 text-muted-foreground">
-            美麗好診所提供個人化減重管理、
-            體重控制與熱門減重商品相關諮詢，
-            加入 LINE 即可由專人協助安排。
-          </p>
-
           {/* LINE 按鈕 */}
           <div className="mt-8">
             <LineConsultButton
