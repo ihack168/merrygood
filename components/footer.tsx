@@ -44,54 +44,7 @@ export function Footer() {
               </div>
             </div>
 
-            <p className="mt-6 text-sm leading-8 text-muted-foreground">
-              美麗好診所專注於減肥、減重診所與體重管理諮詢，
-              提供個人化減重評估與專業建議，
-              協助打造更健康、更理想的體態。
-            </p>
 
-          </div>
-
-          {/* 中間導覽 */}
-          <div className="text-center md:text-left">
-
-            <p className="mb-5 text-sm font-bold tracking-[0.18em] text-foreground">
-              導覽選單
-            </p>
-
-            <div className="flex flex-col gap-4 text-sm">
-
-              <a
-                href="/blog"
-                className="
-                  group flex items-center justify-center gap-2
-                  text-muted-foreground transition-all duration-300
-                  hover:text-primary md:justify-start
-                "
-              >
-                <span className="transition-transform duration-300 group-hover:translate-x-1">
-                  →
-                </span>
-
-                文章列表
-              </a>
-
-              <a
-                href="/#contact"
-                className="
-                  group flex items-center justify-center gap-2
-                  text-muted-foreground transition-all duration-300
-                  hover:text-primary md:justify-start
-                "
-              >
-                <span className="transition-transform duration-300 group-hover:translate-x-1">
-                  →
-                </span>
-
-                聯絡方式
-              </a>
-
-            </div>
           </div>
 
           {/* 右側 CTA */}
