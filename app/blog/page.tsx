@@ -45,10 +45,7 @@ function BlogPageContent() {
         const start = (page - 1) * postsPerPage
         const end = start + postsPerPage
 
-        const tagFilter =
-          selectedTag !== "全部"
-            ? `&& $selectedTag in tags`
-            : ""
+        const tagFilter = selectedTag !== "全部" ? `&& $selectedTag in tags` : ""
 
         const count = await client.fetch(
           `count(*[_type == "post" ${tagFilter}])`,
@@ -89,9 +86,7 @@ function BlogPageContent() {
             }
 
             if (!extractedDesc || extractedDesc === "點擊閱讀詳情...") {
-              const pureText = post.htmlContent
-                .replace(/<[^>]*>?/gm, "")
-                .trim()
+              const pureText = post.htmlContent.replace(/<[^>]*>?/gm, "").trim()
 
               extractedDesc =
                 pureText.substring(0, 100) +
@@ -212,7 +207,7 @@ function BlogPageContent() {
                       key={post.id}
                       className="group overflow-hidden rounded-[2rem] border border-border/80 bg-card/85 shadow-[0_10px_40px_rgba(111,119,66,0.10)] backdrop-blur transition-all duration-500 hover:-translate-y-1.5 hover:border-primary/45 hover:shadow-[0_20px_60px_rgba(190,195,125,0.20)]"
                     >
-                      <div className="relative h-56 w-full overflow-hidden bg-muted">
+                      <div className="relative h-[200px] w-full overflow-hidden bg-muted md:h-56">
                         {activeVideo === post.id && post.videoId ? (
                           <iframe
                             src={`https://www.youtube.com/embed/${post.videoId}?autoplay=1`}
@@ -230,7 +225,15 @@ function BlogPageContent() {
                                 <img
                                   src={post.thumbnail}
                                   alt={post.title}
-                                  className="h-full w-full object-cover transition-all duration-700 group-hover:scale-105"
+                                  className="
+                                    h-full
+                                    w-full
+                                    object-contain
+                                    transition-all
+                                    duration-700
+                                    group-hover:scale-105
+                                    md:object-cover
+                                  "
                                 />
                               ) : (
                                 <div className="flex h-full w-full items-center justify-center bg-secondary text-sm text-muted-foreground">
