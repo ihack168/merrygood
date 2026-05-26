@@ -1,48 +1,109 @@
+```ts
+import React, {useState} from 'react'
 import {defineField, defineType, set} from 'sanity'
+import {Box, Button, Card, Flex, Stack, Text, TextInput} from '@sanity/ui'
 
 function CommaSeparatedTagsInput(props: any) {
-  const {renderDefault, value = [], onChange} = props
+  const {value = [], onChange} = props
+  const [inputValue, setInputValue] = useState('')
 
-  const addTags = (text: string) => {
-    if (!text) return
-
-    const newTags = text
-      .split(/,|，/)
+  const parseTags = (text: string) => {
+    return text
+      .split(/,|，|\n/)
       .map((tag) => tag.trim())
       .filter(Boolean)
+  }
 
-    if (newTags.length <= 1) return
+  const addTags = (text: string) => {
+    const newTags = parseTags(text)
+
+    if (!newTags.length) return
 
     const mergedTags = Array.from(new Set([...value, ...newTags]))
 
     onChange(set(mergedTags))
+    setInputValue('')
   }
 
-  const handlePaste = (event: React.ClipboardEvent) => {
-    const text = event.clipboardData.getData('text')
-
-    if (text.includes(',') || text.includes('，')) {
-      event.preventDefault()
-      addTags(text)
-    }
+  const removeTag = (tagToRemove: string) => {
+    const nextTags = value.filter((tag: string) => tag !== tagToRemove)
+    onChange(set(nextTags))
   }
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    const target = event.target as HTMLInputElement
-    const text = target.value
+  return React.createElement(
+    Stack,
+    {space: 3},
+    React.createElement(TextInput, {
+      value: inputValue,
+      placeholder: '例如：猛健樂,週纖達,瑞倍適',
+      onChange: (event: any) => setInputValue(event.currentTarget.value),
+      onPaste: (event: any) => {
+        const text = event.clipboardData.getData('text')
 
-    if (event.key === 'Enter' && (text.includes(',') || text.includes('，'))) {
-      event.preventDefault()
-      addTags(text)
-      target.value = ''
-    }
-  }
+        if (text.includes(',') || text.includes('，') || text.includes('\n')) {
+          event.preventDefault()
+          addTags(text)
+        }
+      },
+      onKeyDown: (event: any) => {
+        if (event.key === 'Enter') {
+          event.preventDefault()
+          addTags(inputValue)
+        }
+      },
+    }),
 
-  return renderDefault({
-    ...props,
-    onPaste: handlePaste,
-    onKeyDown: handleKeyDown,
-  })
+    React.createElement(
+      Button,
+      {
+        text: '加入標籤',
+        tone: 'primary',
+        onClick: () => addTags(inputValue),
+      }
+    ),
+
+    value.length > 0 &&
+      React.createElement(
+        Flex,
+        {
+          wrap: 'wrap',
+          gap: 2,
+        },
+        value.map((tag: string) =>
+          React.createElement(
+            Card,
+            {
+              key: tag,
+              padding: 2,
+              radius: 2,
+              tone: 'primary',
+              shadow: 1,
+            },
+            React.createElement(
+              Flex,
+              {
+                align: 'center',
+                gap: 2,
+              },
+              React.createElement(Text, {size: 1}, tag),
+              React.createElement(Button, {
+                text: '×',
+                mode: 'bleed',
+                tone: 'critical',
+                onClick: () => removeTag(tag),
+              })
+            )
+          )
+        )
+      ),
+
+    value.length === 0 &&
+      React.createElement(
+        Box,
+        null,
+        React.createElement(Text, {size: 1, muted: true}, '尚未新增標籤')
+      )
+  )
 }
 
 export default defineType({
@@ -128,11 +189,8 @@ export default defineType({
       name: 'tags',
       title: '標籤 / 關鍵字',
       type: 'array',
-      description: '可直接輸入多個標籤，用逗號分隔，例如：猛健樂,週纖達,瑞倍適，然後按 Enter。',
+      description: '可直接貼上：猛健樂,週纖達,瑞倍適，系統會自動拆成多個標籤。',
       of: [{type: 'string'}],
-      options: {
-        layout: 'tags',
-      },
       components: {
         input: CommaSeparatedTagsInput,
       },
@@ -151,3 +209,4 @@ export default defineType({
     },
   },
 })
+```
