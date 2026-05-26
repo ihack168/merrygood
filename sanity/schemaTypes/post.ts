@@ -104,6 +104,7 @@ export default defineType({
       title: 'Title',
       type: 'string',
     }),
+
     defineField({
       name: 'slug',
       title: 'Slug',
@@ -123,36 +124,37 @@ export default defineType({
           return encodeURIComponent(cleanTitle) + `-${uniqueId}`
         },
       },
-      validation: (Rule) => Rule.required().error('Slug 是必填項目，否則前台無法點擊'),
+      validation: (Rule) =>
+        Rule.required().error('Slug 是必填項目，否則前台無法點擊'),
     }),
+
     defineField({
       name: 'htmlContent',
       title: 'HTML Content (Excel Auto-post)',
       type: 'text',
-      description: '這裡是存放原始 HTML 代碼。如果此欄位有內容，前端將優先顯示此處。',
+      description:
+        '這裡是存放原始 HTML 代碼。如果此欄位有內容，前端將優先顯示此處。',
     }),
+
     defineField({
       name: 'tags',
       title: '標籤 / 關鍵字',
       type: 'array',
-      description: '可直接貼上：週纖達,減重針,減肥療程,減重門診,減重醫學,減肥診所',
+      description:
+        '可直接貼上tags',
       of: [{type: 'string'}],
       components: {
         input: TagsInput,
       },
     }),
+
     defineField({
       name: 'author',
       title: 'Author',
       type: 'reference',
       to: {type: 'author'},
     }),
-    defineField({
-      name: 'imageUrl',
-      title: 'External Image URL (外部圖片網址)',
-      type: 'url',
-      description: '直接貼上外部網站的圖片連結 (例如 https://...)，這將作為列表頁的封面圖。',
-    }),
+
     defineField({
       name: 'mainImage',
       title: 'Main image (Sanity Upload)',
@@ -161,27 +163,24 @@ export default defineType({
         hotspot: true,
       },
     }),
+
     defineField({
       name: 'categories',
       title: 'Categories',
       type: 'array',
       of: [{type: 'reference', to: {type: 'category'}}],
     }),
+
     defineField({
       name: 'publishedAt',
       title: 'Published at',
       type: 'datetime',
     }),
+
     defineField({
       name: 'body',
       title: 'Body (Standard Editor)',
       type: 'blockContent',
-    }),
-    defineField({
-      name: 'youtubeVideoId',
-      title: 'YouTube Video ID',
-      type: 'string',
-      description: '輸入 YouTube 影片 ID (例如: dQw4w9WgXcQ)，前端會自動顯示播放按鈕。',
     }),
   ],
 
