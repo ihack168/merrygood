@@ -17,6 +17,16 @@ interface Post {
   htmlContent?: string
 }
 
+function optimizeSanityImageUrl(url?: string) {
+  if (!url) return ""
+
+  if (!url.includes("cdn.sanity.io/images")) return url
+
+  if (url.includes("auto=format")) return url
+
+  return `${url}${url.includes("?") ? "&" : "?"}auto=format`
+}
+
 export function LatestPostsSection() {
   const [posts, setPosts] = useState<Post[]>([])
   const [loadingPosts, setLoadingPosts] = useState(true)
@@ -54,13 +64,10 @@ export function LatestPostsSection() {
             )
 
             if (imgMatch && imgMatch[1]) {
-              extractedImg = imgMatch[1]
+              extractedImg = optimizeSanityImageUrl(imgMatch[1])
             }
 
-            if (
-              !extractedDesc ||
-              extractedDesc === "點擊閱讀詳情..."
-            ) {
+            if (!extractedDesc || extractedDesc === "點擊閱讀詳情...") {
               const pureText = post.htmlContent
                 .replace(/<[^>]*>?/gm, "")
                 .trim()
@@ -84,13 +91,11 @@ export function LatestPostsSection() {
             thumbnail:
               extractedImg ||
               youtubeThumb ||
-              post.imageUrl ||
-              post.mainImage ||
+              optimizeSanityImageUrl(post.imageUrl) ||
+              optimizeSanityImageUrl(post.mainImage) ||
               "",
             description: extractedDesc,
-            tags: Array.isArray(post.tags)
-              ? post.tags
-              : [],
+            tags: Array.isArray(post.tags) ? post.tags : [],
           }
         })
 
@@ -148,10 +153,8 @@ export function LatestPostsSection() {
                 key={post.id}
                 className="group overflow-hidden rounded-[2rem] border border-white/50 bg-white/70 shadow-[0_12px_40px_rgba(129,216,208,0.12)] backdrop-blur transition-all duration-500 hover:-translate-y-1.5 hover:border-primary/35 hover:bg-white/90 hover:shadow-[0_24px_70px_rgba(129,216,208,0.22)]"
               >
-                {/* 修正手機縮圖裁切問題 */}
                 <div className="relative h-[200px] md:h-[220px] w-full overflow-hidden bg-secondary">
-                  {activeVideo === post.id &&
-                  post.videoId ? (
+                  {activeVideo === post.id && post.videoId ? (
                     <iframe
                       src={`https://www.youtube.com/embed/${post.videoId}?autoplay=1`}
                       className="h-full w-full border-none"
@@ -177,6 +180,7 @@ export function LatestPostsSection() {
                               duration-700
                               group-hover:scale-105
                             "
+                            loading="lazy"
                           />
                         ) : (
                           <div className="flex h-full w-full items-center justify-center bg-secondary text-sm text-muted-foreground">
@@ -210,9 +214,7 @@ export function LatestPostsSection() {
                     {post.tags?.map((tag) => (
                       <Link
                         key={tag}
-                        href={`/blog?tag=${encodeURIComponent(
-                          tag
-                        )}`}
+                        href={`/blog?tag=${encodeURIComponent(tag)}`}
                         className="rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-bold text-primary transition-all hover:bg-primary hover:text-white"
                       >
                         #{tag}
@@ -236,7 +238,6 @@ export function LatestPostsSection() {
                       className="inline-flex items-center text-sm font-bold text-primary"
                     >
                       閱讀文章
-
                       <span className="ml-2 transition-transform group-hover:translate-x-1">
                         →
                       </span>

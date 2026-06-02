@@ -21,6 +21,18 @@ function urlFor(source: any) {
   return builder.image(source)
 }
 
+function optimizeSanityImages(html?: string) {
+  if (!html) return ""
+
+  return html.replace(
+    /(https:\/\/cdn\.sanity\.io\/images\/[^"' )<>]+)/g,
+    (url) => {
+      if (url.includes("auto=format")) return url
+      return `${url}${url.includes("?") ? "&" : "?"}auto=format`
+    }
+  )
+}
+
 const ptComponents = {
   types: {
     image: ({ value }: any) => {
@@ -29,7 +41,7 @@ const ptComponents = {
       return (
         <figure className="my-10 flex flex-col items-center">
           <img
-            src={urlFor(value).url()}
+            src={urlFor(value).auto("format").url()}
             alt={value.alt || "文章圖片"}
             className="w-full rounded-[2rem] border border-border shadow-[0_16px_50px_rgba(120,80,70,0.12)]"
             loading="lazy"
@@ -57,12 +69,21 @@ export async function generateMetadata({
     `*[_type == "post" && slug.current == $slug][0]{
       title,
       description,
-      "mainImage": mainImage.asset->url
+      mainImage
     }`,
     { slug }
   )
 
   if (!post) return {}
+
+  const ogImage = post.mainImage
+    ? urlFor(post.mainImage)
+        .width(1200)
+        .height(630)
+        .fit("crop")
+        .auto("format")
+        .url()
+    : undefined
 
   return {
     title: `${post.title} | ${siteName}`,
@@ -72,7 +93,7 @@ export async function generateMetadata({
       description: post.description || post.title,
       url: `${siteUrl}/blog/${slug}`,
       siteName,
-      images: post.mainImage ? [{ url: post.mainImage }] : [],
+      images: ogImage ? [{ url: ogImage }] : [],
       locale: "zh_TW",
       type: "article",
     },
@@ -113,6 +134,8 @@ export default async function PostPage({
       })
     : null
 
+  const optimizedHtml = optimizeSanityImages(post.htmlContent)
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -129,6 +152,9 @@ export default async function PostPage({
     },
     datePublished: post.publishedAt,
     url: `${siteUrl}/blog/${slug}`,
+    image: post.mainImage
+      ? urlFor(post.mainImage).width(1200).auto("format").url()
+      : undefined,
   }
 
   return (
@@ -145,7 +171,6 @@ export default async function PostPage({
         <div className="absolute right-0 top-96 -z-10 h-[260px] w-[260px] rounded-full bg-accent/10 blur-[100px]" />
 
         <div className="mx-auto max-w-4xl">
-          {/* 麵包屑 */}
           <nav className="mb-10 flex items-center gap-2 text-sm text-muted-foreground">
             <Link href="/" className="transition-colors hover:text-primary">
               首頁
@@ -164,7 +189,6 @@ export default async function PostPage({
             </span>
           </nav>
 
-          {/* 標籤 */}
           {post.tags && post.tags.length > 0 && (
             <div className="mb-6 flex flex-wrap gap-2">
               {post.tags.map((tag: string) => (
@@ -178,12 +202,10 @@ export default async function PostPage({
             </div>
           )}
 
-          {/* 標題 */}
           <h1 className="mb-6 text-4xl font-bold leading-tight tracking-tight text-foreground md:text-6xl">
             {post.title}
           </h1>
 
-          {/* 作者與日期 */}
           <div className="mb-12 flex flex-wrap items-center gap-4 border-b border-border pb-8 text-sm text-muted-foreground">
             <span className="font-medium text-foreground">
               撰文者：{post.authorName || siteName}
@@ -197,18 +219,16 @@ export default async function PostPage({
             )}
           </div>
 
-          {/* 主圖 */}
           {post.mainImage && (
             <div className="mb-16 overflow-hidden rounded-[2rem] border border-border bg-white shadow-[0_20px_70px_rgba(120,80,70,0.12)]">
               <img
-                src={urlFor(post.mainImage).url()}
+                src={urlFor(post.mainImage).auto("format").url()}
                 alt={post.title}
                 className="w-full object-cover"
               />
             </div>
           )}
 
-          {/* 內容 */}
           <article
             className="
               prose max-w-none
@@ -272,7 +292,7 @@ export default async function PostPage({
                   [&_li]:text-muted-foreground
                   [&_strong]:text-foreground
                 "
-                dangerouslySetInnerHTML={{ __html: post.htmlContent }}
+                dangerouslySetInnerHTML={{ __html: optimizedHtml }}
               />
             ) : (
               post.body && (
@@ -281,7 +301,6 @@ export default async function PostPage({
             )}
           </article>
 
-          {/* 底部按鈕 */}
           <div className="mt-16 flex flex-col items-center justify-between gap-4 border-t border-border pt-8 sm:flex-row">
             <Link
               href="/blog"
@@ -309,7 +328,6 @@ export default async function PostPage({
         </div>
       </main>
 
-      {/* 浮動諮詢按鈕 */}
       <LineConsultButton
         className="
           fixed bottom-6 right-6 z-[9999]
@@ -335,9 +353,7 @@ export default async function PostPage({
 
         <span>立即諮詢</span>
 
-        <span>
-          →
-        </span>
+        <span>→</span>
       </LineConsultButton>
 
       <Footer />

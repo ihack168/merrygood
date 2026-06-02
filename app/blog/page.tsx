@@ -19,6 +19,16 @@ interface Post {
   htmlContent?: string
 }
 
+function optimizeSanityImageUrl(url?: string) {
+  if (!url) return ""
+
+  if (!url.includes("cdn.sanity.io/images")) return url
+
+  if (url.includes("auto=format")) return url
+
+  return `${url}${url.includes("?") ? "&" : "?"}auto=format`
+}
+
 function BlogPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -82,7 +92,7 @@ function BlogPageContent() {
             const imgMatch = post.htmlContent.match(/<img[^>]+src="([^">]+)"/)
 
             if (imgMatch && imgMatch[1]) {
-              extractedImg = imgMatch[1]
+              extractedImg = optimizeSanityImageUrl(imgMatch[1])
             }
 
             if (!extractedDesc || extractedDesc === "點擊閱讀詳情...") {
@@ -105,8 +115,8 @@ function BlogPageContent() {
             thumbnail:
               extractedImg ||
               youtubeThumb ||
-              post.imageUrl ||
-              post.mainImage ||
+              optimizeSanityImageUrl(post.imageUrl) ||
+              optimizeSanityImageUrl(post.mainImage) ||
               "",
             description: extractedDesc,
             tags: Array.isArray(post.tags) ? post.tags : [],
@@ -234,6 +244,7 @@ function BlogPageContent() {
                                     group-hover:scale-105
                                     md:object-cover
                                   "
+                                  loading="lazy"
                                 />
                               ) : (
                                 <div className="flex h-full w-full items-center justify-center bg-secondary text-sm text-muted-foreground">
@@ -350,9 +361,7 @@ function BlogPageContent() {
                   )}
 
                   <button
-                    onClick={() =>
-                      setPage((p) => Math.min(totalPages, p + 1))
-                    }
+                    onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                     disabled={page >= totalPages}
                     className="ml-2 rounded-full border border-border bg-card/75 px-6 py-3 text-sm font-medium text-muted-foreground transition-all hover:border-primary/50 hover:bg-secondary/70 hover:text-accent disabled:opacity-30"
                   >
