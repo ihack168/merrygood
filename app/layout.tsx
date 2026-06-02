@@ -18,7 +18,9 @@ const siteUrl = "https://blog.merrygood.com.tw"
 const siteName = "美麗好診所"
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+  verification: {
+    google: 'a-9jNT0C1-qzTClGXVBoLvI3EQYipF18AXpmvBf3qiM',
+  },
 
   title: {
     default: "美麗好診所｜專業減肥診所・減重管理諮詢",
