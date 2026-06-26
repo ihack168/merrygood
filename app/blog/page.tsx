@@ -20,25 +20,34 @@ interface Post {
 }
 
 /**
- * 👉 Sanity image optimize
+ * 👉 Sanity image optimize（統一版）
  */
 function optimizeSanityImageUrl(url?: string) {
   if (!url) return ""
 
   if (!url.includes("cdn.sanity.io/images")) return url
-
   if (url.includes("auto=format")) return url
 
   return `${url}${url.includes("?") ? "&" : "?"}auto=format`
 }
 
 /**
- * 👉 抽 HTML 第一張圖（fallback 用）
+ * 👉 抽 HTML 第一張圖（修正版 regex）
  */
 function extractFirstImage(html?: string) {
   if (!html) return null
-  const match = html.match(/<img[^>]+src="([^">]+)"/)
+  const match = html.match(/<img[^>]+src="([^"]+)"/)
   return match?.[1] || null
+}
+
+/**
+ * 👉 清理 HTML 圖片 URL（避免沒 optimize）
+ */
+function normalizeHtmlImages(html: string) {
+  return html.replace(
+    /(https:\/\/cdn\.sanity\.io\/images\/[^"' )<>]+)/g,
+    (url) => optimizeSanityImageUrl(url)
+  )
 }
 
 function BlogPageContent() {
@@ -67,7 +76,8 @@ function BlogPageContent() {
         const start = (page - 1) * postsPerPage
         const end = start + postsPerPage
 
-        const tagFilter = selectedTag !== "全部" ? `&& $selectedTag in tags` : ""
+        const tagFilter =
+          selectedTag !== "全部" ? `&& $selectedTag in tags` : ""
 
         const count = await client.fetch(
           `count(*[_type == "post" ${tagFilter}])`,
@@ -98,15 +108,23 @@ function BlogPageContent() {
           let extractedImg = ""
           let extractedDesc = post.description || ""
 
-          // 👉 1. htmlContent 抓圖
-          if (post.htmlContent) {
-            const imgMatch = post.htmlContent.match(/<img[^>]+src="([^">]+)"/)
+          let html = post.htmlContent || ""
+
+          // 👉 先 normalize html 裡圖片
+          if (html) {
+            html = normalizeHtmlImages(html)
+          }
+
+          // 👉 1. htmlContent 抓第一張圖
+          if (html) {
+            const imgMatch = html.match(/<img[^>]+src="([^"]+)"/)
             if (imgMatch?.[1]) {
               extractedImg = optimizeSanityImageUrl(imgMatch[1])
             }
 
+            // 👉 description fallback
             if (!extractedDesc || extractedDesc === "點擊閱讀詳情...") {
-              const pureText = post.htmlContent.replace(/<[^>]*>?/gm, "").trim()
+              const pureText = html.replace(/<[^>]*>?/gm, "").trim()
 
               extractedDesc =
                 pureText.substring(0, 100) +
@@ -121,12 +139,15 @@ function BlogPageContent() {
             ? `https://img.youtube.com/vi/${post.videoId}/maxresdefault.jpg`
             : ""
 
-          // 👉 3. final thumbnail priority
+          // 👉 3. mainImage fallback（修正 optimize）
+          const mainImage =
+            typeof post.mainImage === "string"
+              ? optimizeSanityImageUrl(post.mainImage)
+              : ""
+
+          // 👉 final thumbnail priority
           const finalThumb =
-            extractedImg ||
-            optimizeSanityImageUrl(post.mainImage) ||
-            youtubeThumb ||
-            ""
+            extractedImg || mainImage || youtubeThumb || ""
 
           return {
             ...post,
@@ -175,13 +196,9 @@ function BlogPageContent() {
 
       <main className="relative overflow-hidden px-6 pb-24 pt-32">
         <div className="mx-auto max-w-6xl">
-
-          {/* header */}
           <div className="mb-12 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
             <header>
-              <h1 className="text-4xl font-bold md:text-6xl">
-                最新文章
-              </h1>
+              <h1 className="text-4xl font-bold md:text-6xl">最新文章</h1>
               <p className="mt-4 text-muted-foreground">
                 {selectedTag === "全部"
                   ? "減重管理、體重控制與熱門減重商品資訊"
@@ -194,7 +211,6 @@ function BlogPageContent() {
             </p>
           </div>
 
-          {/* tags */}
           <div className="mb-12 flex flex-wrap gap-3">
             {allTags.map((tag) => (
               <button
@@ -207,51 +223,37 @@ function BlogPageContent() {
             ))}
           </div>
 
-          {/* loading */}
           {loading ? (
             <div className="flex justify-center py-40">
               <div className="h-12 w-12 animate-spin rounded-full border-2 border-t-primary" />
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-
               {posts.map((post) => (
                 <article
                   key={post.id}
                   className="overflow-hidden rounded-2xl border"
                 >
                   <div className="relative h-56 w-full overflow-hidden">
-
-                    {activeVideo === post.id && post.videoId ? (
-                      <iframe
-                        src={`https://www.youtube.com/embed/${post.videoId}?autoplay=1`}
-                        className="h-full w-full"
-                        allow="autoplay"
-                      />
-                    ) : (
-                      <Link href={`/blog/${post.slug}`}>
-                        {post.thumbnail ? (
-                          <img
-                            src={post.thumbnail}
-                            alt={post.title}
-                            className="h-full w-full object-cover"
-                            loading="lazy"
-                          />
-                        ) : (
-                          <div className="flex h-full items-center justify-center">
-                            暫無圖片
-                          </div>
-                        )}
-                      </Link>
-                    )}
-
+                    <Link href={`/blog/${post.slug}`}>
+                      {post.thumbnail ? (
+                        <img
+                          src={post.thumbnail}
+                          alt={post.title}
+                          className="h-full w-full object-cover"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="flex h-full items-center justify-center">
+                          暫無圖片
+                        </div>
+                      )}
+                    </Link>
                   </div>
 
                   <div className="p-6">
                     <Link href={`/blog/${post.slug}`}>
-                      <h2 className="text-xl font-bold">
-                        {post.title}
-                      </h2>
+                      <h2 className="text-xl font-bold">{post.title}</h2>
                     </Link>
 
                     <p className="mt-3 text-sm text-muted-foreground">
@@ -260,10 +262,8 @@ function BlogPageContent() {
                   </div>
                 </article>
               ))}
-
             </div>
           )}
-
         </div>
       </main>
 
