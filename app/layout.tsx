@@ -160,6 +160,7 @@ export default function RootLayout({
   return (
     <html lang="zh-Hant" className={`${notoSansTC.variable} ${geistMono.variable}`}>
       <body className="bg-background text-foreground font-sans antialiased">
+        <Navbar />
         <Script
           id="medical-clinic-jsonld"
           type="application/ld+json"
