@@ -354,7 +354,6 @@ export default async function PostPage({
         </span>
 
         <span>立即諮詢</span>
-                <ShareBar />
         <span>→</span>
       </LineConsultButton>
 
