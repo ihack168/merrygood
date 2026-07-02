@@ -62,7 +62,7 @@ export default function LinePage() {
                 items-center
                 justify-center
                 rounded-full
-                bg-[#06C755]
+                bg-[#06C515]
                 px-10
                 py-5
                 text-base
