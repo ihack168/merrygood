@@ -21,7 +21,7 @@ export default function LinePage() {
         <div className="relative overflow-hidden">
           <Image
             src="/images/line-consultant.png"
-            alt="美麗好診所 減重醫師"
+            alt="美麗好減肥減重-體重管理資訊站 減重醫師"
             width={800}
             height={1000}
             priority

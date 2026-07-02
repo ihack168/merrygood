@@ -49,7 +49,7 @@ export function HeroSection() {
 
               {/* title */}
               <h1 className="mt-7 text-5xl font-black tracking-[-0.04em] text-foreground md:text-7xl">
-                美麗好診所
+                美麗好減肥減重-體重管理資訊站
               </h1>
 
               {/* subtitle */}
@@ -65,7 +65,7 @@ export function HeroSection() {
 
               {/* desc */}
               <p className="mx-auto mt-7 max-w-xl text-sm leading-8 text-muted-foreground md:text-base lg:mx-0">
-                美麗好診所專注於減肥、減重與體重管理，
+                美麗好減肥減重-體重管理資訊站專注於減肥、減重與體重管理，
                 提供個人化減重評估與專業諮詢，
                 協助打造更健康、更理想的體態。
               </p>
@@ -142,7 +142,7 @@ export function HeroSection() {
                   <div className="relative aspect-square overflow-hidden rounded-[2.4rem] bg-secondary">
                     <Image
                       src="/images/hero.png"
-                      alt="美麗好診所 減肥診所"
+                      alt="美麗好減肥減重-體重管理資訊站 減肥診所"
                       fill
                       priority
                       sizes="(max-width: 768px) 100vw, 50vw"

@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
 })
 
-const siteUrl = "https://blog.merrygood.com.tw"
-const siteName = "美麗好診所"
+const siteUrl = "https://news.merrygood.com.tw"
+const siteName = "美麗好減肥減重-體重管理資訊站"
 
 export const metadata: Metadata = {
   verification: {
@@ -23,15 +23,15 @@ export const metadata: Metadata = {
   },
 
   title: {
-    default: "美麗好診所｜專業減肥診所・減重管理諮詢",
+    default: "美麗好減肥減重-體重管理資訊站｜專業減肥・減重管理諮詢",
     template: `%s｜${siteName}`,
   },
 
   description:
-    "美麗好診所是專注於減肥、減重管理與體重控制諮詢的減肥診所，提供個人化減重評估、減肥門診諮詢、飲食與生活型態建議，以及猛健樂、週纖達、瑞倍適等熱門減重相關商品諮詢。",
+    "美麗好減肥減重-體重管理資訊站是專注於減肥、減重管理與體重控制諮詢，提供個人化減重評估、減肥門診諮詢、飲食與生活型態建議，以及猛健樂、週纖達、瑞倍適等熱門減重相關商品諮詢。",
 
   keywords: [
-    "美麗好診所",
+    "美麗好減肥減重-體重管理資訊站",
     "減肥診所",
     "減重診所",
     "減肥",
@@ -69,7 +69,7 @@ export const metadata: Metadata = {
   },
 
   openGraph: {
-    title: "美麗好診所｜專業減肥診所・減重管理諮詢",
+    title: "美麗好減肥減重-體重管理資訊站｜專業減肥診所・減重管理諮詢",
     description:
       "提供減肥門診、減重管理、體重控制諮詢與個人化減重評估，協助了解適合自己的減重方式。",
     url: siteUrl,
@@ -81,16 +81,16 @@ export const metadata: Metadata = {
         url: "/images/hero.png",
         width: 1200,
         height: 630,
-        alt: "美麗好診所｜專業減肥診所・減重管理諮詢",
+        alt: "美麗好減肥減重-體重管理資訊站｜專業減肥診所・減重管理諮詢",
       },
     ],
   },
 
   twitter: {
     card: "summary_large_image",
-    title: "美麗好診所｜專業減肥診所・減重管理諮詢",
+    title: "美麗好減肥減重-體重管理資訊站｜專業減肥診所・減重管理諮詢",
     description:
-      "美麗好診所提供減肥、減重管理、體重控制與熱門減重商品諮詢服務。",
+      "美麗好減肥減重-體重管理資訊站提供減肥、減重管理、體重控制與熱門減重商品諮詢服務。",
     images: ["/images/hero.png"],
   },
 }
@@ -108,7 +108,7 @@ export default function RootLayout({
     logo: `${siteUrl}/images/logo.png`,
     image: `${siteUrl}/images/hero.png`,
     description:
-      "美麗好診所是專注於減肥、減重管理與體重控制諮詢的減肥診所，提供個人化減重評估與專業諮詢服務。",
+      "美麗好減肥減重-體重管理資訊站是專注於減肥、減重管理與體重控制諮詢，提供個人化減重評估與專業諮詢服務。",
     medicalSpecialty: [
       "Weight Loss",
       "Obesity Medicine",
@@ -148,7 +148,7 @@ export default function RootLayout({
     url: siteUrl,
     inLanguage: "zh-Hant-TW",
     description:
-      "美麗好診所減肥診所官方網站，提供減肥、減重診所、體重管理與熱門減重商品諮詢相關資訊。",
+      "美麗好減肥減重-體重管理資訊站，提供減肥、減重診所、體重管理與熱門減重商品諮詢相關資訊。",
     potentialAction: {
       "@type": "SearchAction",
       target: `${siteUrl}/blog?search={search_term_string}`,

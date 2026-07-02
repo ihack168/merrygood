@@ -12,7 +12,7 @@ import type { Metadata } from "next"
 export const revalidate = 0
 export const dynamic = "force-dynamic"
 
-const siteName = "美麗好診所"
+const siteName = "美麗好減肥減重-體重管理資訊站"
 const siteUrl = "https://www.example.com"
 
 const builder = createImageUrlBuilder(client)

@@ -84,7 +84,7 @@ export function ServicesSection() {
           </h2>
 
           <p className="mt-5 text-base leading-8 text-muted-foreground">
-            美麗好診所專注於減肥、減重診所諮詢與體重管理，
+            美麗好減肥減重-體重管理資訊站專注於減肥、減重診所諮詢與體重管理，
             依照每個人的身體狀況、生活習慣與減重目標，
             提供更安心、更適合自己的減肥建議。
           </p>

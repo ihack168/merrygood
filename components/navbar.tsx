@@ -63,7 +63,7 @@ export function Navbar() {
 
               <img
                 src="/images/logo.png"
-                alt="美麗好診所 減肥診所 Logo"
+                alt="美麗好減肥減重-體重管理資訊站 減肥診所 Logo"
                 className="
                   relative
                   h-11 w-11
@@ -78,7 +78,7 @@ export function Navbar() {
 
             <div className="leading-tight">
               <span className="block text-xl font-black tracking-tight text-foreground md:text-2xl">
-                美麗好診所
+                美麗好減肥減重-體重管理資訊站
               </span>
 
               <span className="hidden text-[11px] tracking-[0.22em] text-muted-foreground md:block">
@@ -202,7 +202,7 @@ export function Navbar() {
             </p>
 
             <p className="mt-3 text-3xl font-black text-foreground">
-              美麗好診所
+              美麗好減肥減重-體重管理資訊站
             </p>
 
             <p className="mt-4 text-sm leading-7 text-muted-foreground">
@@ -256,7 +256,7 @@ export function Navbar() {
 
           {/* Footer */}
           <div className="relative mt-auto pb-8 pt-10 text-sm leading-7 text-muted-foreground">
-            <p>美麗好診所｜減肥診所｜減重診所</p>
+            <p>美麗好減肥減重-體重管理資訊站｜減肥診所｜減重診所</p>
             <p>猛健樂｜週纖達｜瑞倍適 減重諮詢</p>
           </div>
         </div>

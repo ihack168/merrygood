@@ -28,7 +28,7 @@ export function Footer() {
 
                 <img
                   src="/images/logo.png"
-                  alt="美麗好診所 Logo"
+                  alt="美麗好減肥減重-體重管理資訊站 Logo"
                   className="
                     relative
                     h-16 w-16
@@ -44,7 +44,7 @@ export function Footer() {
               {/* Brand */}
               <div>
                 <h3 className="text-3xl font-black tracking-tight text-foreground">
-                  美麗好診所
+                  美麗好減肥減重-體重管理資訊站
                 </h3>
 
                 <p className="mt-2 text-[11px] tracking-[0.28em] text-muted-foreground">
@@ -116,7 +116,7 @@ export function Footer() {
         <div className="flex flex-col items-center justify-between gap-4 py-8 text-center md:flex-row md:text-left">
           
           <p className="text-xs tracking-[0.12em] text-muted-foreground">
-            © 2026 美麗好診所 Weight Loss Clinic.
+            © 2026 美麗好減肥減重-體重管理資訊站 Weight Loss Clinic.
             <br className="md:hidden" />
             All rights reserved.
           </p>
@@ -131,16 +131,16 @@ export function Footer() {
 
       {/* SEO */}
       <div className="sr-only">
-        <h3>美麗好診所｜減肥診所｜減重診所</h3>
+        <h3>美麗好減肥減重-體重管理資訊站｜減肥診所｜減重診所</h3>
 
         <p>
-          美麗好診所提供減肥、減重管理、體重控制與減重諮詢服務，
+          美麗好減肥減重-體重管理資訊站提供減肥、減重管理、體重控制與減重諮詢服務，
           包含猛健樂、週纖達、瑞倍適等熱門減重相關商品諮詢。
         </p>
 
         <p>
           如果您正在尋找減肥診所、減重診所或專業體重管理，
-          歡迎與美麗好診所聯絡預約。
+          歡迎與美麗好減肥減重-體重管理資訊站聯絡預約。
         </p>
       </div>
     </footer>
