@@ -119,7 +119,7 @@ export function Navbar() {
               className="
                 inline-flex items-center justify-center
                 rounded-full
-                bg-primary
+                bg-[#06C755]
                 px-5 py-2.5
                 text-base font-bold
                 text-white
