@@ -327,6 +327,7 @@ export default async function PostPage({
             </LineConsultButton>
           </div>
         </div>
+        <center><ShareBar /></center>
       </main>
 
       <LineConsultButton
