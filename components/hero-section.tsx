@@ -76,7 +76,7 @@ export function HeroSection() {
                   className="
                     inline-flex items-center justify-center gap-2
                     rounded-full
-                    bg-primary
+                    bg-[#06C755]
                     px-9 py-4
                     text-sm font-black
                     text-white

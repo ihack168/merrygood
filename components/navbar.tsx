@@ -243,7 +243,7 @@ export function Navbar() {
               className="
                 flex items-center justify-center
                 rounded-2xl
-                bg-primary
+                bg-[#06C755]
                 px-6 py-4
                 text-base font-bold
                 text-white

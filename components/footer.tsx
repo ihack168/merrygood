@@ -93,7 +93,7 @@ export function Footer() {
               className="
                 mt-7 inline-flex items-center justify-center
                 rounded-full
-                bg-primary
+                bg-[#06C755]
                 px-8 py-3.5
                 text-sm font-black
                 text-white
