@@ -315,34 +315,6 @@ export default async function PostPage({
         </div>
         <center><ShareBar /></center>
       </main>
-
-      <LineConsultButton
-        className="
-          fixed bottom-6 right-6 z-[9999]
-          flex items-center gap-3
-          rounded-full
-          bg-primary
-          px-6 py-4
-          text-sm md:text-base
-          font-semibold
-          text-primary-foreground
-          shadow-[0_18px_45px_rgba(217,143,143,0.35)]
-          backdrop-blur-md
-          border border-white/40
-          transition-all duration-300
-          hover:scale-105
-          hover:shadow-[0_22px_60px_rgba(217,143,143,0.5)]
-        "
-      >
-        <span className="relative flex h-3 w-3">
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-60"></span>
-          <span className="relative inline-flex h-3 w-3 rounded-full bg-white"></span>
-        </span>
-
-        <span>立即諮詢</span>
-        <span>→</span>
-      </LineConsultButton>
-
       <Footer />
     </div>
   )
