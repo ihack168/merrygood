@@ -310,21 +310,7 @@ export default async function PostPage({
               ← 返回文章列表
             </Link>
 
-            <LineConsultButton
-              className="
-                inline-flex items-center gap-2
-                rounded-full
-                bg-primary
-                px-6 py-3
-                text-sm font-semibold
-                text-primary-foreground
-                shadow-[0_14px_36px_rgba(217,143,143,0.32)]
-                transition-all
-                hover:-translate-y-0.5
-              "
-            >
-              預約專業諮詢 →
-            </LineConsultButton>
+
           </div>
         </div>
         <center><ShareBar /></center>
