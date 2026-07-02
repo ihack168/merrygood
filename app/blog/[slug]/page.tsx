@@ -5,6 +5,7 @@ import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { LineConsultButton } from "@/components/line-consult-button"
 import { notFound } from "next/navigation"
+import { ShareBar } from "@/components/share-bar";
 import Link from "next/link"
 import type { Metadata } from "next"
 
