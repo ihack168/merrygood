@@ -46,9 +46,9 @@ export const metadata: Metadata = {
     "瑞倍適",
   ],
 
-  alternates: {
-    canonical: siteUrl,
-  },
+alternates: {
+  canonical: "/",
+},
 
   icons: {
     icon: "/images/logo.png",

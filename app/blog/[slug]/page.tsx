@@ -1,7 +1,6 @@
 import { client } from "@/lib/sanity"
 import { createImageUrlBuilder } from "@sanity/image-url"
 import { PortableText } from "@portabletext/react"
-import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { LineConsultButton } from "@/components/line-consult-button"
 import { notFound } from "next/navigation"
@@ -13,7 +12,7 @@ export const revalidate = 0
 export const dynamic = "force-dynamic"
 
 const siteName = "美麗好減肥減重-體重管理資訊站"
-const siteUrl = "https://www.example.com"
+const siteUrl = "https://news.merrygood.com.tw"
 
 const builder = createImageUrlBuilder(client)
 
@@ -86,19 +85,28 @@ export async function generateMetadata({
         .url()
     : undefined
 
-  return {
-    title: `${post.title} | ${siteName}`,
+return {
+  title: `${post.title} | ${siteName}`,
+  description: post.description || post.title,
+  alternates: {
+    canonical: `/blog/${slug}`,
+  },
+  openGraph: {
+    title: post.title,
     description: post.description || post.title,
-    openGraph: {
-      title: post.title,
-      description: post.description || post.title,
-      url: `${siteUrl}/blog/${slug}`,
-      siteName,
-      images: ogImage ? [{ url: ogImage }] : [],
-      locale: "zh_TW",
-      type: "article",
-    },
-  }
+    url: `${siteUrl}/blog/${slug}`,
+    siteName,
+    images: ogImage ? [{ url: ogImage }] : [],
+    locale: "zh_TW",
+    type: "article",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: post.title,
+    description: post.description || post.title,
+    images: ogImage ? [ogImage] : [],
+  },
+}
 }
 
 export default async function PostPage({
@@ -164,8 +172,6 @@ export default async function PostPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-
-      <Navbar />
 
       <main className="relative overflow-hidden px-6 pb-24 pt-32">
         <div className="absolute left-1/2 top-20 -z-10 h-[360px] w-[360px] -translate-x-1/2 rounded-full bg-primary/10 blur-[110px]" />
