@@ -17,11 +17,9 @@ export function Footer() {
       <div className="relative mx-auto max-w-6xl">
         {/* 主內容 */}
         <div className="flex flex-col gap-16 md:flex-row md:items-center md:justify-between">
-          
           {/* 左側品牌 */}
           <div className="text-center md:text-left">
             <div className="flex items-center justify-center gap-5 md:justify-start">
-              
               {/* Logo */}
               <div className="relative">
                 <div className="absolute inset-0 rounded-full bg-primary/30 blur-xl" />
@@ -48,15 +46,15 @@ export function Footer() {
                 </h3>
 
                 <p className="mt-2 text-[11px] tracking-[0.28em] text-muted-foreground">
-                  WEIGHT LOSS CLINIC
+                  WEIGHT MANAGEMENT INFO
                 </p>
               </div>
             </div>
 
             {/* slogan */}
             <p className="mx-auto mt-7 max-w-md text-sm leading-8 text-muted-foreground md:mx-0">
-              專注於減肥、減重管理與體重控制諮詢，
-              提供個人化評估與專業減重建議。
+              專注於減肥、減重管理、體重控制與醫藥資訊整理，
+              提供減重相關知識、用藥資訊與健康管理方向參考。
             </p>
           </div>
 
@@ -80,13 +78,13 @@ export function Footer() {
             </div>
 
             <p className="mt-5 text-2xl font-black tracking-tight text-foreground">
-              線上減重諮詢
+              線上減重資訊諮詢
             </p>
 
             <p className="mt-4 text-sm leading-8 text-muted-foreground">
               猛健樂｜週纖達｜瑞倍適
               <br />
-              專業減重管理與體重控制建議
+              減重知識｜用藥資訊｜體重管理參考
             </p>
 
             <LineConsultButton
@@ -109,38 +107,49 @@ export function Footer() {
           </div>
         </div>
 
+        {/* 免責聲明 */}
+        <div className="mt-16 rounded-3xl border border-white/60 bg-white/45 px-5 py-5 text-center shadow-sm backdrop-blur">
+          <p className="text-xs leading-6 text-muted-foreground">
+            免責聲明：本網站部分內容可能由 AI 協助整理，並經人工審閱後發布。
+            網站內容僅供一般健康、減重與醫藥資訊參考，不構成醫療診斷、處方、治療建議、
+            用藥指示、減重保證或任何專業醫療意見。減重藥物、保健方式、適應症、
+            禁忌症、副作用與實際效果，會因個人體質、病史、用藥狀況與醫師評估而有所不同。
+            如有減重、用藥或健康相關需求，請務必諮詢合格醫師、藥師或專業醫療人員，
+            並以衛生主管機關、藥品仿單、醫療院所或官方公告之最新資訊為準。
+          </p>
+        </div>
+
         {/* 分隔線 */}
-        <div className="mt-16 border-t border-white/50" />
+        <div className="mt-8 border-t border-white/50" />
 
         {/* Bottom */}
         <div className="flex flex-col items-center justify-between gap-4 py-8 text-center md:flex-row md:text-left">
-          
           <p className="text-xs tracking-[0.12em] text-muted-foreground">
-            © 2026 美麗好減肥減重-體重管理資訊站 Weight Loss Clinic.
+            © 2026 美麗好減肥減重-體重管理資訊站 Weight Management Info.
             <br className="md:hidden" />
             All rights reserved.
           </p>
 
           <div className="flex items-center gap-6 text-xs font-medium text-muted-foreground">
-            <span>減肥診所</span>
+            <span>減肥資訊</span>
             <span>減重管理</span>
-            <span>體重控制</span>
+            <span>醫藥資訊</span>
           </div>
         </div>
       </div>
 
       {/* SEO */}
       <div className="sr-only">
-        <h3>美麗好減肥減重-體重管理資訊站｜減肥診所｜減重診所</h3>
+        <h3>美麗好減肥減重-體重管理資訊站｜減肥資訊｜減重管理｜醫藥資訊</h3>
 
         <p>
-          美麗好減肥減重-體重管理資訊站提供減肥、減重管理、體重控制與減重諮詢服務，
-          包含猛健樂、週纖達、瑞倍適等熱門減重相關商品諮詢。
+          美麗好減肥減重-體重管理資訊站提供減肥、減重管理、體重控制與減重醫藥資訊整理，
+          包含猛健樂、週纖達、瑞倍適等熱門減重相關資訊參考。
         </p>
 
         <p>
-          如果您正在尋找減肥診所、減重診所或專業體重管理，
-          歡迎與美麗好減肥減重-體重管理資訊站聯絡預約。
+          本網站內容僅供一般資訊參考，不構成醫療診斷、處方、治療建議或用藥指示。
+          如有減重、用藥或健康相關需求，請諮詢合格醫師、藥師或專業醫療人員。
         </p>
       </div>
     </footer>
