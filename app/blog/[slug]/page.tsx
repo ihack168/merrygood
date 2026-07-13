@@ -7,6 +7,7 @@ import { notFound } from "next/navigation"
 import { ShareBar } from "@/components/share-bar";
 import Link from "next/link"
 import type { Metadata } from "next"
+import { sanitizePostHtml } from "@/lib/content-cleanup"
 
 export const revalidate = 0
 export const dynamic = "force-dynamic"
@@ -86,7 +87,7 @@ export async function generateMetadata({
     : undefined
 
 return {
-  title: `${post.title} | ${siteName}`,
+  title: post.title,
   description: post.description || post.title,
   alternates: {
     canonical: `/blog/${slug}`,
@@ -143,7 +144,11 @@ export default async function PostPage({
       })
     : null
 
+  // 先做 CDN 圖片優化,再做重複標題/圖片清洗、H1 降級、markdown 星號修正
   const optimizedHtml = optimizeSanityImages(post.htmlContent)
+  const cleanedHtml = optimizedHtml
+    ? sanitizePostHtml(optimizedHtml, post.title, Boolean(post.mainImage))
+    : ""
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -255,7 +260,7 @@ export default async function PostPage({
               prose-blockquote:rounded-r-2xl prose-blockquote:border-l-primary prose-blockquote:bg-white/70 prose-blockquote:px-6 prose-blockquote:py-3 prose-blockquote:text-muted-foreground
             "
           >
-            {post.htmlContent ? (
+            {cleanedHtml ? (
               <div
                 className="
                   [&_table]:!my-10
@@ -299,7 +304,7 @@ export default async function PostPage({
                   [&_li]:text-muted-foreground
                   [&_strong]:text-foreground
                 "
-                dangerouslySetInnerHTML={{ __html: optimizedHtml }}
+                dangerouslySetInnerHTML={{ __html: cleanedHtml }}
               />
             ) : (
               post.body && (
