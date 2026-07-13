@@ -1,57 +1,87 @@
 import type { Metadata } from "next"
 import { Noto_Sans_TC, Geist_Mono } from "next/font/google"
 import Script from "next/script"
-import { Navbar } from '@/components/navbar'
+
+import { Navbar } from "@/components/navbar"
+
 import "./globals.css"
 
 const notoSansTC = Noto_Sans_TC({
   subsets: ["latin"],
   weight: ["400", "500", "700", "900"],
   variable: "--font-noto-sans",
+  display: "swap",
 })
 
 const geistMono = Geist_Mono({
   subsets: ["latin"],
   variable: "--font-geist-mono",
+  display: "swap",
 })
 
 const siteUrl = "https://news.merrygood.com.tw"
-const siteName = "美麗好減肥減重-體重管理資訊站"
+const siteName = "美麗好減肥減重－體重管理資訊站"
+const shortSiteName = "美麗好減肥減重"
+
+const siteDescription =
+  "美麗好減肥減重是由美麗好診所建立的體重管理資訊網站，整理健康減重、飲食控制、運動習慣、減重醫療與處方藥物相關資訊。"
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
+
+  applicationName: siteName,
+
   verification: {
-    google: 'a-9jNT0C1-qzTClGXVBoLvI3EQYipF18AXpmvBf3qiM',
+    google: "a-9jNT0C1-qzTClGXVBoLvI3EQYipF18AXpmvBf3qiM",
   },
 
   title: {
-    default: "美麗好減肥減重-體重管理資訊站｜專業減肥・減重管理諮詢",
-    template: `%s｜${siteName}`,
+    default: "美麗好減肥減重｜健康減重與體重管理資訊",
+    template: `%s｜${shortSiteName}`,
   },
 
-  description:
-    "美麗好減肥減重-體重管理資訊站是專注於減肥、減重管理與體重控制諮詢，提供個人化減重評估、減肥門診諮詢、飲食與生活型態建議，以及猛健樂、週纖達、瑞倍適等熱門減重相關商品諮詢。",
+  description: siteDescription,
 
   keywords: [
-    "美麗好減肥減重-體重管理資訊站",
-    "減肥診所",
-    "減重診所",
+    "美麗好減肥減重",
+    "健康減重",
     "減肥",
     "減重",
     "體重管理",
-    "減肥門診",
-    "減重管理",
+    "飲食控制",
+    "減重醫療",
+    "減重門診",
     "體重控制",
     "猛健樂",
     "週纖達",
     "瑞倍適",
   ],
 
-alternates: {
-  canonical: "/",
-},
+  authors: [
+    {
+      name: "美麗好減肥減重編輯團隊",
+      url: `${siteUrl}/about`,
+    },
+  ],
+
+  creator: "美麗好減肥減重編輯團隊",
+  publisher: siteName,
+
+  category: "健康與體重管理",
+
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
 
   icons: {
-    icon: "/images/logo.png",
+    icon: [
+      {
+        url: "/images/logo.png",
+        type: "image/png",
+      },
+    ],
     shortcut: "/images/logo.png",
     apple: "/images/logo.png",
   },
@@ -70,9 +100,8 @@ alternates: {
   },
 
   openGraph: {
-    title: "美麗好減肥減重-體重管理資訊站｜專業減肥診所・減重管理諮詢",
-    description:
-      "提供減肥門診、減重管理、體重控制諮詢與個人化減重評估，協助了解適合自己的減重方式。",
+    title: "美麗好減肥減重｜健康減重與體重管理資訊",
+    description: siteDescription,
     url: siteUrl,
     siteName,
     locale: "zh_TW",
@@ -82,16 +111,15 @@ alternates: {
         url: "/images/hero.png",
         width: 1200,
         height: 630,
-        alt: "美麗好減肥減重-體重管理資訊站｜專業減肥診所・減重管理諮詢",
+        alt: "美麗好減肥減重－體重管理資訊站",
       },
     ],
   },
 
   twitter: {
     card: "summary_large_image",
-    title: "美麗好減肥減重-體重管理資訊站｜專業減肥診所・減重管理諮詢",
-    description:
-      "美麗好減肥減重-體重管理資訊站提供減肥、減重管理、體重控制與熱門減重商品諮詢服務。",
+    title: "美麗好減肥減重｜健康減重與體重管理資訊",
+    description: siteDescription,
     images: ["/images/hero.png"],
   },
 }
@@ -103,66 +131,78 @@ export default function RootLayout({
 }>) {
   const organizationJsonLd = {
     "@context": "https://schema.org",
-    "@type": "MedicalClinic",
+    "@type": "Organization",
+    "@id": `${siteUrl}/#organization`,
     name: siteName,
+    alternateName: shortSiteName,
     url: siteUrl,
-    logo: `${siteUrl}/images/logo.png`,
-    image: `${siteUrl}/images/hero.png`,
-    description:
-      "美麗好減肥減重-體重管理資訊站是專注於減肥、減重管理與體重控制諮詢，提供個人化減重評估與專業諮詢服務。",
-    medicalSpecialty: [
-      "Weight Loss",
-      "Obesity Medicine",
-      "Nutrition",
-      "Preventive Medicine",
-    ],
+    logo: {
+      "@type": "ImageObject",
+      "@id": `${siteUrl}/#logo`,
+      url: `${siteUrl}/images/logo.png`,
+      contentUrl: `${siteUrl}/images/logo.png`,
+      caption: siteName,
+    },
+    image: {
+      "@id": `${siteUrl}/#logo`,
+    },
+    description: siteDescription,
     areaServed: {
       "@type": "Country",
       name: "Taiwan",
     },
-    availableService: [
-      {
-        "@type": "MedicalTherapy",
-        name: "減肥門診諮詢",
-        description:
-          "提供體重管理、減肥諮詢、生活型態調整與個人化減重建議。",
-      },
-      {
-        "@type": "MedicalTherapy",
-        name: "個人化減重評估",
-        description:
-          "依照體重狀況、生活習慣、飲食模式與減重目標，規劃適合的減重方向。",
-      },
-      {
-        "@type": "MedicalTherapy",
-        name: "體重管理追蹤",
-        description:
-          "透過定期追蹤與回診評估，協助掌握減重進度並調整減肥策略。",
-      },
+    knowsAbout: [
+      "健康減重",
+      "體重管理",
+      "飲食控制",
+      "運動與體態管理",
+      "肥胖管理",
+      "減重醫療資訊",
+      "減重處方藥物",
+      "猛健樂",
+      "週纖達",
+      "瑞倍適",
     ],
+    parentOrganization: {
+      "@type": "MedicalClinic",
+      "@id": "https://www.merrygood.com.tw/#organization",
+      name: "美麗好診所",
+      url: "https://www.merrygood.com.tw",
+    },
   }
 
   const websiteJsonLd = {
     "@context": "https://schema.org",
     "@type": "WebSite",
+    "@id": `${siteUrl}/#website`,
+    url: `${siteUrl}/`,
     name: siteName,
-    url: siteUrl,
+    alternateName: shortSiteName,
+    description: siteDescription,
     inLanguage: "zh-Hant-TW",
-    description:
-      "美麗好減肥減重-體重管理資訊站，提供減肥、減重診所、體重管理與熱門減重商品諮詢相關資訊。",
+    publisher: {
+      "@id": `${siteUrl}/#organization`,
+    },
     potentialAction: {
       "@type": "SearchAction",
-      target: `${siteUrl}/blog?search={search_term_string}`,
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: `${siteUrl}/blog?search={search_term_string}`,
+      },
       "query-input": "required name=search_term_string",
     },
   }
 
   return (
-    <html lang="zh-Hant" className={`${notoSansTC.variable} ${geistMono.variable}`}>
+    <html
+      lang="zh-Hant-TW"
+      className={`${notoSansTC.variable} ${geistMono.variable}`}
+    >
       <body className="bg-background text-foreground font-sans antialiased">
         <Navbar />
+
         <Script
-          id="medical-clinic-jsonld"
+          id="organization-jsonld"
           type="application/ld+json"
           strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
@@ -180,20 +220,11 @@ export default function RootLayout({
         />
 
         <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"
+          id="umami-analytics"
+          src="https://cloud.umami.is/script.js"
+          data-website-id="252dacef-7992-411c-83d8-2ab1a6830843"
           strategy="afterInteractive"
         />
-<script defer src="https://cloud.umami.is/script.js" data-website-id="252dacef-7992-411c-83d8-2ab1a6830843"></script>
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag("js", new Date());
-            gtag("config", "G-XXXXXXXXXX", {
-              page_path: window.location.pathname,
-            });
-          `}
-        </Script>
 
         {children}
       </body>
