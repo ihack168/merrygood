@@ -517,12 +517,6 @@ export default async function PostPage({
             {post.title}
           </h1>
 
-          {description && (
-            <p className="mb-8 text-lg leading-8 text-muted-foreground">
-              {description}
-            </p>
-          )}
-
           <div className="mb-12 flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-border pb-8 text-sm text-muted-foreground">
             <span>
               撰文者：
