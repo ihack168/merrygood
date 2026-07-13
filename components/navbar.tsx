@@ -180,7 +180,7 @@ export function Navbar() {
                 hover:shadow-[0_16px_40px_rgba(129,216,208,0.42)]
               "
             >
-              美麗好診所諮詢
+              我要諮詢
             </LineConsultButton>
           </div>
 
