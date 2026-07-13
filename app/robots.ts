@@ -1,11 +1,16 @@
-import { MetadataRoute } from 'next'
+import type { MetadataRoute } from "next"
+
+const siteUrl = "https://news.merrygood.com.tw"
 
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: {
-      userAgent: '*',
-      allow: '/',
-    },
-    sitemap: 'https://news.merrygood.com.tw/sitemap.xml',
+    rules: [
+      {
+        userAgent: "*",
+        allow: "/",
+      },
+    ],
+    sitemap: `${siteUrl}/sitemap.xml`,
+    host: siteUrl,
   }
 }

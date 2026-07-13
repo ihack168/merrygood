@@ -1,8 +1,8 @@
-import { MetadataRoute } from "next"
+import type { MetadataRoute } from "next"
+
 import { client } from "@/lib/sanity"
 
-export const revalidate =3600
-export const dynamic = "force-dynamic"
+export const revalidate = 3600
 
 const baseUrl = "https://news.merrygood.com.tw"
 
@@ -12,42 +12,70 @@ type SanityPost = {
   updatedAt?: string
 }
 
+function toValidDate(value?: string) {
+  if (!value) return undefined
+
+  const date = new Date(value)
+
+  return Number.isNaN(date.getTime()) ? undefined : date
+}
+
+function buildPostUrl(slug: string) {
+  return new URL(`/blog/${slug}`, baseUrl).toString()
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const posts = await client.fetch<SanityPost[]>(
-    `*[_type == "post" && defined(slug.current)] | order(publishedAt desc){
+    `*[
+      _type == "post"
+      && defined(slug.current)
+    ] | order(coalesce(_updatedAt, publishedAt, _createdAt) desc) {
       "slug": slug.current,
-      publishedAt,
+      "publishedAt": coalesce(publishedAt, _createdAt),
       "updatedAt": _updatedAt
     }`,
     {},
-    { cache: "no-store" }
+    {
+      next: {
+        revalidate: 3600,
+      },
+    }
   )
+
+  const validPosts = posts.filter(
+    (post) => typeof post.slug === "string" && post.slug.trim().length > 0
+  )
+
+  const newestContentDate =
+    validPosts
+      .map((post) => toValidDate(post.updatedAt || post.publishedAt))
+      .find((date): date is Date => Boolean(date)) ?? undefined
 
   const staticRoutes: MetadataRoute.Sitemap = [
     {
-      url: baseUrl,
-      lastModified: new Date(),
-      changeFrequency: "daily",
+      url: `${baseUrl}/`,
+      ...(newestContentDate ? { lastModified: newestContentDate } : {}),
+      changeFrequency: "weekly",
       priority: 1,
     },
     {
       url: `${baseUrl}/blog`,
-      lastModified: new Date(),
+      ...(newestContentDate ? { lastModified: newestContentDate } : {}),
       changeFrequency: "daily",
-      priority: 0.8,
+      priority: 0.9,
     },
   ]
 
-  const blogRoutes: MetadataRoute.Sitemap = posts.map((post) => ({
-    url: `${baseUrl}/blog/${post.slug}`,
-    lastModified: post.updatedAt
-      ? new Date(post.updatedAt)
-      : post.publishedAt
-        ? new Date(post.publishedAt)
-        : new Date(),
-    changeFrequency: "weekly",
-    priority: 0.7,
-  }))
+  const blogRoutes: MetadataRoute.Sitemap = validPosts.map((post) => {
+    const lastModified = toValidDate(post.updatedAt || post.publishedAt)
+
+    return {
+      url: buildPostUrl(post.slug),
+      ...(lastModified ? { lastModified } : {}),
+      changeFrequency: "monthly" as const,
+      priority: 0.8,
+    }
+  })
 
   return [...staticRoutes, ...blogRoutes]
 }
