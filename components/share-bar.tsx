@@ -7,7 +7,7 @@ type ShareBarProps = {
   /** 文章的完整 canonical URL，建議由文章頁直接傳入 */
   url?: string
 
-  /** 分享標題，LINE 分享時會一併帶入 */
+  /** 分享標題，保留供 aria-label 或未來擴充使用 */
   title?: string
 
   /** light 給白底網站使用；dark 給深色版面使用 */
@@ -49,14 +49,10 @@ export function ShareBar({
   const lineShareUrl = useMemo(() => {
     if (!currentUrl) return "#"
 
-    const shareText = title
-      ? `${title}\n${currentUrl}`
-      : currentUrl
-
     return `https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(
-      shareText
+      currentUrl
     )}`
-  }, [currentUrl, title])
+  }, [currentUrl])
 
   const handleCopy = async () => {
     if (!currentUrl) return
@@ -80,27 +76,18 @@ export function ShareBar({
   return (
     <div className="fixed bottom-6 left-1/2 z-[9999] -translate-x-1/2">
       <div
-        className={`
-          flex items-center gap-1
-          rounded-full border
-          px-2 py-2
-          shadow-2xl
-          backdrop-blur
-          md:gap-2 md:px-4 md:py-3
-          ${
-            isDark
-              ? "border-white/10 bg-black/80 text-white"
-              : "border-black/5 bg-white/95 text-gray-900 shadow-black/10"
-          }
-        `}
+        className={[
+          "flex items-center gap-1 rounded-full border px-2 py-2 shadow-2xl backdrop-blur md:gap-2 md:px-4 md:py-3",
+          isDark
+            ? "border-white/10 bg-black/80 text-white"
+            : "border-black/5 bg-white/95 text-gray-900 shadow-black/10",
+        ].join(" ")}
       >
         <span
-          className={`
-            hidden whitespace-nowrap pr-1
-            text-xs font-bold
-            md:block
-            ${isDark ? "text-gray-400" : "text-gray-500"}
-          `}
+          className={[
+            "hidden whitespace-nowrap pr-1 text-xs font-bold md:block",
+            isDark ? "text-gray-400" : "text-gray-500",
+          ].join(" ")}
         >
           分享
         </span>
@@ -109,20 +96,15 @@ export function ShareBar({
           href={facebookShareUrl}
           target="_blank"
           rel="noopener noreferrer"
-          aria-label="分享到 Facebook"
+          aria-label={`分享到 Facebook${title ? `：${title}` : ""}`}
           aria-disabled={!currentUrl}
           onClick={(event) => {
             if (!currentUrl) event.preventDefault()
           }}
-          className={`
-            whitespace-nowrap rounded-full
-            bg-blue-600
-            px-2 py-2
-            text-[11px] font-bold text-white
-            transition hover:opacity-90
-            md:px-4 md:text-xs
-            ${!currentUrl ? "pointer-events-none opacity-50" : ""}
-          `}
+          className={[
+            "whitespace-nowrap rounded-full bg-blue-600 px-2 py-2 text-[11px] font-bold text-white transition hover:opacity-90 md:px-4 md:text-xs",
+            !currentUrl ? "pointer-events-none opacity-50" : "",
+          ].join(" ")}
         >
           FB
         </a>
@@ -131,20 +113,15 @@ export function ShareBar({
           href={lineShareUrl}
           target="_blank"
           rel="noopener noreferrer"
-          aria-label="分享到 LINE"
+          aria-label={`分享到 LINE${title ? `：${title}` : ""}`}
           aria-disabled={!currentUrl}
           onClick={(event) => {
             if (!currentUrl) event.preventDefault()
           }}
-          className={`
-            whitespace-nowrap rounded-full
-            bg-green-500
-            px-2 py-2
-            text-[11px] font-bold text-white
-            transition hover:opacity-90
-            md:px-4 md:text-xs
-            ${!currentUrl ? "pointer-events-none opacity-50" : ""}
-          `}
+          className={[
+            "whitespace-nowrap rounded-full bg-green-500 px-2 py-2 text-[11px] font-bold text-white transition hover:opacity-90 md:px-4 md:text-xs",
+            !currentUrl ? "pointer-events-none opacity-50" : "",
+          ].join(" ")}
         >
           LINE
         </a>
@@ -154,45 +131,28 @@ export function ShareBar({
           onClick={handleCopy}
           disabled={!currentUrl}
           aria-label="複製文章連結"
-          className={`
-            whitespace-nowrap rounded-full
-            px-2 py-2
-            text-[11px] font-bold
-            transition
-            disabled:cursor-not-allowed
-            disabled:opacity-50
-            md:px-4 md:text-xs
-            ${
-              isDark
-                ? "bg-white/10 hover:bg-white/20"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-            }
-          `}
+          className={[
+            "whitespace-nowrap rounded-full px-2 py-2 text-[11px] font-bold transition disabled:cursor-not-allowed disabled:opacity-50 md:px-4 md:text-xs",
+            isDark
+              ? "bg-white/10 hover:bg-white/20"
+              : "bg-gray-100 text-gray-700 hover:bg-gray-200",
+          ].join(" ")}
         >
           {copied ? "已複製！" : "COPY"}
         </button>
 
         <div
           aria-hidden="true"
-          className={`
-            mx-1 h-5 w-px
-            ${isDark ? "bg-white/20" : "bg-gray-200"}
-          `}
+          className={[
+            "mx-1 h-5 w-px",
+            isDark ? "bg-white/20" : "bg-gray-200",
+          ].join(" ")}
         />
 
         <button
           type="button"
           onClick={handleContact}
-          className="
-            whitespace-nowrap rounded-full
-            bg-[#06C755]
-            px-2 py-2
-            text-[11px] font-black text-white
-            transition
-            hover:scale-105
-            hover:bg-[#00E676]
-            md:px-4 md:text-xs
-          "
+          className="whitespace-nowrap rounded-full bg-[#06C755] px-2 py-2 text-[11px] font-black text-white transition hover:scale-105 hover:bg-[#00E676] md:px-4 md:text-xs"
         >
           立即諮詢
         </button>

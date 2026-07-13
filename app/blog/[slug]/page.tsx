@@ -109,13 +109,13 @@ function buildDescription(
   const supplied = removeRepeatedTitle(stripHtml(description), title)
 
   if (supplied && supplied !== "點擊閱讀詳情...") {
-    return supplied.slice(0, 160)
+    return `${supplied.slice(0, 137)}${supplied.length > 137 ? "..." : ""}`
   }
 
   const fromHtml = removeRepeatedTitle(stripHtml(htmlContent), title)
 
   if (fromHtml) {
-    return `${fromHtml.slice(0, 157)}${fromHtml.length > 157 ? "..." : ""}`
+    return `${fromHtml.slice(0, 137)}${fromHtml.length > 137 ? "..." : ""}`
   }
 
   return `${title}｜${shortSiteName}`
@@ -366,10 +366,18 @@ export default async function PostPage({
     post.title
   )
 
-  const publishedDate = formatDate(post.publishedAt)
-  const modifiedDate = formatDate(post._updatedAt)
   const publishedIso = toIsoDate(post.publishedAt)
-  const modifiedIso = toIsoDate(post._updatedAt || post.publishedAt)
+
+  const rawModifiedIso = toIsoDate(post._updatedAt || post.publishedAt)
+  const modifiedIso =
+    publishedIso &&
+    rawModifiedIso &&
+    new Date(rawModifiedIso).getTime() < new Date(publishedIso).getTime()
+      ? publishedIso
+      : rawModifiedIso
+
+  const publishedDate = formatDate(publishedIso)
+  const modifiedDate = formatDate(modifiedIso)
   const canonicalUrl = `${siteUrl}/blog/${slug}`
 
   const mainImageUrl = post.mainImage
@@ -559,6 +567,12 @@ export default async function PostPage({
             {post.title}
           </h1>
 
+          {description && (
+            <p className="mb-8 text-lg leading-8 text-muted-foreground">
+              {description}
+            </p>
+          )}
+
           <div className="mb-12 flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-border pb-8 text-sm text-muted-foreground">
             <span>
               撰文者：
@@ -731,10 +745,7 @@ export default async function PostPage({
           </section>
 
           <div className="mt-10">
-            <ShareBar
-            url={canonicalUrl}
-            title={post.title}
-/>
+            <ShareBar />
           </div>
 
           {relatedPosts.length > 0 && (
