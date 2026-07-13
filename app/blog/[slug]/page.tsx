@@ -255,7 +255,14 @@ export async function generateMetadata({
     : `${siteUrl}/images/hero.png`
 
   const publishedTime = toIsoDate(post.publishedAt)
-  const modifiedTime = toIsoDate(post._updatedAt || post.publishedAt)
+  const rawModifiedTime = toIsoDate(post._updatedAt || post.publishedAt)
+  const modifiedTime =
+    publishedTime &&
+    rawModifiedTime &&
+    new Date(rawModifiedTime).getTime() < new Date(publishedTime).getTime()
+      ? publishedTime
+      : rawModifiedTime
+
   const authorName = post.authorName || defaultAuthorName
   const tags = Array.isArray(post.tags) ? post.tags.filter(Boolean) : []
 
@@ -567,12 +574,6 @@ export default async function PostPage({
             {post.title}
           </h1>
 
-          {description && (
-            <p className="mb-8 text-lg leading-8 text-muted-foreground">
-              {description}
-            </p>
-          )}
-
           <div className="mb-12 flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-border pb-8 text-sm text-muted-foreground">
             <span>
               撰文者：
@@ -745,7 +746,10 @@ export default async function PostPage({
           </section>
 
           <div className="mt-10">
-            <ShareBar />
+            <ShareBar
+              url={canonicalUrl}
+              title={post.title}
+            />
           </div>
 
           {relatedPosts.length > 0 && (
