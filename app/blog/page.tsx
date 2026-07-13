@@ -10,8 +10,6 @@ const POSTS_PER_PAGE = 15
 // 文章量大時，首頁上方 tag 不要太多。
 // 顯示「全部」+ 熱門前 12 個 tag，對 SEO / AEO / GEO 比較乾淨。
 const TOP_TAG_LIMIT = 12
-
-// TODO: 換成這個網站實際的網域跟品牌名稱
 const siteUrl = "https://news.merrygood.com.tw"
 const siteName = "美麗好減肥減重｜體重管理資訊站"
 
