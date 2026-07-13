@@ -192,8 +192,6 @@ interface RelatedPost {
   _id: string
   title: string
   slug: string
-  description?: string
-  mainImage?: unknown
   publishedAt?: string
 }
 
@@ -201,8 +199,6 @@ interface PostResult extends PostMetadataResult {
   _id: string
   slug: string
   body?: unknown
-  authorBio?: string
-  authorImage?: unknown
 }
 
 const ptComponents = {
@@ -389,8 +385,6 @@ export default async function PostPage({
       htmlContent,
       "authorName": author->name,
       "authorSlug": author->slug.current,
-      "authorBio": author->bio,
-      "authorImage": author->image,
       "tags": coalesce(categories[]->title, tags)
     }`,
     { slug },
@@ -400,7 +394,7 @@ export default async function PostPage({
   if (!post?.title) notFound()
 
   const tags = Array.isArray(post.tags) ? post.tags.filter(Boolean) : []
-  const displayedTags = tags.slice(0, 3)
+  const displayedTags = tags.slice(0, 2)
   const authorName = post.authorName || defaultAuthorName
   const authorUrl = post.authorSlug
     ? `/authors/${post.authorSlug}`
@@ -466,12 +460,10 @@ export default async function PostPage({
     | order(
         count(coalesce(categories[]->title, tags)[@ in $tags]) desc,
         coalesce(publishedAt, _createdAt) desc
-      )[0...4]{
+      )[0...3]{
         _id,
         title,
         "slug": slug.current,
-        description,
-        mainImage,
         "publishedAt": coalesce(publishedAt, _createdAt)
       }`,
     {
@@ -574,14 +566,11 @@ export default async function PostPage({
         }}
       />
 
-      <main className="relative overflow-hidden px-6 pb-24 pt-32">
-        <div className="absolute left-1/2 top-20 -z-10 h-[360px] w-[360px] -translate-x-1/2 rounded-full bg-primary/10 blur-[110px]" />
-        <div className="absolute right-0 top-96 -z-10 h-[260px] w-[260px] rounded-full bg-accent/10 blur-[100px]" />
-
-        <div className="mx-auto max-w-4xl">
+      <main className="px-5 pb-20 pt-28 md:px-6 md:pt-32">
+        <div className="mx-auto max-w-3xl">
           <nav
             aria-label="麵包屑導覽"
-            className="mb-10 flex items-center gap-2 text-sm text-muted-foreground"
+            className="mb-7 flex items-center gap-2 overflow-hidden text-xs text-muted-foreground"
           >
             <Link href="/" className="transition-colors hover:text-primary">
               首頁
@@ -597,19 +586,19 @@ export default async function PostPage({
 
             <span
               aria-current="page"
-              className="max-w-xs truncate text-foreground"
+              className="truncate text-foreground"
             >
               {post.title}
             </span>
           </nav>
 
           {displayedTags.length > 0 && (
-            <div className="mb-6 flex flex-wrap gap-2">
+            <div className="mb-4 flex flex-wrap gap-2">
               {displayedTags.map((tag) => (
                 <Link
                   key={tag}
                   href={`/blog?tag=${encodeURIComponent(tag)}`}
-                  className="rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-medium text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
+                  className="rounded-full bg-primary/8 px-3 py-1 text-xs font-medium text-primary transition-colors hover:bg-primary/15"
                 >
                   #{tag}
                 </Link>
@@ -617,11 +606,11 @@ export default async function PostPage({
             </div>
           )}
 
-          <h1 className="mb-6 text-4xl font-bold leading-tight tracking-tight text-foreground md:text-6xl">
+          <h1 className="mb-5 text-4xl font-bold leading-tight tracking-tight text-foreground md:text-5xl">
             {post.title}
           </h1>
 
-          <div className="mb-12 flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-border pb-8 text-sm text-muted-foreground">
+          <div className="mb-10 flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-border pb-6 text-sm text-muted-foreground">
             <span>
               撰文者：
               <Link
@@ -670,14 +659,14 @@ export default async function PostPage({
           <article
             className="
               prose max-w-none
-              prose-lg md:prose-xl
+              prose-lg
               prose-p:mb-5 prose-p:leading-[1.9] prose-p:text-muted-foreground
               prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-foreground
-              prose-h2:mt-12 prose-h2:mb-6 prose-h2:border-l-4 prose-h2:border-primary prose-h2:pl-5 prose-h2:text-3xl
-              prose-h3:mt-8 prose-h3:text-2xl
+              prose-h2:mt-10 prose-h2:mb-5 prose-h2:border-l-4 prose-h2:border-primary prose-h2:pl-4 prose-h2:text-2xl
+              prose-h3:mt-7 prose-h3:text-xl
               prose-strong:font-bold prose-strong:text-foreground
               prose-a:text-primary prose-a:no-underline hover:prose-a:opacity-70
-              prose-ul:rounded-[1.5rem] prose-ul:border prose-ul:border-border prose-ul:bg-white/70 prose-ul:p-8 prose-ul:shadow-sm
+              prose-ul:rounded-2xl prose-ul:border prose-ul:border-border prose-ul:bg-white/60 prose-ul:p-6
               prose-li:text-muted-foreground prose-li:marker:text-primary
               prose-table:my-10 prose-table:block prose-table:overflow-x-auto prose-table:border-collapse
               prose-thead:bg-primary/10 prose-th:border prose-th:border-border prose-th:p-4 prose-th:text-primary
@@ -714,16 +703,16 @@ export default async function PostPage({
                   [&_p]:mb-5
                   [&_p]:leading-[1.9]
                   [&_p]:text-muted-foreground
-                  [&_h2]:mt-12
-                  [&_h2]:mb-6
+                  [&_h2]:mt-10
+                  [&_h2]:mb-5
                   [&_h2]:border-l-4
                   [&_h2]:border-primary
-                  [&_h2]:pl-5
-                  [&_h2]:text-3xl
+                  [&_h2]:pl-4
+                  [&_h2]:text-2xl
                   [&_h2]:font-bold
                   [&_h2]:text-foreground
-                  [&_h3]:mt-8
-                  [&_h3]:text-2xl
+                  [&_h3]:mt-7
+                  [&_h3]:text-xl
                   [&_h3]:font-bold
                   [&_h3]:text-foreground
                   [&_li]:mb-1
@@ -741,156 +730,59 @@ export default async function PostPage({
 
           <aside
             aria-label="醫療資訊聲明"
-            className="mt-14 rounded-2xl border border-border bg-card/70 p-5 text-sm leading-7 text-muted-foreground"
+            className="mt-12 border-t border-border pt-5 text-sm leading-7 text-muted-foreground"
           >
-            本文僅提供一般健康與體重管理資訊，不能取代醫師診斷、處方或個別化醫療建議。
-            若你有疾病、正在服藥、懷孕，或考慮使用處方減重藥物，請先由合格醫療專業人員評估。
+            本文僅供一般健康資訊參考，不能取代醫師診斷、處方或個別化醫療建議。
+            涉及疾病、用藥、懷孕或處方減重藥物時，請先諮詢合格醫療專業人員。
           </aside>
 
-          <section
-            aria-labelledby="article-author"
-            className="mt-10 rounded-3xl border border-border bg-white/70 p-6 shadow-sm"
-          >
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">
-              ARTICLE AUTHOR
-            </p>
-
-            <h2 id="article-author" className="mt-2 text-xl font-bold">
-              關於作者
-            </h2>
-
-            <div className="mt-5 flex items-start gap-4">
-              {post.authorImage && (
-                <img
-                  src={urlFor(post.authorImage)
-                    .width(160)
-                    .height(160)
-                    .fit("crop")
-                    .auto("format")
-                    .url()}
-                  alt={authorName}
-                  className="h-16 w-16 rounded-full border border-border object-cover"
-                  loading="lazy"
-                  decoding="async"
-                />
-              )}
-
-              <div>
-                <Link
-                  href={authorUrl}
-                  rel="author"
-                  className="font-bold text-foreground transition-colors hover:text-primary"
-                >
-                  {authorName}
-                </Link>
-
-                <p className="mt-2 text-sm leading-7 text-muted-foreground">
-                  {post.authorBio ||
-                    "負責整理健康減重、體重管理與減重醫療相關資訊，並依網站編輯政策持續檢查與更新內容。"}
-                </p>
-              </div>
-            </div>
-          </section>
-
-          <div className="mt-10">
-            <ShareBar
-              url={canonicalUrl}
-              title={post.title}
-            />
-          </div>
+          <ShareBar
+            url={canonicalUrl}
+            title={post.title}
+          />
 
           {relatedPosts.length > 0 && (
             <section
               aria-labelledby="related-articles"
-              className="mt-16 border-t border-border pt-12"
+              className="mt-14 border-t border-border pt-8"
             >
-              <div className="mb-8">
-                <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">
-                  RELATED ARTICLES
-                </p>
+              <h2
+                id="related-articles"
+                className="text-2xl font-bold tracking-tight"
+              >
+                延伸閱讀
+              </h2>
 
-                <h2
-                  id="related-articles"
-                  className="mt-2 text-3xl font-bold tracking-tight"
-                >
-                  延伸閱讀
-                </h2>
-              </div>
-
-              <div className="grid gap-6 sm:grid-cols-2">
-                {relatedPosts.map((relatedPost) => {
-                  const relatedImageUrl = relatedPost.mainImage
-                    ? urlFor(relatedPost.mainImage)
-                        .width(800)
-                        .height(450)
-                        .fit("crop")
-                        .auto("format")
-                        .url()
-                    : ""
-
-                  return (
-                    <article
-                      key={relatedPost._id}
-                      className="overflow-hidden rounded-2xl border border-border bg-white/70 shadow-sm transition-transform hover:-translate-y-1"
+              <div className="mt-5 divide-y divide-border rounded-2xl border border-border bg-white/60">
+                {relatedPosts.map((relatedPost) => (
+                  <article key={relatedPost._id}>
+                    <Link
+                      href={`/blog/${relatedPost.slug}`}
+                      className="flex items-center justify-between gap-5 px-5 py-4 transition-colors hover:bg-primary/5"
                     >
-                      {relatedImageUrl && (
-                        <Link
-                          href={`/blog/${relatedPost.slug}`}
-                          aria-label={`閱讀文章：${relatedPost.title}`}
-                        >
-                          <img
-                            src={relatedImageUrl}
-                            alt={relatedPost.title}
-                            className="aspect-video w-full object-cover"
-                            loading="lazy"
-                            decoding="async"
-                          />
-                        </Link>
-                      )}
+                      <h3 className="font-semibold leading-7 text-foreground">
+                        {relatedPost.title}
+                      </h3>
 
-                      <div className="p-5">
-                        <Link href={`/blog/${relatedPost.slug}`}>
-                          <h3 className="text-lg font-bold leading-snug transition-colors hover:text-primary">
-                            {relatedPost.title}
-                          </h3>
-                        </Link>
-
-                        {relatedPost.description && (
-                          <p className="mt-3 line-clamp-2 text-sm leading-6 text-muted-foreground">
-                            {removeRepeatedTitle(
-                              stripHtml(relatedPost.description),
-                              relatedPost.title
-                            )}
-                          </p>
-                        )}
-
-                        <Link
-                          href={`/blog/${relatedPost.slug}`}
-                          className="mt-5 inline-flex text-sm font-semibold text-primary"
-                        >
-                          閱讀文章 →
-                        </Link>
-                      </div>
-                    </article>
-                  )
-                })}
+                      <span
+                        aria-hidden="true"
+                        className="flex-shrink-0 text-primary"
+                      >
+                        →
+                      </span>
+                    </Link>
+                  </article>
+                ))}
               </div>
             </section>
           )}
 
-          <div className="mt-16 flex flex-col items-center justify-between gap-4 border-t border-border pt-8 sm:flex-row">
+          <div className="mt-12 border-t border-border pt-7">
             <Link
               href="/blog"
-              className="inline-flex items-center gap-2 rounded-full border border-border bg-white px-6 py-3 text-sm font-semibold text-muted-foreground shadow-sm transition-all hover:border-primary/40 hover:text-primary"
+              className="text-sm font-semibold text-primary transition-opacity hover:opacity-70"
             >
               ← 返回文章列表
-            </Link>
-
-            <Link
-              href="/about"
-              className="inline-flex items-center gap-2 rounded-full border border-border bg-white px-6 py-3 text-sm font-semibold text-muted-foreground shadow-sm transition-all hover:border-primary/40 hover:text-primary"
-            >
-              關於本站
             </Link>
           </div>
         </div>
