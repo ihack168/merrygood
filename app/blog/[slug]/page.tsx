@@ -14,7 +14,7 @@ export const dynamic = "force-dynamic"
 const siteName = "美麗好減肥減重－體重管理資訊站"
 const shortSiteName = "美麗好減肥減重"
 const siteUrl = "https://news.merrygood.com.tw"
-const defaultAuthorName = "美麗好減肥減重編輯團隊"
+const defaultAuthorName = "美麗好"
 
 const builder = createImageUrlBuilder(client)
 
