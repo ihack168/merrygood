@@ -1,10 +1,13 @@
+```tsx
 "use client"
 
 import Link from "next/link"
-import { useState, useEffect } from "react"
+import { useEffect, useState } from "react"
 import { usePathname } from "next/navigation"
 
 import { LineConsultButton } from "@/components/line-consult-button"
+
+const siteName = "美麗好減肥減重－體重管理資訊站"
 
 export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -17,35 +20,51 @@ export function Navbar() {
       setScrolled(window.scrollY > 20)
     }
 
-    window.addEventListener("scroll", handleScroll)
+    window.addEventListener("scroll", handleScroll, { passive: true })
     handleScroll()
 
-    return () => window.removeEventListener("scroll", handleScroll)
+    return () => {
+      window.removeEventListener("scroll", handleScroll)
+    }
   }, [])
 
   useEffect(() => {
     setMobileOpen(false)
     document.body.style.overflow = "unset"
+
+    return () => {
+      document.body.style.overflow = "unset"
+    }
   }, [pathname])
+
+  const closeMobileMenu = () => {
+    setMobileOpen(false)
+    document.body.style.overflow = "unset"
+  }
 
   const toggleMenu = () => {
     const nextState = !mobileOpen
 
     setMobileOpen(nextState)
-
     document.body.style.overflow = nextState ? "hidden" : "unset"
+  }
+
+  const isActive = (href: string) => {
+    if (href === "/") return pathname === "/"
+    return pathname.startsWith(href)
   }
 
   return (
     <>
-      {/* Navbar */}
-      <nav className="pointer-events-none fixed left-0 right-0 top-0 z-[80] flex justify-center">
+      <nav
+        aria-label="主要導覽"
+        className="pointer-events-none fixed left-0 right-0 top-0 z-[80] flex justify-center"
+      >
         <div
           className={`
             pointer-events-auto
             flex items-center justify-between
             transition-all duration-500
-
             ${
               scrolled
                 ? "mt-4 h-16 w-[94%] max-w-6xl rounded-full border border-white/40 bg-white/70 px-5 shadow-[0_18px_60px_rgba(129,216,208,0.18)] backdrop-blur-2xl md:w-[88%] md:px-7"
@@ -53,17 +72,19 @@ export function Navbar() {
             }
           `}
         >
-          {/* Logo */}
           <Link
             href="/"
-            className="relative z-[90] flex items-center gap-3"
+            aria-label={`${siteName}首頁`}
+            className="relative z-[90] flex min-w-0 items-center gap-3"
           >
-            <div className="relative">
+            <div className="relative flex-shrink-0">
               <div className="absolute inset-0 rounded-full bg-primary/25 blur-md" />
 
               <img
                 src="/images/logo.png"
-                alt="美麗好減肥減重-體重管理資訊站 減肥診所 Logo"
+                alt={`${siteName} Logo`}
+                width={44}
+                height={44}
                 className="
                   relative
                   h-11 w-11
@@ -76,45 +97,76 @@ export function Navbar() {
               />
             </div>
 
-            <div className="leading-tight">
-              <span className="block text-xl font-black tracking-tight text-foreground md:text-2xl">
-                美麗好減肥減重-體重管理資訊站
+            <div className="min-w-0 leading-tight">
+              <span className="block truncate text-base font-black tracking-tight text-foreground sm:text-xl md:text-2xl">
+                {siteName}
               </span>
 
               <span className="hidden text-[11px] tracking-[0.22em] text-muted-foreground md:block">
-                WEIGHT LOSS CLINIC
+                WEIGHT MANAGEMENT INFO
               </span>
             </div>
           </Link>
 
-          {/* Desktop menu */}
-          <div className="hidden items-center gap-10 md:flex">
+          <div className="hidden items-center gap-8 md:flex">
             <Link
               href="/blog"
-              className="
+              aria-current={isActive("/blog") ? "page" : undefined}
+              className={`
                 group relative
-                text-[18px] font-bold tracking-wide
-                text-muted-foreground
+                text-base font-bold tracking-wide
                 transition-all duration-300
-                hover:text-foreground
-              "
+                ${
+                  isActive("/blog")
+                    ? "text-foreground"
+                    : "text-muted-foreground hover:text-foreground"
+                }
+              `}
             >
               文章列表
 
               <span
-                className="
+                className={`
                   absolute -bottom-2 left-1/2
-                  h-[3px] w-0
+                  h-[3px]
                   -translate-x-1/2
                   rounded-full
                   bg-primary
                   transition-all duration-300
-                  group-hover:w-6
-                "
+                  ${isActive("/blog") ? "w-6" : "w-0 group-hover:w-6"}
+                `}
               />
             </Link>
 
-            {/* CTA */}
+            <Link
+              href="/about"
+              aria-current={isActive("/about") ? "page" : undefined}
+              className={`
+                group relative
+                text-base font-bold tracking-wide
+                transition-all duration-300
+                ${
+                  isActive("/about")
+                    ? "text-foreground"
+                    : "text-muted-foreground hover:text-foreground"
+                }
+              `}
+            >
+              關於本站
+
+              <span
+                className={`
+                  absolute -bottom-2 left-1/2
+                  h-[3px]
+                  -translate-x-1/2
+                  rounded-full
+                  bg-primary
+                  transition-all duration-300
+                  ${isActive("/about") ? "w-6" : "w-0 group-hover:w-6"}
+                `}
+              />
+            </Link>
+
             <LineConsultButton
               className="
                 inline-flex items-center justify-center
@@ -129,17 +181,20 @@ export function Navbar() {
                 hover:shadow-[0_16px_40px_rgba(129,216,208,0.42)]
               "
             >
-              LINE 免費諮詢
+              美麗好診所諮詢
             </LineConsultButton>
           </div>
 
-          {/* Mobile button */}
           <button
+            type="button"
             onClick={toggleMenu}
-            aria-label="開啟選單"
+            aria-label={mobileOpen ? "關閉選單" : "開啟選單"}
+            aria-expanded={mobileOpen}
+            aria-controls="mobile-navigation"
             className="
               relative z-[90]
               flex h-11 w-11
+              flex-shrink-0
               items-center justify-center
               rounded-full
               border border-white/50
@@ -181,67 +236,107 @@ export function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile Menu */}
       {mobileOpen && (
         <div
+          id="mobile-navigation"
           className="
             fixed inset-0 z-[70]
             flex flex-col
-            bg-white/85
+            overflow-y-auto
+            bg-white/90
             px-7 pt-28
             backdrop-blur-2xl
             animate-in fade-in duration-300
             md:hidden
           "
         >
-          <div className="absolute left-1/2 top-20 h-[320px] w-[320px] -translate-x-1/2 rounded-full bg-primary/20 blur-[100px]" />
+          <div className="pointer-events-none absolute left-1/2 top-20 h-[320px] w-[320px] -translate-x-1/2 rounded-full bg-primary/20 blur-[100px]" />
 
-          <div className="relative mb-10">
+          <div className="relative mb-8">
             <p className="text-[11px] tracking-[0.28em] text-muted-foreground">
-              WEIGHT LOSS CLINIC
+              WEIGHT MANAGEMENT INFO
             </p>
 
-            <p className="mt-3 text-3xl font-black text-foreground">
-              美麗好減肥減重-體重管理資訊站
+            <p className="mt-3 text-3xl font-black leading-tight text-foreground">
+              {siteName}
             </p>
 
             <p className="mt-4 text-sm leading-7 text-muted-foreground">
-              專業減肥診所｜減重管理｜
+              健康減重、體重管理、飲食控制與減重醫療資訊整理。
               <br />
-              體重控制諮詢
+              本站由美麗好診所建立並持有。
             </p>
           </div>
 
-          {/* Links */}
           <div className="relative flex flex-col">
             <Link
-              href="/blog"
-              onClick={() => {
-                setMobileOpen(false)
-                document.body.style.overflow = "unset"
-              }}
-              className="
+              href="/"
+              onClick={closeMobileMenu}
+              aria-current={pathname === "/" ? "page" : undefined}
+              className={`
                 group
                 flex items-center justify-between
                 border-b border-border/60
-                py-6
+                py-5
                 text-xl font-semibold
-                text-foreground
-              "
+                ${
+                  pathname === "/"
+                    ? "text-primary"
+                    : "text-foreground"
+                }
+              `}
+            >
+              首頁
+              <span className="text-primary">→</span>
+            </Link>
+
+            <Link
+              href="/blog"
+              onClick={closeMobileMenu}
+              aria-current={isActive("/blog") ? "page" : undefined}
+              className={`
+                group
+                flex items-center justify-between
+                border-b border-border/60
+                py-5
+                text-xl font-semibold
+                ${
+                  isActive("/blog")
+                    ? "text-primary"
+                    : "text-foreground"
+                }
+              `}
             >
               文章列表
+              <span className="text-primary">→</span>
+            </Link>
 
-              <span className="text-primary">
-                →
-              </span>
+            <Link
+              href="/about"
+              onClick={closeMobileMenu}
+              aria-current={isActive("/about") ? "page" : undefined}
+              className={`
+                group
+                flex items-center justify-between
+                border-b border-border/60
+                py-5
+                text-xl font-semibold
+                ${
+                  isActive("/about")
+                    ? "text-primary"
+                    : "text-foreground"
+                }
+              `}
+            >
+              關於本站
+              <span className="text-primary">→</span>
             </Link>
           </div>
 
-          {/* CTA */}
           <div className="relative mt-10">
             <LineConsultButton
               className="
-                flex items-center justify-center
+                flex w-full items-center justify-center
                 rounded-2xl
                 bg-[#06C755]
                 px-6 py-4
@@ -250,17 +345,17 @@ export function Navbar() {
                 shadow-[0_20px_50px_rgba(129,216,208,0.35)]
               "
             >
-              加入 LINE 免費諮詢
+              前往美麗好診所諮詢
             </LineConsultButton>
           </div>
 
-          {/* Footer */}
           <div className="relative mt-auto pb-8 pt-10 text-sm leading-7 text-muted-foreground">
-            <p>美麗好減肥減重-體重管理資訊站｜減肥診所｜減重診所</p>
-            <p>猛健樂｜週纖達｜瑞倍適 減重諮詢</p>
+            <p>{siteName}</p>
+            <p>健康減重｜體重管理｜減重醫療資訊</p>
           </div>
         </div>
       )}
     </>
   )
 }
+```
