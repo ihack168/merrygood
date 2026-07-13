@@ -59,12 +59,12 @@ export const metadata: Metadata = {
 
   authors: [
     {
-      name: "美麗好減肥減重編輯團隊",
+      name: "美麗好",
       url: `${siteUrl}/about`,
     },
   ],
 
-  creator: "美麗好減肥減重編輯團隊",
+  creator: "美麗好",
   publisher: siteName,
 
   category: "健康與體重管理",
