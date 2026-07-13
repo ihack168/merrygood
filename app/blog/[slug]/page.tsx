@@ -8,7 +8,8 @@ import Link from "next/link"
 import type { Metadata } from "next"
 import { sanitizePostHtml } from "@/lib/content-cleanup"
 
-export const revalidate = 3600
+export const revalidate = 0
+export const dynamic = "force-dynamic"
 
 const siteName = "美麗好減肥減重－體重管理資訊站"
 const shortSiteName = "美麗好減肥減重"
@@ -185,7 +186,7 @@ export async function generateMetadata({
       "tags": coalesce(categories[]->title, tags)
     }`,
     { slug },
-    { next: { revalidate: 3600 } }
+    { cache: "no-store" }
   )
 
   if (!post?.title) {
@@ -309,7 +310,7 @@ export default async function PostPage({
       "tags": coalesce(categories[]->title, tags)
     }`,
     { slug },
-    { next: { revalidate: 3600 } }
+    { cache: "no-store" }
   )
 
   if (!post?.title) notFound()
@@ -377,7 +378,7 @@ export default async function PostPage({
       postId: post._id,
       tags,
     },
-    { next: { revalidate: 3600 } }
+    { cache: "no-store" }
   )
 
   const blogPostingJsonLd = {
@@ -797,20 +798,4 @@ export default async function PostPage({
       <Footer />
     </div>
   )
-}
-
-export async function generateStaticParams() {
-  const posts = await client.fetch<Array<{ slug?: string }>>(
-    `*[_type == "post" && defined(slug.current)]{
-      "slug": slug.current
-    }`,
-    {},
-    { next: { revalidate: 3600 } }
-  )
-
-  return posts
-    .filter((post) => Boolean(post.slug))
-    .map((post) => ({
-      slug: post.slug as string,
-    }))
 }
