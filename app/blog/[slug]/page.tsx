@@ -731,7 +731,10 @@ export default async function PostPage({
           </section>
 
           <div className="mt-10">
-            <ShareBar />
+            <ShareBar
+            url={canonicalUrl}
+            title={post.title}
+/>
           </div>
 
           {relatedPosts.length > 0 && (
