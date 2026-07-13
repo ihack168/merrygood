@@ -35,6 +35,39 @@ function optimizeSanityImages(html?: string) {
   )
 }
 
+function decodeHtmlEntities(value: string) {
+  return value
+    .replace(/&amp;/gi, "&")
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;/gi, "'")
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">")
+}
+
+function extractFirstImageFromHtml(htmlContent?: string) {
+  if (!htmlContent) return ""
+
+  const match = htmlContent.match(
+    /<img\b[^>]*\bsrc\s*=\s*["']([^"']+)["'][^>]*>/i
+  )
+
+  if (!match?.[1]) return ""
+
+  return decodeHtmlEntities(match[1].trim())
+}
+
+function buildSocialImageUrl(imageUrl: string) {
+  if (!imageUrl) return ""
+
+  if (!imageUrl.includes("cdn.sanity.io/images/")) {
+    return imageUrl
+  }
+
+  const separator = imageUrl.includes("?") ? "&" : "?"
+
+  return `${imageUrl}${separator}w=1200&h=630&fit=crop&auto=format`
+}
+
 function stripHtml(value?: string) {
   if (!value) return ""
 
@@ -245,14 +278,18 @@ export async function generateMetadata({
 
   const canonicalUrl = `${siteUrl}/blog/${slug}`
 
-  const ogImage = post.mainImage
-    ? urlFor(post.mainImage)
-        .width(1200)
-        .height(630)
-        .fit("crop")
-        .auto("format")
-        .url()
-    : `${siteUrl}/images/hero.png`
+  const firstHtmlImage = extractFirstImageFromHtml(post.htmlContent)
+
+  const ogImage = firstHtmlImage
+    ? buildSocialImageUrl(firstHtmlImage)
+    : post.mainImage
+      ? urlFor(post.mainImage)
+          .width(1200)
+          .height(630)
+          .fit("crop")
+          .auto("format")
+          .url()
+      : ""
 
   const publishedTime = toIsoDate(post.publishedAt)
   const rawModifiedTime = toIsoDate(post._updatedAt || post.publishedAt)
@@ -311,21 +348,23 @@ export async function generateMetadata({
       authors: [authorName],
       section: tags[0] || "體重管理",
       tags,
-      images: [
-        {
-          url: ogImage,
-          width: 1200,
-          height: 630,
-          alt: post.title,
-        },
-      ],
+      images: ogImage
+        ? [
+            {
+              url: ogImage,
+              width: 1200,
+              height: 630,
+              alt: post.title,
+            },
+          ]
+        : [],
     },
 
     twitter: {
       card: "summary_large_image",
       title: post.title,
       description,
-      images: [ogImage],
+      images: ogImage ? [ogImage] : [],
     },
   }
 }
@@ -395,14 +434,18 @@ export default async function PostPage({
         .url()
     : undefined
 
-  const structuredImageUrl = post.mainImage
-    ? urlFor(post.mainImage)
-        .width(1200)
-        .height(630)
-        .fit("crop")
-        .auto("format")
-        .url()
-    : `${siteUrl}/images/hero.png`
+  const firstHtmlImage = extractFirstImageFromHtml(post.htmlContent)
+
+  const structuredImageUrl = firstHtmlImage
+    ? buildSocialImageUrl(firstHtmlImage)
+    : post.mainImage
+      ? urlFor(post.mainImage)
+          .width(1200)
+          .height(630)
+          .fit("crop")
+          .auto("format")
+          .url()
+      : ""
 
   const optimizedHtml = optimizeSanityImages(post.htmlContent)
   const sanitizedHtml = optimizedHtml
@@ -471,12 +514,16 @@ export default async function PostPage({
     },
     datePublished: publishedIso,
     dateModified: modifiedIso,
-    image: {
-      "@type": "ImageObject",
-      url: structuredImageUrl,
-      width: 1200,
-      height: 630,
-    },
+    ...(structuredImageUrl
+      ? {
+          image: {
+            "@type": "ImageObject",
+            url: structuredImageUrl,
+            width: 1200,
+            height: 630,
+          },
+        }
+      : {}),
     articleSection: tags[0] || "體重管理",
     keywords: tags,
     about: tags.map((tag) => ({
