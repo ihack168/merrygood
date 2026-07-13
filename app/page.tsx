@@ -1,14 +1,12 @@
 import type { Metadata } from "next";
 
+import { Navbar } from "@/components/navbar";
 import { HeroSection } from "@/components/hero-section";
 import { LatestPostsSection } from "@/components/latest-posts-section";
 import { ContactSection } from "@/components/contact-section";
 import { Footer } from "@/components/footer";
 
-// ⚠️ 修正：這裡原本是套版時沒替換掉的佔位字串 "https://你的實際網址.tw"，
-// 導致首頁的 og:url / json-ld 全部指向一個不存在的假網址。
-// layout.tsx 已在全域掛過 <Navbar />，這裡不再重複渲染。
-const SITE_URL = "https://news.merrygood.com.tw";
+const SITE_URL = "https://你的實際網址.tw";
 
 const SITE_NAME = "美麗好減肥減重｜體重管理資訊站";
 
@@ -173,6 +171,8 @@ export default function Home() {
           __html: JSON.stringify(faqJsonLd).replace(/</g, "\\u003c"),
         }}
       />
+
+      <Navbar />
 
       <main>
         <section className="pb-4 pt-24 md:pb-6 md:pt-32">
