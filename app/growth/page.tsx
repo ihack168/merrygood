@@ -1195,13 +1195,13 @@ export default function GrowthChartPage() {
             <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
               兒童生長曲線追蹤系統
             </h1>
-<GrowthLogoutButton />
             <p className="mt-2 text-sm text-slate-500">
               記錄身高、體重及 BMI，並追蹤歷次生長變化。
             </p>
           </div>
 
           <div className="flex flex-wrap gap-3">
+            <GrowthLogoutButton />
             <button
               type="button"
               onClick={() =>
