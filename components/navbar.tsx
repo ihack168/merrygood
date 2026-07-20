@@ -9,18 +9,6 @@ import { LineConsultButton } from "@/components/line-consult-button"
 const siteName = "美麗好減肥減重－體重管理資訊站"
 
 export function Navbar() {
-  const pathname = usePathname()
-
-  if (pathname === "/growth" || pathname.startsWith("/growth/")) {
-    return null
-  }
-
-  return (
-    // 你原本 Navbar 的全部內容
-  )
-}
-
-export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
 
@@ -63,6 +51,10 @@ export function Navbar() {
   const isActive = (href: string) => {
     if (href === "/") return pathname === "/"
     return pathname.startsWith(href)
+  }
+
+  if (pathname === "/growth" || pathname.startsWith("/growth/")) {
+    return null
   }
 
   return (
