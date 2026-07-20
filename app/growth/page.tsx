@@ -567,6 +567,9 @@ export default function GrowthChartPage() {
   const [showNewPatientModal, setShowNewPatientModal] =
     useState(false)
 
+  const [editingPatientId, setEditingPatientId] =
+    useState<string | null>(null)
+
   const [
     showMeasurementModal,
     setShowMeasurementModal,
@@ -742,7 +745,40 @@ export default function GrowthChartPage() {
         previousMeasurement.weight
       : null
 
-  async function handleCreatePatient(event: FormEvent) {
+  function openCreatePatientModal() {
+    setEditingPatientId(null)
+    setPatientForm(emptyPatientForm)
+    setShowNewPatientModal(true)
+  }
+
+  function openEditPatientModal(patient: Patient) {
+    setEditingPatientId(patient.id)
+    setPatientForm({
+      chartNumber: patient.chartNumber,
+      name: patient.name,
+      biologicalSex: patient.biologicalSex,
+      birthday: patient.birthday,
+      guardianName: patient.guardianName,
+      guardianPhone: patient.guardianPhone,
+      firstVisitDate: patient.firstVisitDate,
+      premature: patient.premature,
+      gestationalWeeks:
+        patient.gestationalWeeks?.toString() ?? "",
+      birthHeight: patient.birthHeight?.toString() ?? "",
+      birthWeight: patient.birthWeight?.toString() ?? "",
+      note: patient.note,
+    })
+    setShowNewPatientModal(true)
+  }
+
+  function closePatientModal() {
+    if (saving) return
+    setShowNewPatientModal(false)
+    setEditingPatientId(null)
+    setPatientForm(emptyPatientForm)
+  }
+
+  async function handleSavePatient(event: FormEvent) {
     event.preventDefault()
 
     if (
@@ -758,8 +794,9 @@ export default function GrowthChartPage() {
 
     const duplicatedChartNumber = patients.some(
       (patient) =>
+        patient.id !== editingPatientId &&
         patient.chartNumber.toLowerCase() ===
-        patientForm.chartNumber.trim().toLowerCase(),
+          patientForm.chartNumber.trim().toLowerCase(),
     )
 
     if (duplicatedChartNumber) {
@@ -770,45 +807,57 @@ export default function GrowthChartPage() {
     setSaving(true)
     const supabase = createClient()
 
-    const { data, error } = await supabase
-      .from("patients")
-      .insert({
-        chart_number: patientForm.chartNumber.trim(),
-        name: patientForm.name.trim(),
-        biological_sex: patientForm.biologicalSex,
-        birthday: patientForm.birthday,
-        guardian_name: patientForm.guardianName.trim() || null,
-        guardian_phone: patientForm.guardianPhone.trim() || null,
-        first_visit_date: patientForm.firstVisitDate || today,
-        premature: patientForm.premature,
-        gestational_weeks:
-          patientForm.gestationalWeeks !== ""
-            ? Number(patientForm.gestationalWeeks)
-            : null,
-        birth_height:
-          patientForm.birthHeight !== ""
-            ? Number(patientForm.birthHeight)
-            : null,
-        birth_weight:
-          patientForm.birthWeight !== ""
-            ? Number(patientForm.birthWeight)
-            : null,
-        note: patientForm.note.trim() || null,
-      })
-      .select("id")
-      .single()
+    const patientPayload = {
+      chart_number: patientForm.chartNumber.trim(),
+      name: patientForm.name.trim(),
+      biological_sex: patientForm.biologicalSex,
+      birthday: patientForm.birthday,
+      guardian_name: patientForm.guardianName.trim() || null,
+      guardian_phone: patientForm.guardianPhone.trim() || null,
+      first_visit_date: patientForm.firstVisitDate || today,
+      premature: patientForm.premature,
+      gestational_weeks:
+        patientForm.premature && patientForm.gestationalWeeks !== ""
+          ? Number(patientForm.gestationalWeeks)
+          : null,
+      birth_height:
+        patientForm.birthHeight !== ""
+          ? Number(patientForm.birthHeight)
+          : null,
+      birth_weight:
+        patientForm.birthWeight !== ""
+          ? Number(patientForm.birthWeight)
+          : null,
+      note: patientForm.note.trim() || null,
+    }
 
-    if (error) {
-      console.error("建立病例失敗：", error)
-      window.alert(`建立病例失敗：${error.message}`)
+    const result = editingPatientId
+      ? await supabase
+          .from("patients")
+          .update(patientPayload)
+          .eq("id", editingPatientId)
+          .select("id")
+          .single()
+      : await supabase
+          .from("patients")
+          .insert(patientPayload)
+          .select("id")
+          .single()
+
+    if (result.error) {
+      const action = editingPatientId ? "更新" : "建立"
+      console.error(`${action}病例失敗：`, result.error)
+      window.alert(`${action}病例失敗：${result.error.message}`)
       setSaving(false)
       return
     }
 
+    const savedPatientId = result.data.id
     setSearchKeyword("")
     setPatientForm(emptyPatientForm)
+    setEditingPatientId(null)
     setShowNewPatientModal(false)
-    await loadPatients(data.id)
+    await loadPatients(savedPatientId)
     setSaving(false)
   }
 
@@ -939,7 +988,7 @@ export default function GrowthChartPage() {
             <button
               type="button"
               onClick={() =>
-                setShowNewPatientModal(true)
+                openCreatePatientModal()
               }
               className="rounded-xl border border-blue-600 bg-white px-5 py-3 text-sm font-bold text-blue-700 transition hover:bg-blue-50"
             >
@@ -1073,7 +1122,7 @@ export default function GrowthChartPage() {
                 <button
                   type="button"
                   onClick={() =>
-                    setShowNewPatientModal(true)
+                    openCreatePatientModal()
                   }
                   className="mt-3 text-sm font-bold text-blue-600 hover:text-blue-700"
                 >
@@ -1123,6 +1172,9 @@ export default function GrowthChartPage() {
 
                     <button
                       type="button"
+                      onClick={() =>
+                        openEditPatientModal(selectedPatient)
+                      }
                       className="w-fit rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 transition hover:bg-slate-50"
                     >
                       編輯基本資料
@@ -1574,7 +1626,7 @@ export default function GrowthChartPage() {
               <button
                 type="button"
                 onClick={() =>
-                  setShowNewPatientModal(true)
+                  openCreatePatientModal()
                 }
                 className="mt-5 rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white hover:bg-blue-700"
               >
@@ -1591,19 +1643,19 @@ export default function GrowthChartPage() {
             <div className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-200 bg-white px-5 py-4 sm:px-6">
               <div>
                 <h2 className="text-xl font-bold text-slate-900">
-                  新增病例
+                  {editingPatientId ? "編輯病例" : "新增病例"}
                 </h2>
 
                 <p className="mt-1 text-sm text-slate-500">
-                  建立病童基本資料與出生資訊。
+                  {editingPatientId
+                    ? "修改病童基本資料與出生資訊。"
+                    : "建立病童基本資料與出生資訊。"}
                 </p>
               </div>
 
               <button
                 type="button"
-                onClick={() =>
-                  setShowNewPatientModal(false)
-                }
+                onClick={closePatientModal}
                 className="flex h-10 w-10 items-center justify-center rounded-full text-xl text-slate-500 hover:bg-slate-100"
               >
                 ×
@@ -1611,7 +1663,7 @@ export default function GrowthChartPage() {
             </div>
 
             <form
-              onSubmit={handleCreatePatient}
+              onSubmit={handleSavePatient}
               className="p-5 sm:p-6"
             >
               <div className="grid gap-5 sm:grid-cols-2">
@@ -1908,9 +1960,7 @@ export default function GrowthChartPage() {
               <div className="mt-7 flex justify-end gap-3 border-t border-slate-200 pt-5">
                 <button
                   type="button"
-                  onClick={() =>
-                    setShowNewPatientModal(false)
-                  }
+                  onClick={closePatientModal}
                   className="rounded-xl border border-slate-300 px-5 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50"
                 >
                   取消
@@ -1921,7 +1971,13 @@ export default function GrowthChartPage() {
                   disabled={saving}
                   className="rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-300"
                 >
-                  {saving ? "建立中…" : "建立病例"}
+                  {saving
+                    ? editingPatientId
+                      ? "儲存中…"
+                      : "建立中…"
+                    : editingPatientId
+                      ? "儲存修改"
+                      : "建立病例"}
                 </button>
               </div>
             </form>
