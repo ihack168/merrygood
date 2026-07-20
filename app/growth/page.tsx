@@ -8,6 +8,11 @@ import {
 } from "react"
 import { GrowthLogoutButton } from "@/components/growth-logout-button"
 import { createClient } from "@/lib/supabase/client"
+import {
+  getHpaGrowthCurves,
+  getGrowthCurveValueRange,
+  type GrowthPercentile,
+} from "@/lib/growth/hpa-growth-data"
 
 type BiologicalSex = "male" | "female"
 
