@@ -10,7 +10,7 @@ import { GrowthLogoutButton } from "@/components/growth-logout-button"
 import { createClient } from "@/lib/supabase/client"
 import {
   getHpaGrowthCurves,
-  getGrowthCurveValueRange,
+  getHpaBmiStandards,
   type GrowthPercentile,
 } from "@/lib/growth/hpa-growth-data"
 
@@ -257,11 +257,14 @@ function MeasurementChart({
   unit: string
 }) {
   const chartWidth = 760
-  const chartHeight = 320
+  const chartHeight = 420
   const paddingLeft = 64
-  const paddingRight = 28
+  const paddingRight = 52
   const paddingTop = 32
   const paddingBottom = 52
+
+  const minAge = 0
+  const maxAge = 84
 
   const points = useMemo(() => {
     return patient.measurements
@@ -291,45 +294,166 @@ function MeasurementChart({
           value,
         }
       })
+      .filter(
+        (point) =>
+          point.ageMonths >= minAge &&
+          point.ageMonths <= maxAge &&
+          Number.isFinite(point.value),
+      )
       .sort((a, b) => a.ageMonths - b.ageMonths)
   }, [patient, metric])
 
-  if (points.length === 0) {
+  const officialCurves = useMemo(() => {
+    if (metric === "bmi") {
+      const bmiStandards = getHpaBmiStandards(
+        patient.biologicalSex,
+      ).filter(
+        (point) =>
+          point.month >= minAge &&
+          point.month <= maxAge,
+      )
+
+      return [
+        {
+          key: "underweight",
+          label: "過輕界線",
+          points: bmiStandards.map((point) => ({
+            month: point.month,
+            value: point.underweightBelow,
+          })),
+          stroke: "#0ea5e9",
+          strokeWidth: 1.8,
+          dash: "5 4",
+        },
+        {
+          key: "overweight",
+          label: "過重界線",
+          points: bmiStandards.map((point) => ({
+            month: point.month,
+            value: point.overweightAtOrAbove,
+          })),
+          stroke: "#f59e0b",
+          strokeWidth: 2,
+        },
+        {
+          key: "obese",
+          label: "肥胖界線",
+          points: bmiStandards.map((point) => ({
+            month: point.month,
+            value: point.obeseAtOrAbove,
+          })),
+          stroke: "#dc2626",
+          strokeWidth: 2,
+        },
+      ]
+    }
+
+    const curves = getHpaGrowthCurves(
+      patient.biologicalSex,
+      metric,
+    )
+
+    const percentileStyles: Record<
+      GrowthPercentile,
+      {
+        label: string
+        stroke: string
+        strokeWidth: number
+        dash?: string
+      }
+    > = {
+      p3: {
+        label: "P3",
+        stroke: "#94a3b8",
+        strokeWidth: 1.5,
+        dash: "5 4",
+      },
+      p15: {
+        label: "P15",
+        stroke: "#64748b",
+        strokeWidth: 1.5,
+      },
+      p50: {
+        label: "P50",
+        stroke: "#16a34a",
+        strokeWidth: 2.5,
+      },
+      p85: {
+        label: "P85",
+        stroke: "#64748b",
+        strokeWidth: 1.5,
+      },
+      p97: {
+        label: "P97",
+        stroke: "#94a3b8",
+        strokeWidth: 1.5,
+        dash: "5 4",
+      },
+    }
+
+    const percentiles: GrowthPercentile[] = [
+      "p3",
+      "p15",
+      "p50",
+      "p85",
+      "p97",
+    ]
+
+    return percentiles.map((percentile) => ({
+      key: percentile,
+      label: percentileStyles[percentile].label,
+      points: curves[percentile].filter(
+        (point) =>
+          point.month >= minAge &&
+          point.month <= maxAge,
+      ),
+      stroke: percentileStyles[percentile].stroke,
+      strokeWidth:
+        percentileStyles[percentile].strokeWidth,
+      dash: percentileStyles[percentile].dash,
+    }))
+  }, [patient.biologicalSex, metric])
+
+  const officialValues = officialCurves.flatMap(
+    (curve) => curve.points.map((point) => point.value),
+  )
+
+  const patientValues = points.map(
+    (point) => point.value,
+  )
+
+  const allValues = [
+    ...officialValues,
+    ...patientValues,
+  ].filter(Number.isFinite)
+
+  if (allValues.length === 0) {
     return (
       <EmptyChart
         title={title}
-        description="新增至少一筆量測資料後，系統會將測量點顯示於圖表上。"
+        description="目前沒有可顯示的國健署曲線資料。"
       />
     )
   }
 
-  const ageValues = points.map((point) => point.ageMonths)
-  const metricValues = points.map((point) => point.value)
+  const rawMinValue = Math.min(...allValues)
+  const rawMaxValue = Math.max(...allValues)
 
-  const minAge = Math.max(0, Math.min(...ageValues) - 6)
-  const maxAge = Math.max(
-    minAge + 12,
-    Math.max(...ageValues) + 6,
-  )
-
-  const rawMinValue = Math.min(...metricValues)
-  const rawMaxValue = Math.max(...metricValues)
-
-  const valuePadding = Math.max(
-    (rawMaxValue - rawMinValue) * 0.35,
+  const valuePadding =
     metric === "height"
       ? 5
       : metric === "weight"
         ? 2
-        : 1.5,
-  )
+        : 1
 
   const minValue = Math.max(
     0,
-    rawMinValue - valuePadding,
+    Math.floor(rawMinValue - valuePadding),
   )
 
-  const maxValue = rawMaxValue + valuePadding
+  const maxValue = Math.ceil(
+    rawMaxValue + valuePadding,
+  )
 
   const plotWidth =
     chartWidth - paddingLeft - paddingRight
@@ -350,39 +474,47 @@ function MeasurementChart({
       paddingTop +
       (1 -
         (value - minValue) /
-          (maxValue - minValue)) *
+          Math.max(maxValue - minValue, 1)) *
         plotHeight
     )
   }
 
-  const polylinePoints = points
+  const patientPolylinePoints = points
     .map(
       (point) =>
-        `${mapX(point.ageMonths)},${mapY(point.value)}`,
+        `${mapX(point.ageMonths)},${mapY(
+          point.value,
+        )}`,
     )
     .join(" ")
 
-  const yTicks = Array.from({ length: 6 }, (_, index) => {
-    const ratio = index / 5
-    const value =
-      maxValue - ratio * (maxValue - minValue)
+  const yTicks = Array.from(
+    { length: 6 },
+    (_, index) => {
+      const ratio = index / 5
 
-    return {
-      value,
-      y: paddingTop + ratio * plotHeight,
-    }
-  })
+      const value =
+        maxValue -
+        ratio * (maxValue - minValue)
 
-  const xTicks = Array.from({ length: 7 }, (_, index) => {
-    const ratio = index / 6
-    const month =
-      minAge + ratio * (maxAge - minAge)
+      return {
+        value,
+        y: paddingTop + ratio * plotHeight,
+      }
+    },
+  )
 
-    return {
-      month,
-      x: paddingLeft + ratio * plotWidth,
-    }
-  })
+  const xTicks = Array.from(
+    { length: 8 },
+    (_, index) => {
+      const month = index * 12
+
+      return {
+        month,
+        x: mapX(month),
+      }
+    },
+  )
 
   return (
     <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
@@ -393,13 +525,40 @@ function MeasurementChart({
           </h3>
 
           <p className="mt-1 text-xs text-slate-500">
-            目前先顯示病童歷次量測軌跡，之後再疊加國健署正式百分位曲線。
+            {metric === "bmi"
+              ? "顯示國民健康署 BMI 過輕、過重及肥胖判定界線，並疊加病童量測紀錄。"
+              : "顯示國民健康署 P3、P15、P50、P85、P97 生長曲線，並疊加病童量測紀錄。"}
           </p>
         </div>
 
-        <span className="w-fit rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">
-          官方曲線尚未匯入
+        <span className="w-fit rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-700">
+          國健署 0～7 歲標準
         </span>
+      </div>
+
+      <div className="flex flex-wrap gap-4 border-b border-slate-100 px-5 py-3">
+        {officialCurves.map((curve) => (
+          <div
+            key={`legend-${curve.key}`}
+            className="flex items-center gap-2 text-xs font-medium text-slate-600"
+          >
+            <span
+              className="block w-7"
+              style={{
+                borderTop: `${curve.strokeWidth}px ${
+                  curve.dash ? "dashed" : "solid"
+                } ${curve.stroke}`,
+              }}
+            />
+
+            {curve.label}
+          </div>
+        ))}
+
+        <div className="flex items-center gap-2 text-xs font-medium text-slate-600">
+          <span className="block h-[3px] w-7 bg-blue-600" />
+          病童量測
+        </div>
       </div>
 
       <div className="overflow-x-auto p-4">
@@ -443,8 +602,8 @@ function MeasurementChart({
             </g>
           ))}
 
-          {xTicks.map((tick, index) => (
-            <g key={`x-${index}`}>
+          {xTicks.map((tick) => (
+            <g key={`x-${tick.month}`}>
               <line
                 x1={tick.x}
                 y1={paddingTop}
@@ -461,7 +620,7 @@ function MeasurementChart({
                 fontSize="11"
                 fill="#64748b"
               >
-                {(tick.month / 12).toFixed(1)} 歲
+                {tick.month / 12} 歲
               </text>
             </g>
           ))}
@@ -479,17 +638,62 @@ function MeasurementChart({
             {unit}
           </text>
 
-          <polyline
-            points={polylinePoints}
-            fill="none"
-            stroke="#2563eb"
-            strokeWidth="3"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
+          {officialCurves.map((curve) => {
+            const curvePolylinePoints =
+              curve.points
+                .map(
+                  (point) =>
+                    `${mapX(point.month)},${mapY(
+                      point.value,
+                    )}`,
+                )
+                .join(" ")
+
+            const lastPoint =
+              curve.points[curve.points.length - 1]
+
+            return (
+              <g key={curve.key}>
+                <polyline
+                  points={curvePolylinePoints}
+                  fill="none"
+                  stroke={curve.stroke}
+                  strokeWidth={curve.strokeWidth}
+                  strokeDasharray={curve.dash}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+
+                {lastPoint && (
+                  <text
+                    x={mapX(lastPoint.month) + 6}
+                    y={mapY(lastPoint.value) + 4}
+                    textAnchor="start"
+                    fontSize="10"
+                    fontWeight="700"
+                    fill={curve.stroke}
+                  >
+                    {curve.label}
+                  </text>
+                )}
+              </g>
+            )
+          })}
+
+          {points.length > 1 && (
+            <polyline
+              points={patientPolylinePoints}
+              fill="none"
+              stroke="#2563eb"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          )}
 
           {points.map((point, index) => {
-            const latest = index === points.length - 1
+            const latest =
+              index === points.length - 1
 
             return (
               <g key={point.id}>
@@ -497,7 +701,9 @@ function MeasurementChart({
                   cx={mapX(point.ageMonths)}
                   cy={mapY(point.value)}
                   r={latest ? 7 : 5}
-                  fill={latest ? "#dc2626" : "#2563eb"}
+                  fill={
+                    latest ? "#dc2626" : "#2563eb"
+                  }
                   stroke="#ffffff"
                   strokeWidth="3"
                 >
@@ -527,6 +733,12 @@ function MeasurementChart({
           })}
         </svg>
       </div>
+
+      {points.length === 0 && (
+        <p className="border-t border-slate-100 px-5 py-3 text-center text-xs text-slate-500">
+          國健署標準曲線已顯示；新增量測紀錄後，病童資料點會疊加在曲線上。
+        </p>
+      )}
     </div>
   )
 }
