@@ -2,14 +2,7 @@
 
 import { useMemo, useState } from "react"
 
-import boysBmiJson from "@/data/growth/boys-bmi.json"
-import boysHeadCircumferenceJson from "@/data/growth/boys-head-circumference.json"
-import boysHeightJson from "@/data/growth/boys-height.json"
-import boysWeightJson from "@/data/growth/boys-weight.json"
-import girlsBmiJson from "@/data/growth/girls-bmi.json"
-import girlsHeadCircumferenceJson from "@/data/growth/girls-head-circumference.json"
-import girlsHeightJson from "@/data/growth/girls-height.json"
-import girlsWeightJson from "@/data/growth/girls-weight.json"
+
 
 import { GrowthChart } from "@/components/growth/growth-chart"
 import { MeasurementModal } from "@/components/growth/measurement-modal"
@@ -23,17 +16,15 @@ import type {
   Patient,
 } from "@/components/growth/types"
 
-const boysHeight = boysHeightJson as GrowthReferencePoint[]
-const boysWeight = boysWeightJson as GrowthReferencePoint[]
-const boysBmi = boysBmiJson as GrowthReferencePoint[]
-const boysHeadCircumference =
-  boysHeadCircumferenceJson as GrowthReferencePoint[]
+const boysHeight: GrowthReferencePoint[] = []
+const boysWeight: GrowthReferencePoint[] = []
+const boysBmi: GrowthReferencePoint[] = []
+const boysHeadCircumference: GrowthReferencePoint[] = []
 
-const girlsHeight = girlsHeightJson as GrowthReferencePoint[]
-const girlsWeight = girlsWeightJson as GrowthReferencePoint[]
-const girlsBmi = girlsBmiJson as GrowthReferencePoint[]
-const girlsHeadCircumference =
-  girlsHeadCircumferenceJson as GrowthReferencePoint[]
+const girlsHeight: GrowthReferencePoint[] = []
+const girlsWeight: GrowthReferencePoint[] = []
+const girlsBmi: GrowthReferencePoint[] = []
+const girlsHeadCircumference: GrowthReferencePoint[] = []
 
 const initialPatients: Patient[] = [
   {
