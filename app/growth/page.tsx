@@ -2,10 +2,12 @@
 
 import {
   FormEvent,
+  useEffect,
   useMemo,
   useState,
 } from "react"
 import { GrowthLogoutButton } from "@/components/growth-logout-button"
+import { createClient } from "@/lib/supabase/client"
 
 type BiologicalSex = "male" | "female"
 
@@ -61,62 +63,6 @@ type MeasurementFormState = {
 }
 
 const today = new Date().toISOString().split("T")[0]
-
-const initialPatients: Patient[] = [
-  {
-    id: "patient-001",
-    chartNumber: "C20260001",
-    name: "王小明",
-    biologicalSex: "male",
-    birthday: "2019-04-18",
-    guardianName: "王先生",
-    guardianPhone: "0912-345-678",
-    firstVisitDate: "2023-06-15",
-    premature: false,
-    birthHeight: 50,
-    birthWeight: 3.2,
-    note: "持續追蹤身高成長速度。",
-    measurements: [
-      {
-        id: "measurement-001",
-        measuredAt: "2023-06-15",
-        height: 99.2,
-        weight: 15.4,
-        headCircumference: 50.1,
-        note: "初診。",
-      },
-      {
-        id: "measurement-002",
-        measuredAt: "2024-01-08",
-        height: 102.7,
-        weight: 16.2,
-        headCircumference: 50.5,
-      },
-      {
-        id: "measurement-003",
-        measuredAt: "2024-09-20",
-        height: 107.1,
-        weight: 17.6,
-        boneAge: 5.1,
-      },
-      {
-        id: "measurement-004",
-        measuredAt: "2025-06-12",
-        height: 111.8,
-        weight: 19.1,
-        boneAge: 5.8,
-      },
-      {
-        id: "measurement-005",
-        measuredAt: "2026-03-05",
-        height: 116.3,
-        weight: 20.4,
-        boneAge: 6.4,
-        note: "生長速度穩定。",
-      },
-    ],
-  },
-]
 
 const emptyPatientForm: PatientFormState = {
   chartNumber: "",
@@ -230,12 +176,6 @@ function formatDate(date: string) {
   }
 
   return date.replaceAll("-", "/")
-}
-
-function createId(prefix: string) {
-  return `${prefix}-${Date.now()}-${Math.random()
-    .toString(36)
-    .slice(2, 8)}`
 }
 
 function SummaryCard({
@@ -605,11 +545,17 @@ function FieldLabel({
 }
 
 export default function GrowthChartPage() {
-  const [patients, setPatients] =
-    useState<Patient[]>(initialPatients)
+  const [patients, setPatients] = useState<Patient[]>([])
 
   const [selectedPatientId, setSelectedPatientId] =
-    useState(initialPatients[0]?.id ?? "")
+    useState("")
+
+  const [loadingPatients, setLoadingPatients] =
+    useState(true)
+
+  const [saving, setSaving] = useState(false)
+
+  const [dataError, setDataError] = useState("")
 
   const [searchKeyword, setSearchKeyword] =
     useState("")
@@ -633,6 +579,94 @@ export default function GrowthChartPage() {
     useState<MeasurementFormState>(
       emptyMeasurementForm,
     )
+
+  useEffect(() => {
+    void loadPatients()
+  }, [])
+
+  async function loadPatients(preferredPatientId?: string) {
+    setLoadingPatients(true)
+    setDataError("")
+
+    const supabase = createClient()
+    const { data, error } = await supabase
+      .from("patients")
+      .select(`
+        id,
+        chart_number,
+        name,
+        biological_sex,
+        birthday,
+        guardian_name,
+        guardian_phone,
+        first_visit_date,
+        premature,
+        gestational_weeks,
+        birth_height,
+        birth_weight,
+        note,
+        measurements (
+          id,
+          measured_at,
+          height,
+          weight,
+          head_circumference,
+          bone_age,
+          note
+        )
+      `)
+      .order("created_at", { ascending: false })
+
+    if (error) {
+      console.error("讀取病例失敗：", error)
+      setDataError(`讀取病例失敗：${error.message}`)
+      setLoadingPatients(false)
+      return
+    }
+
+    const mappedPatients: Patient[] = (data ?? []).map((row) => ({
+      id: row.id,
+      chartNumber: row.chart_number,
+      name: row.name,
+      biologicalSex: row.biological_sex as BiologicalSex,
+      birthday: row.birthday,
+      guardianName: row.guardian_name ?? "",
+      guardianPhone: row.guardian_phone ?? "",
+      firstVisitDate: row.first_visit_date ?? row.birthday,
+      premature: row.premature ?? false,
+      gestationalWeeks: row.gestational_weeks ?? undefined,
+      birthHeight: row.birth_height ?? undefined,
+      birthWeight: row.birth_weight ?? undefined,
+      note: row.note ?? "",
+      measurements: (row.measurements ?? []).map((measurement) => ({
+        id: measurement.id,
+        measuredAt: measurement.measured_at,
+        height: Number(measurement.height),
+        weight: Number(measurement.weight),
+        headCircumference:
+          measurement.head_circumference === null
+            ? undefined
+            : Number(measurement.head_circumference),
+        boneAge:
+          measurement.bone_age === null
+            ? undefined
+            : Number(measurement.bone_age),
+        note: measurement.note ?? "",
+      })),
+    }))
+
+    setPatients(mappedPatients)
+
+    const targetId = preferredPatientId ?? selectedPatientId
+    const targetStillExists = mappedPatients.some(
+      (patient) => patient.id === targetId,
+    )
+
+    setSelectedPatientId(
+      targetStillExists ? targetId : mappedPatients[0]?.id ?? "",
+    )
+    setLoadingPatients(false)
+  }
 
   const selectedPatient =
     patients.find(
@@ -708,7 +742,7 @@ export default function GrowthChartPage() {
         previousMeasurement.weight
       : null
 
-  function handleCreatePatient(event: FormEvent) {
+  async function handleCreatePatient(event: FormEvent) {
     event.preventDefault()
 
     if (
@@ -725,9 +759,7 @@ export default function GrowthChartPage() {
     const duplicatedChartNumber = patients.some(
       (patient) =>
         patient.chartNumber.toLowerCase() ===
-        patientForm.chartNumber
-          .trim()
-          .toLowerCase(),
+        patientForm.chartNumber.trim().toLowerCase(),
     )
 
     if (duplicatedChartNumber) {
@@ -735,46 +767,52 @@ export default function GrowthChartPage() {
       return
     }
 
-    const newPatient: Patient = {
-      id: createId("patient"),
-      chartNumber: patientForm.chartNumber.trim(),
-      name: patientForm.name.trim(),
-      biologicalSex: patientForm.biologicalSex,
-      birthday: patientForm.birthday,
-      guardianName: patientForm.guardianName.trim(),
-      guardianPhone:
-        patientForm.guardianPhone.trim(),
-      firstVisitDate:
-        patientForm.firstVisitDate || today,
-      premature: patientForm.premature,
-      gestationalWeeks:
-        patientForm.gestationalWeeks !== ""
-          ? Number(patientForm.gestationalWeeks)
-          : undefined,
-      birthHeight:
-        patientForm.birthHeight !== ""
-          ? Number(patientForm.birthHeight)
-          : undefined,
-      birthWeight:
-        patientForm.birthWeight !== ""
-          ? Number(patientForm.birthWeight)
-          : undefined,
-      note: patientForm.note.trim(),
-      measurements: [],
+    setSaving(true)
+    const supabase = createClient()
+
+    const { data, error } = await supabase
+      .from("patients")
+      .insert({
+        chart_number: patientForm.chartNumber.trim(),
+        name: patientForm.name.trim(),
+        biological_sex: patientForm.biologicalSex,
+        birthday: patientForm.birthday,
+        guardian_name: patientForm.guardianName.trim() || null,
+        guardian_phone: patientForm.guardianPhone.trim() || null,
+        first_visit_date: patientForm.firstVisitDate || today,
+        premature: patientForm.premature,
+        gestational_weeks:
+          patientForm.gestationalWeeks !== ""
+            ? Number(patientForm.gestationalWeeks)
+            : null,
+        birth_height:
+          patientForm.birthHeight !== ""
+            ? Number(patientForm.birthHeight)
+            : null,
+        birth_weight:
+          patientForm.birthWeight !== ""
+            ? Number(patientForm.birthWeight)
+            : null,
+        note: patientForm.note.trim() || null,
+      })
+      .select("id")
+      .single()
+
+    if (error) {
+      console.error("建立病例失敗：", error)
+      window.alert(`建立病例失敗：${error.message}`)
+      setSaving(false)
+      return
     }
 
-    setPatients((current) => [
-      newPatient,
-      ...current,
-    ])
-
-    setSelectedPatientId(newPatient.id)
     setSearchKeyword("")
     setPatientForm(emptyPatientForm)
     setShowNewPatientModal(false)
+    await loadPatients(data.id)
+    setSaving(false)
   }
 
-  function handleAddMeasurement(event: FormEvent) {
+  async function handleAddMeasurement(event: FormEvent) {
     event.preventDefault()
 
     if (!selectedPatient) {
@@ -812,45 +850,41 @@ export default function GrowthChartPage() {
       return
     }
 
-    const newMeasurement: Measurement = {
-      id: createId("measurement"),
-      measuredAt: measurementForm.measuredAt,
-      height,
-      weight,
-      headCircumference:
-        measurementForm.headCircumference !== ""
-          ? Number(
-              measurementForm.headCircumference,
-            )
-          : undefined,
-      boneAge:
-        measurementForm.boneAge !== ""
-          ? Number(measurementForm.boneAge)
-          : undefined,
-      note: measurementForm.note.trim(),
+    setSaving(true)
+    const supabase = createClient()
+
+    const { error } = await supabase
+      .from("measurements")
+      .insert({
+        patient_id: selectedPatient.id,
+        measured_at: measurementForm.measuredAt,
+        height,
+        weight,
+        head_circumference:
+          measurementForm.headCircumference !== ""
+            ? Number(measurementForm.headCircumference)
+            : null,
+        bone_age:
+          measurementForm.boneAge !== ""
+            ? Number(measurementForm.boneAge)
+            : null,
+        note: measurementForm.note.trim() || null,
+      })
+
+    if (error) {
+      console.error("新增量測失敗：", error)
+      window.alert(`新增量測失敗：${error.message}`)
+      setSaving(false)
+      return
     }
-
-    setPatients((current) =>
-      current.map((patient) => {
-        if (patient.id !== selectedPatient.id) {
-          return patient
-        }
-
-        return {
-          ...patient,
-          measurements: [
-            ...patient.measurements,
-            newMeasurement,
-          ],
-        }
-      }),
-    )
 
     setMeasurementForm(emptyMeasurementForm)
     setShowMeasurementModal(false)
+    await loadPatients(selectedPatient.id)
+    setSaving(false)
   }
 
-  function handleDeleteMeasurement(
+  async function handleDeleteMeasurement(
     measurementId: string,
   ) {
     if (!selectedPatient) {
@@ -858,29 +892,29 @@ export default function GrowthChartPage() {
     }
 
     const confirmed = window.confirm(
-      "確定要刪除這筆測量紀錄嗎？正式系統建議改成保留刪除稽核紀錄。",
+      "確定要刪除這筆測量紀錄嗎？",
     )
 
     if (!confirmed) {
       return
     }
 
-    setPatients((current) =>
-      current.map((patient) => {
-        if (patient.id !== selectedPatient.id) {
-          return patient
-        }
+    setSaving(true)
+    const supabase = createClient()
+    const { error } = await supabase
+      .from("measurements")
+      .delete()
+      .eq("id", measurementId)
 
-        return {
-          ...patient,
-          measurements:
-            patient.measurements.filter(
-              (measurement) =>
-                measurement.id !== measurementId,
-            ),
-        }
-      }),
-    )
+    if (error) {
+      console.error("刪除量測失敗：", error)
+      window.alert(`刪除量測失敗：${error.message}`)
+      setSaving(false)
+      return
+    }
+
+    await loadPatients(selectedPatient.id)
+    setSaving(false)
   }
 
   return (
@@ -925,6 +959,22 @@ export default function GrowthChartPage() {
           </div>
         </div>
       </header>
+
+      {dataError && (
+        <div className="mx-auto mt-5 max-w-[1500px] px-4 sm:px-6 lg:px-8">
+          <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+            {dataError}
+          </div>
+        </div>
+      )}
+
+      {loadingPatients && (
+        <div className="mx-auto mt-5 max-w-[1500px] px-4 sm:px-6 lg:px-8">
+          <div className="rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm font-medium text-blue-700">
+            正在讀取病例資料…
+          </div>
+        </div>
+      )}
 
       <div className="mx-auto grid max-w-[1500px] gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[320px_minmax(0,1fr)] lg:px-8">
         <aside className="h-fit rounded-2xl border border-slate-200 bg-white shadow-sm lg:sticky lg:top-6">
@@ -1868,9 +1918,10 @@ export default function GrowthChartPage() {
 
                 <button
                   type="submit"
-                  className="rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white hover:bg-blue-700"
+                  disabled={saving}
+                  className="rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-300"
                 >
-                  建立病例
+                  {saving ? "建立中…" : "建立病例"}
                 </button>
               </div>
             </form>
@@ -2107,9 +2158,10 @@ export default function GrowthChartPage() {
 
                 <button
                   type="submit"
-                  className="rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white hover:bg-blue-700"
+                  disabled={saving}
+                  className="rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-300"
                 >
-                  儲存量測紀錄
+                  {saving ? "儲存中…" : "儲存量測紀錄"}
                 </button>
               </div>
             </form>
