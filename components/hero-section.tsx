@@ -129,14 +129,9 @@ export function HeroSection() {
 
                 <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8">
                   <div className="max-w-md rounded-2xl border border-white/20 bg-black/28 p-4 text-white backdrop-blur-md">
-                    <p className="text-xs font-black uppercase tracking-[0.2em] text-emerald-300">
-                      Professional Guidance
-                    </p>
 
                     <p className="mt-2 text-lg font-black leading-7">
-                      減重不是只看體重數字，
-                      <br />
-                      而是建立能長期維持的健康方式。
+                     健康的減重方式。
                     </p>
                   </div>
                 </div>
