@@ -202,7 +202,7 @@ export default function WeightLossProgramsPage() {
       )}
 
       <main>
-        <section className="relative isolate min-h-[calc(100svh-5rem)] overflow-hidden border-b border-white/15">
+        <section className="relative isolate h-[520px] overflow-hidden border-b border-white/15 sm:h-[560px] lg:h-[620px]">
           <Image
             src="/images/weight-loss-programs-hero.png"
             alt="醫師與民眾進行體重管理諮詢"
@@ -214,23 +214,23 @@ export default function WeightLossProgramsPage() {
 
           <div
             aria-hidden="true"
-            className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/55 to-black/20"
+            className="absolute inset-0 bg-gradient-to-r from-black/82 via-black/58 to-black/22"
           />
 
           <div
             aria-hidden="true"
-            className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/15"
+            className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-black/10"
           />
 
           <div
             aria-hidden="true"
-            className="absolute -left-32 top-20 h-96 w-96 rounded-full bg-emerald-400/15 blur-3xl"
+            className="absolute -left-24 top-16 h-72 w-72 rounded-full bg-emerald-400/15 blur-3xl"
           />
 
-          <div className="relative z-10 mx-auto flex min-h-[calc(100svh-5rem)] max-w-7xl items-center px-6 py-16 lg:px-8">
-            <div className="w-full">
+          <div className="relative z-10 mx-auto flex h-full max-w-7xl items-center px-6 lg:px-8">
+            <div className="max-w-3xl">
               <nav aria-label="麵包屑">
-                <ol className="flex items-center gap-2 text-sm text-white/70">
+                <ol className="flex items-center gap-2 text-sm text-white/72">
                   <li>
                     <Link href="/" className="transition hover:text-white">
                       首頁
@@ -243,41 +243,19 @@ export default function WeightLossProgramsPage() {
                 </ol>
               </nav>
 
-              <div className="mt-8 grid items-end gap-10 lg:grid-cols-[1.15fr_0.85fr]">
-                <div>
-                  <p className="text-xs font-black uppercase tracking-[0.28em] text-emerald-300 sm:text-sm">
-                    Weight Management
-                  </p>
+              <p className="mt-8 text-sm font-black uppercase tracking-[0.28em] text-emerald-300 sm:text-base">
+                Weight Management
+              </p>
 
-                  <h1 className="mt-5 max-w-4xl text-5xl font-black leading-[1.06] tracking-[-0.05em] text-white drop-shadow-lg sm:text-6xl lg:text-7xl">
-                    減重項目
-                    <span className="block text-emerald-300">一次看懂</span>
-                  </h1>
+              <h1 className="mt-4 text-5xl font-black leading-[1.05] tracking-[-0.05em] text-white drop-shadow-lg sm:text-6xl lg:text-7xl">
+                減重項目
+                <span className="block text-emerald-300">一次看懂</span>
+              </h1>
 
-                  <p className="mt-6 max-w-2xl text-base leading-8 text-white/85 drop-shadow sm:text-lg sm:leading-9">
-                    集中整理週纖達、猛健樂與瑞倍適相關內容。
-                    點選任一項目，即可查看該標籤下的完整文章列表。
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-3 gap-3">
-                  {programs.map((program) => (
-                    <Link
-                      key={program.tag}
-                      href={`/blog?tag=${encodeURIComponent(program.tag)}`}
-                      className="rounded-2xl border border-white/20 bg-black/25 p-4 text-center text-white shadow-lg backdrop-blur-md transition hover:-translate-y-1 hover:border-emerald-300/70 hover:bg-black/40"
-                    >
-                      <span className="block text-xs font-black text-emerald-300">
-                        {program.order}
-                      </span>
-
-                      <span className="mt-2 block text-sm font-black">
-                        {program.title}
-                      </span>
-                    </Link>
-                  ))}
-                </div>
-              </div>
+              <p className="mt-6 max-w-2xl text-lg leading-9 text-white/88 drop-shadow sm:text-xl sm:leading-10">
+                集中整理週纖達、猛健樂與瑞倍適相關內容。
+                點選任一項目，即可查看該標籤下的完整文章列表。
+              </p>
             </div>
           </div>
         </section>
