@@ -28,7 +28,7 @@ export function LatestPostCard({ post }: LatestPostCardProps) {
 
   return (
     <article className="group overflow-hidden rounded-[2rem] border border-white/50 bg-white/70 shadow-[0_12px_40px_rgba(129,216,208,0.12)] backdrop-blur transition-all duration-500 hover:-translate-y-1.5 hover:border-primary/35 hover:bg-white/90 hover:shadow-[0_24px_70px_rgba(129,216,208,0.22)]">
-      <div className="relative h-[200px] md:h-[220px] w-full overflow-hidden bg-secondary">
+      <div className="relative h-[200px] w-full overflow-hidden bg-secondary md:h-[220px]">
         {isVideoPlaying && post.videoId ? (
           <iframe
             src={`https://www.youtube.com/embed/${post.videoId}?autoplay=1`}
@@ -48,7 +48,7 @@ export function LatestPostCard({ post }: LatestPostCardProps) {
                 <img
                   src={post.thumbnail}
                   alt={post.title}
-                  className="h-full w-full object-contain md:object-cover transition-all duration-700 group-hover:scale-105"
+                  className="h-full w-full object-contain transition-all duration-700 group-hover:scale-105 md:object-cover"
                   loading="lazy"
                   decoding="async"
                 />
@@ -75,21 +75,7 @@ export function LatestPostCard({ post }: LatestPostCardProps) {
         )}
       </div>
 
-      <div className="flex min-h-[270px] flex-col p-6">
-        {post.tags.length > 0 && (
-          <div className="mb-4 flex flex-wrap gap-2">
-            {post.tags.map((tag) => (
-              <Link
-                key={tag}
-                href={`/blog?tag=${encodeURIComponent(tag)}`}
-                className="rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-bold text-primary transition-all hover:bg-primary hover:text-white"
-              >
-                #{tag}
-              </Link>
-            ))}
-          </div>
-        )}
-
+      <div className="flex min-h-[230px] flex-col p-6">
         <Link href={articleUrl}>
           <h3 className="line-clamp-2 text-xl font-black leading-snug text-foreground transition-colors group-hover:text-primary">
             {post.title}
