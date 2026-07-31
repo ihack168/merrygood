@@ -143,17 +143,7 @@ export function HeroSection() {
               </div>
             </div>
 
-            <div className="absolute -bottom-5 -left-3 hidden rounded-2xl border border-border/70 bg-background/92 px-5 py-4 shadow-lg backdrop-blur-md sm:block">
-              <p className="text-2xl font-black text-primary">3</p>
-              <p className="mt-1 text-xs font-bold text-muted-foreground">
-                重點減重主題
-              </p>
-            </div>
-
             <div className="absolute -right-3 top-8 hidden rounded-2xl border border-border/70 bg-background/92 px-5 py-4 shadow-lg backdrop-blur-md sm:block">
-              <p className="text-sm font-black text-foreground">
-                先了解・再評估
-              </p>
               <p className="mt-1 text-xs text-muted-foreground">
                 安全比速度更重要
               </p>
