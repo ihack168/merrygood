@@ -126,7 +126,7 @@ export default function AboutPage() {
                 </p>
 
                 <div className="mt-7">
-                  <LineConsultButton />
+                  <LineConsultButton>Line 預約諮詢</LineConsultButton>
                 </div>
               </article>
             ))}
