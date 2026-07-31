@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import Image from "next/image"
 import Link from "next/link"
 
 const SITE_URL = "https://news.merrygood.com.tw"
@@ -201,71 +202,81 @@ export default function WeightLossProgramsPage() {
       )}
 
       <main>
-        <section className="relative isolate overflow-hidden border-b border-border/60">
-          <div
-            aria-hidden="true"
-            className="absolute inset-0 -z-30 bg-[linear-gradient(135deg,hsl(var(--background))_0%,hsl(var(--background))_54%,hsl(var(--primary)/0.09)_100%)]"
-          />
-          <div
-            aria-hidden="true"
-            className="absolute -left-32 top-8 -z-20 h-80 w-80 rounded-full bg-primary/10 blur-3xl"
-          />
-          <div
-            aria-hidden="true"
-            className="absolute -right-28 bottom-[-8rem] -z-20 h-96 w-96 rounded-full bg-emerald-300/10 blur-3xl"
-          />
-          <div
-            aria-hidden="true"
-            className="absolute inset-0 -z-10 opacity-[0.022] [background-image:linear-gradient(to_right,currentColor_1px,transparent_1px),linear-gradient(to_bottom,currentColor_1px,transparent_1px)] [background-size:64px_64px]"
+        <section className="relative isolate min-h-[calc(100svh-5rem)] overflow-hidden border-b border-white/15">
+          <Image
+            src="/images/weight-loss-programs-hero.png"
+            alt="醫師與民眾進行體重管理諮詢"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover object-center"
           />
 
-          <div className="mx-auto max-w-7xl px-6 pb-12 pt-28 lg:px-8 lg:pb-14 lg:pt-32">
-            <nav aria-label="麵包屑">
-              <ol className="flex items-center gap-2 text-sm text-muted-foreground">
-                <li>
-                  <Link href="/" className="transition hover:text-primary">
-                    首頁
-                  </Link>
-                </li>
-                <li aria-hidden="true">/</li>
-                <li aria-current="page" className="font-bold text-foreground">
-                  減重項目
-                </li>
-              </ol>
-            </nav>
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/55 to-black/20"
+          />
 
-            <div className="mt-8 grid items-end gap-8 lg:grid-cols-[1.2fr_0.8fr]">
-              <div>
-                <p className="text-xs font-black uppercase tracking-[0.26em] text-primary">
-                  Weight Management
-                </p>
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/15"
+          />
 
-                <h1 className="mt-4 max-w-4xl text-4xl font-black leading-[1.08] tracking-[-0.045em] sm:text-5xl lg:text-6xl">
-                  減重項目
-                  <span className="ml-3 text-primary">一次看懂</span>
-                </h1>
+          <div
+            aria-hidden="true"
+            className="absolute -left-32 top-20 h-96 w-96 rounded-full bg-emerald-400/15 blur-3xl"
+          />
 
-                <p className="mt-5 max-w-3xl text-base leading-8 text-muted-foreground sm:text-lg">
-                  集中整理週纖達、猛健樂與瑞倍適相關內容。
-                  點選任一項目，即可查看該標籤下的完整文章列表。
-                </p>
-              </div>
+          <div className="relative z-10 mx-auto flex min-h-[calc(100svh-5rem)] max-w-7xl items-center px-6 py-16 lg:px-8">
+            <div className="w-full">
+              <nav aria-label="麵包屑">
+                <ol className="flex items-center gap-2 text-sm text-white/70">
+                  <li>
+                    <Link href="/" className="transition hover:text-white">
+                      首頁
+                    </Link>
+                  </li>
+                  <li aria-hidden="true">/</li>
+                  <li aria-current="page" className="font-bold text-white">
+                    減重項目
+                  </li>
+                </ol>
+              </nav>
 
-              <div className="grid grid-cols-3 gap-3">
-                {programs.map((program) => (
-                  <Link
-                    key={program.tag}
-                    href={`/blog?tag=${encodeURIComponent(program.tag)}`}
-                    className="rounded-2xl border border-border/60 bg-card/75 p-4 text-center backdrop-blur transition hover:-translate-y-0.5 hover:border-primary/30 hover:bg-primary/[0.06]"
-                  >
-                    <span className="block text-xs font-black text-primary">
-                      {program.order}
-                    </span>
-                    <span className="mt-2 block text-sm font-black">
-                      {program.title}
-                    </span>
-                  </Link>
-                ))}
+              <div className="mt-8 grid items-end gap-10 lg:grid-cols-[1.15fr_0.85fr]">
+                <div>
+                  <p className="text-xs font-black uppercase tracking-[0.28em] text-emerald-300 sm:text-sm">
+                    Weight Management
+                  </p>
+
+                  <h1 className="mt-5 max-w-4xl text-5xl font-black leading-[1.06] tracking-[-0.05em] text-white drop-shadow-lg sm:text-6xl lg:text-7xl">
+                    減重項目
+                    <span className="block text-emerald-300">一次看懂</span>
+                  </h1>
+
+                  <p className="mt-6 max-w-2xl text-base leading-8 text-white/85 drop-shadow sm:text-lg sm:leading-9">
+                    集中整理週纖達、猛健樂與瑞倍適相關內容。
+                    點選任一項目，即可查看該標籤下的完整文章列表。
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-3 gap-3">
+                  {programs.map((program) => (
+                    <Link
+                      key={program.tag}
+                      href={`/blog?tag=${encodeURIComponent(program.tag)}`}
+                      className="rounded-2xl border border-white/20 bg-black/25 p-4 text-center text-white shadow-lg backdrop-blur-md transition hover:-translate-y-1 hover:border-emerald-300/70 hover:bg-black/40"
+                    >
+                      <span className="block text-xs font-black text-emerald-300">
+                        {program.order}
+                      </span>
+
+                      <span className="mt-2 block text-sm font-black">
+                        {program.title}
+                      </span>
+                    </Link>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
