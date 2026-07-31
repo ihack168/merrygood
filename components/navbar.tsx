@@ -6,51 +6,51 @@ import { usePathname } from "next/navigation"
 
 import { LineConsultButton } from "@/components/line-consult-button"
 
-const siteName = "美麗好減肥減重－體重管理資訊站"
+const brandName = "美麗好減肥減重"
+const brandTagline = "體重管理資訊站"
+
+const navigationItems = [
+  { label: "首頁", href: "/" },
+  { label: "減重項目", href: "/weight-loss-programs" },
+  { label: "兒童生長門診", href: "/child-growth-clinic" },
+  { label: "文章列表", href: "/blog" },
+  { label: "關於我們", href: "/about" },
+]
 
 export function Navbar() {
+  const pathname = usePathname()
   const [mobileOpen, setMobileOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
 
-  const pathname = usePathname()
-
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20)
-    }
-
-    window.addEventListener("scroll", handleScroll, { passive: true })
+    const handleScroll = () => setScrolled(window.scrollY > 12)
     handleScroll()
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll)
-    }
+    window.addEventListener("scroll", handleScroll, { passive: true })
+    return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
   useEffect(() => {
     setMobileOpen(false)
-    document.body.style.overflow = "unset"
-
+    document.body.style.overflow = ""
     return () => {
-      document.body.style.overflow = "unset"
+      document.body.style.overflow = ""
     }
   }, [pathname])
 
   const closeMobileMenu = () => {
     setMobileOpen(false)
-    document.body.style.overflow = "unset"
+    document.body.style.overflow = ""
   }
 
-  const toggleMenu = () => {
+  const toggleMobileMenu = () => {
     const nextState = !mobileOpen
-
     setMobileOpen(nextState)
-    document.body.style.overflow = nextState ? "hidden" : "unset"
+    document.body.style.overflow = nextState ? "hidden" : ""
   }
 
   const isActive = (href: string) => {
     if (href === "/") return pathname === "/"
-    return pathname.startsWith(href)
+    return pathname === href || pathname.startsWith(`${href}/`)
   }
 
   if (pathname === "/growth" || pathname.startsWith("/growth/")) {
@@ -59,305 +59,141 @@ export function Navbar() {
 
   return (
     <>
-      <nav
-        aria-label="主要導覽"
-        className="pointer-events-none fixed left-0 right-0 top-0 z-[80] flex justify-center"
-      >
-        <div
-          className={`
-            pointer-events-auto
-            flex items-center justify-between
-            transition-all duration-500
-            ${
-              scrolled
-                ? "mt-4 h-16 w-[94%] max-w-6xl rounded-full border border-white/40 bg-white/70 px-5 shadow-[0_18px_60px_rgba(129,216,208,0.18)] backdrop-blur-2xl md:w-[88%] md:px-7"
-                : "h-20 w-full border-b border-white/20 bg-white/35 px-5 backdrop-blur-xl md:px-10"
-            }
-          `}
-        >
-          <Link
-            href="/"
-            aria-label={`${siteName}首頁`}
-            className="relative z-[90] flex min-w-0 items-center gap-3"
+      <header className="pointer-events-none fixed inset-x-0 top-0 z-[80]">
+        <div className="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-8">
+          <nav
+            aria-label="主要導覽"
+            className={`
+              pointer-events-auto mt-3 flex h-16 items-center justify-between
+              rounded-2xl border px-4 transition-all duration-300 sm:px-5
+              ${
+                scrolled
+                  ? "border-border/70 bg-background/90 shadow-[0_14px_45px_-24px_rgba(15,23,42,0.35)] backdrop-blur-xl"
+                  : "border-white/30 bg-background/70 shadow-sm backdrop-blur-lg"
+              }
+            `}
           >
-            <div className="relative flex-shrink-0">
-              <div className="absolute inset-0 rounded-full bg-primary/25 blur-md" />
-
-              <img
-                src="/images/logo.png"
-                alt={`${siteName} Logo`}
-                width={44}
-                height={44}
-                className="
-                  relative
-                  h-11 w-11
-                  rounded-full
-                  border border-white/60
-                  bg-white
-                  object-cover
-                  shadow-[0_8px_24px_rgba(129,216,208,0.20)]
-                "
-              />
-            </div>
-
-            <div className="min-w-0 leading-tight">
-              <span className="block truncate text-base font-black tracking-tight text-foreground sm:text-xl md:text-2xl">
-                {siteName}
-              </span>
-
-              <span className="hidden text-[11px] tracking-[0.22em] text-muted-foreground md:block">
-                WEIGHT MANAGEMENT INFO
-              </span>
-            </div>
-          </Link>
-
-          <div className="hidden items-center gap-8 md:flex">
-            <Link
-              href="/blog"
-              aria-current={isActive("/blog") ? "page" : undefined}
-              className={`
-                group relative
-                text-base font-bold tracking-wide
-                transition-all duration-300
-                ${
-                  isActive("/blog")
-                    ? "text-foreground"
-                    : "text-muted-foreground hover:text-foreground"
-                }
-              `}
-            >
-              文章列表
-
-              <span
-                className={`
-                  absolute -bottom-2 left-1/2
-                  h-[3px]
-                  -translate-x-1/2
-                  rounded-full
-                  bg-primary
-                  transition-all duration-300
-                  ${isActive("/blog") ? "w-6" : "w-0 group-hover:w-6"}
-                `}
-              />
-            </Link>
-
-            <Link
-              href="/about"
-              aria-current={isActive("/about") ? "page" : undefined}
-              className={`
-                group relative
-                text-base font-bold tracking-wide
-                transition-all duration-300
-                ${
-                  isActive("/about")
-                    ? "text-foreground"
-                    : "text-muted-foreground hover:text-foreground"
-                }
-              `}
-            >
-              關於我們
-
-              <span
-                className={`
-                  absolute -bottom-2 left-1/2
-                  h-[3px]
-                  -translate-x-1/2
-                  rounded-full
-                  bg-primary
-                  transition-all duration-300
-                  ${isActive("/about") ? "w-6" : "w-0 group-hover:w-6"}
-                `}
-              />
-            </Link>
-
-            <LineConsultButton
-              className="
-                inline-flex items-center justify-center
-                rounded-full
-                bg-[#06C755]
-                px-5 py-2.5
-                text-base font-bold
-                text-white
-                shadow-[0_10px_30px_rgba(129,216,208,0.35)]
-                transition-all duration-300
-                hover:-translate-y-0.5
-                hover:shadow-[0_16px_40px_rgba(129,216,208,0.42)]
-              "
-            >
-              我要諮詢
-            </LineConsultButton>
-          </div>
-
-          <button
-            type="button"
-            onClick={toggleMenu}
-            aria-label={mobileOpen ? "關閉選單" : "開啟選單"}
-            aria-expanded={mobileOpen}
-            aria-controls="mobile-navigation"
-            className="
-              relative z-[90]
-              flex h-11 w-11
-              flex-shrink-0
-              items-center justify-center
-              rounded-full
-              border border-white/50
-              bg-white/70
-              shadow-[0_10px_30px_rgba(129,216,208,0.16)]
-              backdrop-blur-xl
-              md:hidden
-            "
-          >
-            <div className="relative h-5 w-5">
-              <span
-                className={`
-                  absolute left-0 top-1
-                  h-0.5 w-full rounded-full bg-foreground
-                  transition-all duration-300
-                  ${mobileOpen ? "translate-y-2 rotate-45" : ""}
-                `}
-              />
-
-              <span
-                className={`
-                  absolute left-0 top-1/2
-                  h-0.5 w-full -translate-y-1/2 rounded-full bg-foreground
-                  transition-all duration-300
-                  ${mobileOpen ? "opacity-0" : ""}
-                `}
-              />
-
-              <span
-                className={`
-                  absolute bottom-1 left-0
-                  h-0.5 w-full rounded-full bg-foreground
-                  transition-all duration-300
-                  ${mobileOpen ? "-translate-y-2 -rotate-45" : ""}
-                `}
-              />
-            </div>
-          </button>
-        </div>
-      </nav>
-
-      {mobileOpen && (
-        <div
-          id="mobile-navigation"
-          className="
-            fixed inset-0 z-[70]
-            flex flex-col
-            overflow-y-auto
-            bg-white/90
-            px-7 pt-28
-            backdrop-blur-2xl
-            animate-in fade-in duration-300
-            md:hidden
-          "
-        >
-          <div className="pointer-events-none absolute left-1/2 top-20 h-[320px] w-[320px] -translate-x-1/2 rounded-full bg-primary/20 blur-[100px]" />
-
-          <div className="relative mb-8">
-            <p className="text-[11px] tracking-[0.28em] text-muted-foreground">
-              WEIGHT MANAGEMENT INFO
-            </p>
-
-            <p className="mt-3 text-3xl font-black leading-tight text-foreground">
-              {siteName}
-            </p>
-
-            <p className="mt-4 text-sm leading-7 text-muted-foreground">
-              健康減重、體重管理、飲食控制與減重醫療資訊整理。
-              <br />
-              本站由美麗好診所建立並持有。
-            </p>
-          </div>
-
-          <div className="relative flex flex-col">
             <Link
               href="/"
-              onClick={closeMobileMenu}
-              aria-current={pathname === "/" ? "page" : undefined}
-              className={`
-                group
-                flex items-center justify-between
-                border-b border-border/60
-                py-5
-                text-xl font-semibold
-                ${
-                  pathname === "/"
-                    ? "text-primary"
-                    : "text-foreground"
-                }
-              `}
+              aria-label={`${brandName}首頁`}
+              className="group flex min-w-0 items-center gap-3"
             >
-              首頁
-              <span className="text-primary">→</span>
+              <div className="relative shrink-0">
+                <div className="absolute inset-0 rounded-full bg-primary/20 blur-md transition group-hover:bg-primary/30" />
+                <img
+                  src="/images/logo.png"
+                  alt={`${brandName} Logo`}
+                  width={40}
+                  height={40}
+                  className="relative h-10 w-10 rounded-full border border-border/60 bg-white object-cover shadow-sm"
+                />
+              </div>
+
+              <div className="min-w-0 leading-none">
+                <span className="block truncate text-base font-black tracking-tight text-foreground sm:text-lg">
+                  {brandName}
+                </span>
+                <span className="mt-1 hidden text-[10px] font-semibold tracking-[0.18em] text-muted-foreground sm:block">
+                  {brandTagline}
+                </span>
+              </div>
             </Link>
 
-            <Link
-              href="/blog"
-              onClick={closeMobileMenu}
-              aria-current={isActive("/blog") ? "page" : undefined}
-              className={`
-                group
-                flex items-center justify-between
-                border-b border-border/60
-                py-5
-                text-xl font-semibold
-                ${
-                  isActive("/blog")
-                    ? "text-primary"
-                    : "text-foreground"
-                }
-              `}
-            >
-              文章列表
-              <span className="text-primary">→</span>
-            </Link>
+            <div className="hidden items-center gap-1 lg:flex">
+              {navigationItems.map((item) => {
+                const active = isActive(item.href)
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    aria-current={active ? "page" : undefined}
+                    className={`
+                      relative rounded-full px-4 py-2.5 text-sm font-bold
+                      transition-colors duration-200
+                      ${
+                        active
+                          ? "bg-primary/10 text-primary"
+                          : "text-muted-foreground hover:bg-muted/70 hover:text-foreground"
+                      }
+                    `}
+                  >
+                    {item.label}
+                  </Link>
+                )
+              })}
+            </div>
 
-            <Link
-              href="/about"
-              onClick={closeMobileMenu}
-              aria-current={isActive("/about") ? "page" : undefined}
-              className={`
-                group
-                flex items-center justify-between
-                border-b border-border/60
-                py-5
-                text-xl font-semibold
-                ${
-                  isActive("/about")
-                    ? "text-primary"
-                    : "text-foreground"
-                }
-              `}
-            >
-              關於我們
-              <span className="text-primary">→</span>
-            </Link>
-          </div>
+            <div className="hidden items-center gap-3 lg:flex">
+              <LineConsultButton
+                className="inline-flex min-h-10 items-center justify-center rounded-full bg-[#06C755] px-5 py-2.5 text-sm font-bold text-white shadow-[0_10px_24px_rgba(6,199,85,0.22)] transition duration-200 hover:-translate-y-0.5 hover:bg-[#05b94f] hover:shadow-[0_14px_30px_rgba(6,199,85,0.30)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#06C755] focus-visible:ring-offset-2"
+              >
+                Line 預約
+              </LineConsultButton>
+            </div>
 
-          <div className="relative mt-10">
-            <LineConsultButton
-              className="
-                flex w-full items-center justify-center
-                rounded-2xl
-                bg-[#06C755]
-                px-6 py-4
-                text-base font-bold
-                text-white
-                shadow-[0_20px_50px_rgba(129,216,208,0.35)]
-              "
+            <button
+              type="button"
+              onClick={toggleMobileMenu}
+              aria-label={mobileOpen ? "關閉選單" : "開啟選單"}
+              aria-expanded={mobileOpen}
+              aria-controls="mobile-navigation"
+              className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border/70 bg-background/90 text-foreground shadow-sm transition hover:bg-muted lg:hidden"
             >
-              Line預約諮詢
-            </LineConsultButton>
-          </div>
-
-          <div className="relative mt-auto pb-8 pt-10 text-sm leading-7 text-muted-foreground">
-            <p>{siteName}</p>
-            <p>健康減重｜體重管理｜減重醫療資訊</p>
-          </div>
+              <span className="sr-only">{mobileOpen ? "關閉選單" : "開啟選單"}</span>
+              <span className="relative block h-4 w-5">
+                <span className={`absolute left-0 top-0 h-0.5 w-5 rounded-full bg-current transition duration-300 ${mobileOpen ? "translate-y-[7px] rotate-45" : ""}`} />
+                <span className={`absolute left-0 top-[7px] h-0.5 w-5 rounded-full bg-current transition duration-300 ${mobileOpen ? "opacity-0" : ""}`} />
+                <span className={`absolute bottom-0 left-0 h-0.5 w-5 rounded-full bg-current transition duration-300 ${mobileOpen ? "-translate-y-[7px] -rotate-45" : ""}`} />
+              </span>
+            </button>
+          </nav>
         </div>
-      )}
+      </header>
+
+      <div
+        aria-hidden={!mobileOpen}
+        className={`fixed inset-0 z-[70] bg-black/20 backdrop-blur-sm transition-opacity duration-300 lg:hidden ${mobileOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"}`}
+        onClick={closeMobileMenu}
+      />
+
+      <aside
+        id="mobile-navigation"
+        aria-label="行動版導覽"
+        className={`fixed right-0 top-0 z-[75] flex h-dvh w-[88%] max-w-sm flex-col border-l border-border/70 bg-background px-6 pb-6 pt-24 shadow-[-20px_0_60px_-30px_rgba(15,23,42,0.35)] transition-transform duration-300 lg:hidden ${mobileOpen ? "translate-x-0" : "translate-x-full"}`}
+      >
+        <div className="border-b border-border/70 pb-6">
+          <p className="text-xs font-black uppercase tracking-[0.2em] text-primary">Merrygood Health</p>
+          <p className="mt-3 text-2xl font-black tracking-tight text-foreground">{brandName}</p>
+          <p className="mt-2 text-sm leading-7 text-muted-foreground">健康減重、體重管理、飲食控制與減重醫療資訊。</p>
+        </div>
+
+        <div className="flex flex-col py-4">
+          {navigationItems.map((item) => {
+            const active = isActive(item.href)
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={closeMobileMenu}
+                aria-current={active ? "page" : undefined}
+                className={`flex items-center justify-between border-b border-border/60 py-4 text-lg font-bold transition ${active ? "text-primary" : "text-foreground hover:text-primary"}`}
+              >
+                <span>{item.label}</span>
+                <span aria-hidden="true" className={active ? "text-primary" : "text-muted-foreground"}>→</span>
+              </Link>
+            )
+          })}
+        </div>
+
+        <div className="mt-auto pt-6">
+          <LineConsultButton
+            className="flex min-h-12 w-full items-center justify-center rounded-full bg-[#06C755] px-6 py-3 text-base font-bold text-white shadow-[0_12px_28px_rgba(6,199,85,0.24)] transition hover:bg-[#05b94f] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#06C755] focus-visible:ring-offset-2"
+          >
+            Line 預約諮詢
+          </LineConsultButton>
+          <p className="mt-5 text-center text-xs leading-6 text-muted-foreground">{brandTagline}</p>
+        </div>
+      </aside>
     </>
   )
 }
