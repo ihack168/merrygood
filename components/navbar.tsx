@@ -7,8 +7,8 @@ import { usePathname } from "next/navigation"
 
 import { LineConsultButton } from "@/components/line-consult-button"
 
-const brandName = "美麗好減肥減重"
-const brandTagline = "體重管理資訊站"
+const brandName = "美麗好減重資訊站"
+const brandTagline = "體重管理"
 
 const navigationItems = [
   { label: "首頁", href: "/" },
@@ -90,7 +90,7 @@ export function Navbar() {
           <nav
             aria-label="主要導覽"
             className={`
-              pointer-events-auto mt-3 flex h-16 items-center justify-between
+              pointer-events-auto mt-3 flex h-[72px] items-center justify-between
               rounded-2xl border px-4 transition-all duration-300 sm:px-5
               ${
                 scrolled
@@ -110,19 +110,19 @@ export function Navbar() {
                 <Image
                   src="/images/logo.png"
                   alt={`${brandName} Logo`}
-                  width={40}
-                  height={40}
+                  width={46}
+                  height={46}
                   priority
-                  className="relative h-10 w-10 rounded-full border border-border/60 bg-white object-cover shadow-sm"
+                  className="relative h-[46px] w-[46px] rounded-full border border-border/60 bg-white object-cover shadow-sm"
                 />
               </div>
 
               <div className="min-w-0 leading-none">
-                <span className="block truncate text-base font-black tracking-tight text-foreground sm:text-lg">
+                <span className="block truncate text-lg font-black tracking-tight text-foreground sm:text-xl">
                   {brandName}
                 </span>
 
-                <span className="mt-1 hidden text-[10px] font-semibold tracking-[0.18em] text-muted-foreground sm:block">
+                <span className="mt-1 hidden text-xs font-semibold tracking-[0.16em] text-muted-foreground sm:block">
                   {brandTagline}
                 </span>
               </div>
@@ -139,7 +139,7 @@ export function Navbar() {
                     aria-current={active ? "page" : undefined}
                     className={`
                       relative whitespace-nowrap rounded-full px-3.5 py-2.5
-                      text-sm font-bold transition-colors duration-200
+                      text-base font-bold transition-colors duration-200
                       ${
                         active
                           ? "bg-primary/10 text-primary"
@@ -158,7 +158,7 @@ export function Navbar() {
                 className="
                   inline-flex min-h-10 items-center justify-center
                   whitespace-nowrap rounded-full bg-[#06C755]
-                  px-5 py-2.5 text-sm font-bold text-white
+                  px-6 py-3 text-base font-bold text-white
                   shadow-[0_10px_24px_rgba(6,199,85,0.22)]
                   transition duration-200
                   hover:-translate-y-0.5 hover:bg-[#05b94f]

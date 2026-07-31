@@ -2,7 +2,7 @@ import Link from "next/link"
 
 import { LineConsultButton } from "@/components/line-consult-button"
 
-const siteName = "美麗好減肥減重－體重管理資訊站"
+const siteName = "美麗好減重資訊站－體重管理"
 
 export function Footer() {
   return (
@@ -44,7 +44,7 @@ export function Footer() {
                 rel="noopener noreferrer"
                 className="mx-1 font-semibold text-primary hover:opacity-75"
               >
-                美麗好診所
+                美麗好健康資訊站
               </a>
               建立並持有；本站為健康資訊網站，不提供線上診斷。
             </p>
