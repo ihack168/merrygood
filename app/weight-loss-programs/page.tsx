@@ -251,11 +251,6 @@ export default function WeightLossProgramsPage() {
                 減重項目
                 <span className="block text-emerald-300">一次看懂</span>
               </h1>
-
-              <p className="mt-6 max-w-2xl text-lg leading-9 text-white/88 drop-shadow sm:text-xl sm:leading-10">
-                集中整理週纖達、猛健樂與瑞倍適相關內容。
-                點選任一項目，即可查看該標籤下的完整文章列表。
-              </p>
             </div>
           </div>
         </section>
