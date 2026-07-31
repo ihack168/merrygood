@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { usePathname } from "next/navigation"
@@ -15,41 +16,66 @@ const navigationItems = [
   { label: "兒童生長門診", href: "/child-growth-clinic" },
   { label: "文章列表", href: "/blog" },
   { label: "關於我們", href: "/about" },
-]
+] as const
 
 export function Navbar() {
   const pathname = usePathname()
+
   const [mobileOpen, setMobileOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 12)
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 12)
+    }
+
     handleScroll()
     window.addEventListener("scroll", handleScroll, { passive: true })
-    return () => window.removeEventListener("scroll", handleScroll)
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll)
+    }
   }, [])
 
   useEffect(() => {
     setMobileOpen(false)
-    document.body.style.overflow = ""
+  }, [pathname])
+
+  useEffect(() => {
+    document.body.style.overflow = mobileOpen ? "hidden" : ""
+
     return () => {
       document.body.style.overflow = ""
     }
-  }, [pathname])
+  }, [mobileOpen])
+
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setMobileOpen(false)
+      }
+    }
+
+    window.addEventListener("keydown", handleEscape)
+
+    return () => {
+      window.removeEventListener("keydown", handleEscape)
+    }
+  }, [])
 
   const closeMobileMenu = () => {
     setMobileOpen(false)
-    document.body.style.overflow = ""
   }
 
   const toggleMobileMenu = () => {
-    const nextState = !mobileOpen
-    setMobileOpen(nextState)
-    document.body.style.overflow = nextState ? "hidden" : ""
+    setMobileOpen((current) => !current)
   }
 
   const isActive = (href: string) => {
-    if (href === "/") return pathname === "/"
+    if (href === "/") {
+      return pathname === "/"
+    }
+
     return pathname === href || pathname.startsWith(`${href}/`)
   }
 
@@ -60,7 +86,7 @@ export function Navbar() {
   return (
     <>
       <header className="pointer-events-none fixed inset-x-0 top-0 z-[80]">
-        <div className="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto w-full max-w-[1440px] px-3 sm:px-5 xl:px-8">
           <nav
             aria-label="主要導覽"
             className={`
@@ -76,15 +102,17 @@ export function Navbar() {
             <Link
               href="/"
               aria-label={`${brandName}首頁`}
-              className="group flex min-w-0 items-center gap-3"
+              className="group flex min-w-0 shrink items-center gap-3"
             >
               <div className="relative shrink-0">
                 <div className="absolute inset-0 rounded-full bg-primary/20 blur-md transition group-hover:bg-primary/30" />
-                <img
+
+                <Image
                   src="/images/logo.png"
                   alt={`${brandName} Logo`}
                   width={40}
                   height={40}
+                  priority
                   className="relative h-10 w-10 rounded-full border border-border/60 bg-white object-cover shadow-sm"
                 />
               </div>
@@ -93,23 +121,25 @@ export function Navbar() {
                 <span className="block truncate text-base font-black tracking-tight text-foreground sm:text-lg">
                   {brandName}
                 </span>
+
                 <span className="mt-1 hidden text-[10px] font-semibold tracking-[0.18em] text-muted-foreground sm:block">
                   {brandTagline}
                 </span>
               </div>
             </Link>
 
-            <div className="hidden items-center gap-1 lg:flex">
+            <div className="hidden items-center gap-0.5 xl:flex">
               {navigationItems.map((item) => {
                 const active = isActive(item.href)
+
                 return (
                   <Link
                     key={item.href}
                     href={item.href}
                     aria-current={active ? "page" : undefined}
                     className={`
-                      relative rounded-full px-4 py-2.5 text-sm font-bold
-                      transition-colors duration-200
+                      relative whitespace-nowrap rounded-full px-3.5 py-2.5
+                      text-sm font-bold transition-colors duration-200
                       ${
                         active
                           ? "bg-primary/10 text-primary"
@@ -123,9 +153,19 @@ export function Navbar() {
               })}
             </div>
 
-            <div className="hidden items-center gap-3 lg:flex">
+            <div className="hidden shrink-0 items-center xl:flex">
               <LineConsultButton
-                className="inline-flex min-h-10 items-center justify-center rounded-full bg-[#06C755] px-5 py-2.5 text-sm font-bold text-white shadow-[0_10px_24px_rgba(6,199,85,0.22)] transition duration-200 hover:-translate-y-0.5 hover:bg-[#05b94f] hover:shadow-[0_14px_30px_rgba(6,199,85,0.30)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#06C755] focus-visible:ring-offset-2"
+                className="
+                  inline-flex min-h-10 items-center justify-center
+                  whitespace-nowrap rounded-full bg-[#06C755]
+                  px-5 py-2.5 text-sm font-bold text-white
+                  shadow-[0_10px_24px_rgba(6,199,85,0.22)]
+                  transition duration-200
+                  hover:-translate-y-0.5 hover:bg-[#05b94f]
+                  hover:shadow-[0_14px_30px_rgba(6,199,85,0.30)]
+                  focus-visible:outline-none focus-visible:ring-2
+                  focus-visible:ring-[#06C755] focus-visible:ring-offset-2
+                "
               >
                 Line 預約
               </LineConsultButton>
@@ -137,49 +177,125 @@ export function Navbar() {
               aria-label={mobileOpen ? "關閉選單" : "開啟選單"}
               aria-expanded={mobileOpen}
               aria-controls="mobile-navigation"
-              className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border/70 bg-background/90 text-foreground shadow-sm transition hover:bg-muted lg:hidden"
+              className="
+                relative flex h-10 w-10 shrink-0 items-center justify-center
+                rounded-full border border-border/70 bg-background/90
+                text-foreground shadow-sm transition hover:bg-muted
+                xl:hidden
+              "
             >
-              <span className="sr-only">{mobileOpen ? "關閉選單" : "開啟選單"}</span>
-              <span className="relative block h-4 w-5">
-                <span className={`absolute left-0 top-0 h-0.5 w-5 rounded-full bg-current transition duration-300 ${mobileOpen ? "translate-y-[7px] rotate-45" : ""}`} />
-                <span className={`absolute left-0 top-[7px] h-0.5 w-5 rounded-full bg-current transition duration-300 ${mobileOpen ? "opacity-0" : ""}`} />
-                <span className={`absolute bottom-0 left-0 h-0.5 w-5 rounded-full bg-current transition duration-300 ${mobileOpen ? "-translate-y-[7px] -rotate-45" : ""}`} />
+              <span className="sr-only">
+                {mobileOpen ? "關閉選單" : "開啟選單"}
+              </span>
+
+              <span aria-hidden="true" className="relative block h-4 w-5">
+                <span
+                  className={`
+                    absolute left-0 top-0 h-0.5 w-5 rounded-full
+                    bg-current transition duration-300
+                    ${mobileOpen ? "translate-y-[7px] rotate-45" : ""}
+                  `}
+                />
+
+                <span
+                  className={`
+                    absolute left-0 top-[7px] h-0.5 w-5 rounded-full
+                    bg-current transition duration-300
+                    ${mobileOpen ? "opacity-0" : ""}
+                  `}
+                />
+
+                <span
+                  className={`
+                    absolute bottom-0 left-0 h-0.5 w-5 rounded-full
+                    bg-current transition duration-300
+                    ${mobileOpen ? "-translate-y-[7px] -rotate-45" : ""}
+                  `}
+                />
               </span>
             </button>
           </nav>
         </div>
       </header>
 
-      <div
-        aria-hidden={!mobileOpen}
-        className={`fixed inset-0 z-[70] bg-black/20 backdrop-blur-sm transition-opacity duration-300 lg:hidden ${mobileOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"}`}
+      <button
+        type="button"
+        aria-label="關閉行動版選單"
+        tabIndex={mobileOpen ? 0 : -1}
         onClick={closeMobileMenu}
+        className={`
+          fixed inset-0 z-[70] bg-black/20 backdrop-blur-sm
+          transition-opacity duration-300 xl:hidden
+          ${
+            mobileOpen
+              ? "pointer-events-auto opacity-100"
+              : "pointer-events-none opacity-0"
+          }
+        `}
       />
 
       <aside
         id="mobile-navigation"
         aria-label="行動版導覽"
-        className={`fixed right-0 top-0 z-[75] flex h-dvh w-[88%] max-w-sm flex-col border-l border-border/70 bg-background px-6 pb-6 pt-24 shadow-[-20px_0_60px_-30px_rgba(15,23,42,0.35)] transition-transform duration-300 lg:hidden ${mobileOpen ? "translate-x-0" : "translate-x-full"}`}
+        aria-hidden={!mobileOpen}
+        className={`
+          fixed right-0 top-0 z-[75]
+          flex h-dvh w-[88%] max-w-sm flex-col
+          border-l border-border/70 bg-background
+          px-6 pb-6 pt-24
+          shadow-[-20px_0_60px_-30px_rgba(15,23,42,0.35)]
+          transition-transform duration-300 xl:hidden
+          ${
+            mobileOpen
+              ? "visible translate-x-0"
+              : "invisible translate-x-full"
+          }
+        `}
       >
         <div className="border-b border-border/70 pb-6">
-          <p className="text-xs font-black uppercase tracking-[0.2em] text-primary">Merrygood Health</p>
-          <p className="mt-3 text-2xl font-black tracking-tight text-foreground">{brandName}</p>
-          <p className="mt-2 text-sm leading-7 text-muted-foreground">健康減重、體重管理、飲食控制與減重醫療資訊。</p>
+          <p className="text-xs font-black uppercase tracking-[0.2em] text-primary">
+            Merrygood Health
+          </p>
+
+          <p className="mt-3 text-2xl font-black tracking-tight text-foreground">
+            {brandName}
+          </p>
+
+          <p className="mt-2 text-sm leading-7 text-muted-foreground">
+            健康減重、體重管理、飲食控制與減重醫療資訊。
+          </p>
         </div>
 
         <div className="flex flex-col py-4">
           {navigationItems.map((item) => {
             const active = isActive(item.href)
+
             return (
               <Link
                 key={item.href}
                 href={item.href}
                 onClick={closeMobileMenu}
+                tabIndex={mobileOpen ? 0 : -1}
                 aria-current={active ? "page" : undefined}
-                className={`flex items-center justify-between border-b border-border/60 py-4 text-lg font-bold transition ${active ? "text-primary" : "text-foreground hover:text-primary"}`}
+                className={`
+                  flex items-center justify-between
+                  border-b border-border/60 py-4
+                  text-lg font-bold transition
+                  ${
+                    active
+                      ? "text-primary"
+                      : "text-foreground hover:text-primary"
+                  }
+                `}
               >
                 <span>{item.label}</span>
-                <span aria-hidden="true" className={active ? "text-primary" : "text-muted-foreground"}>→</span>
+
+                <span
+                  aria-hidden="true"
+                  className={active ? "text-primary" : "text-muted-foreground"}
+                >
+                  →
+                </span>
               </Link>
             )
           })}
@@ -187,11 +303,22 @@ export function Navbar() {
 
         <div className="mt-auto pt-6">
           <LineConsultButton
-            className="flex min-h-12 w-full items-center justify-center rounded-full bg-[#06C755] px-6 py-3 text-base font-bold text-white shadow-[0_12px_28px_rgba(6,199,85,0.24)] transition hover:bg-[#05b94f] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#06C755] focus-visible:ring-offset-2"
+            className="
+              flex min-h-12 w-full items-center justify-center
+              rounded-full bg-[#06C755] px-6 py-3
+              text-base font-bold text-white
+              shadow-[0_12px_28px_rgba(6,199,85,0.24)]
+              transition hover:bg-[#05b94f]
+              focus-visible:outline-none focus-visible:ring-2
+              focus-visible:ring-[#06C755] focus-visible:ring-offset-2
+            "
           >
             Line 預約諮詢
           </LineConsultButton>
-          <p className="mt-5 text-center text-xs leading-6 text-muted-foreground">{brandTagline}</p>
+
+          <p className="mt-5 text-center text-xs leading-6 text-muted-foreground">
+            {brandTagline}
+          </p>
         </div>
       </aside>
     </>
