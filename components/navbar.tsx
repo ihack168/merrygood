@@ -8,7 +8,7 @@ import { usePathname } from "next/navigation"
 import { LineConsultButton } from "@/components/line-consult-button"
 
 const brandName = "美麗好減重資訊站"
-const brandTagline = "體重管理"
+const brandTagline = "健康體重管理"
 
 const navigationItems = [
   { label: "首頁", href: "/" },

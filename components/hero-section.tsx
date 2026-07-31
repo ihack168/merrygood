@@ -43,9 +43,7 @@ export function HeroSection() {
 
           <h1 className="mt-5 max-w-3xl text-5xl font-black leading-[1.02] tracking-[-0.055em] text-foreground sm:text-6xl lg:text-7xl">
             專業減重資訊
-            <span className="mt-2 block text-primary">
-              從理解開始
-            </span>
+            <span className="mt-2 block text-primary">從理解開始</span>
           </h1>
 
           <p className="mt-6 max-w-2xl text-lg font-bold leading-8 text-foreground/85 sm:text-xl">
@@ -124,14 +122,13 @@ export function HeroSection() {
 
                 <div
                   aria-hidden="true"
-                  className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent"
+                  className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent"
                 />
 
-                <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8">
-                  <div className="max-w-md rounded-2xl border border-white/20 bg-black/28 p-4 text-white backdrop-blur-md">
-
-                    <p className="mt-2 text-lg font-black leading-7">
-                     健康的減重方式。
+                <div className="absolute bottom-3 left-3 sm:bottom-5 sm:left-5">
+                  <div className="rounded-full border border-white/20 bg-black/35 px-4 py-2 text-white shadow-lg backdrop-blur-md sm:px-5 sm:py-2.5">
+                    <p className="text-sm font-black tracking-tight sm:text-base">
+                      健康減重，從理解開始。
                     </p>
                   </div>
                 </div>
