@@ -167,7 +167,7 @@ export function Navbar() {
                   focus-visible:ring-[#06C755] focus-visible:ring-offset-2
                 "
               >
-                Line 預約
+                Line預約諮詢
               </LineConsultButton>
             </div>
 
