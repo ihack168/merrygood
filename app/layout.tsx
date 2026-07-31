@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { Noto_Sans_TC, Geist_Mono } from "next/font/google"
 import Script from "next/script"
 
+import { Footer } from "@/components/footer"
 import { Navbar } from "@/components/navbar"
 
 import "./globals.css"
@@ -198,7 +199,7 @@ export default function RootLayout({
       lang="zh-Hant-TW"
       className={`${notoSansTC.variable} ${geistMono.variable}`}
     >
-      <body className="bg-background text-foreground font-sans antialiased">
+      <body className="flex min-h-screen flex-col bg-background font-sans text-foreground antialiased">
         <Navbar />
 
         <Script
@@ -226,7 +227,9 @@ export default function RootLayout({
           strategy="afterInteractive"
         />
 
-        {children}
+        <main className="flex-1 pt-20">{children}</main>
+
+        <Footer />
       </body>
     </html>
   )

@@ -1,7 +1,6 @@
 import { client } from "@/lib/sanity"
 import { createImageUrlBuilder } from "@sanity/image-url"
 import { PortableText } from "@portabletext/react"
-import { Footer } from "@/components/footer"
 import { notFound } from "next/navigation"
 import { ShareBar } from "@/components/share-bar"
 import Link from "next/link"
@@ -788,7 +787,6 @@ export default async function PostPage({
         </div>
       </main>
 
-      <Footer />
     </div>
   )
 }

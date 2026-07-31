@@ -1,5 +1,4 @@
 import { client } from "@/lib/sanity"
-import { Footer } from "@/components/footer"
 import Link from "next/link"
 import type { Metadata } from "next"
 
@@ -377,7 +376,6 @@ export default async function BlogPage({
         </div>
       </main>
 
-      <Footer />
     </div>
   )
 }

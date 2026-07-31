@@ -126,7 +126,11 @@ export default function AboutPage() {
                 </p>
 
                 <div className="mt-7">
-                  <LineConsultButton>Line 預約諮詢</LineConsultButton>
+                  <LineConsultButton
+                    className="inline-flex min-h-12 items-center justify-center rounded-full bg-[#06C755] px-6 py-3 text-base font-bold text-white shadow-[0_10px_24px_rgba(6,199,85,0.28)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#05b94f] hover:shadow-[0_14px_30px_rgba(6,199,85,0.36)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#06C755] focus-visible:ring-offset-2"
+                  >
+                    Line 預約諮詢
+                  </LineConsultButton>
                 </div>
               </article>
             ))}
