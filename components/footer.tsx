@@ -87,10 +87,6 @@ export function Footer() {
               需要專業醫療評估？
             </p>
 
-            <p className="mt-2 max-w-sm text-sm leading-6 text-muted-foreground">
-              個人化減重、處方藥物或醫療問題，請透過美麗好診所官方管道諮詢。
-            </p>
-
             <LineConsultButton
               className="mt-4 inline-flex items-center justify-center rounded-full bg-[#06C755] px-6 py-3 text-sm font-bold text-white transition-opacity hover:opacity-90"
             >
