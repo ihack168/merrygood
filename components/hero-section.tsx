@@ -49,13 +49,13 @@ export function HeroSection() {
 
               {/* title */}
               <h1 className="mt-7 text-5xl font-black tracking-[-0.04em] text-foreground md:text-7xl">
-                美麗好減肥減重-體重管理資訊站
+                美麗好減重-體重管理資訊站
               </h1>
 
               {/* subtitle */}
               <div className="mt-6 space-y-2">
                 <p className="text-2xl font-black tracking-tight text-accent md:text-4xl">
-                  專業減肥診所
+                  專業減重診所
                 </p>
 
                 <p className="text-lg font-semibold text-foreground/80 md:text-2xl">
@@ -65,7 +65,7 @@ export function HeroSection() {
 
               {/* desc */}
               <p className="mx-auto mt-7 max-w-xl text-sm leading-8 text-muted-foreground md:text-base lg:mx-0">
-                美麗好減肥減重-體重管理資訊站專注於減肥、減重與體重管理，
+                美麗好減重-體重管理資訊站專注於減肥、減重與體重管理，
                 提供個人化減重評估與專業諮詢，
                 協助打造更健康、更理想的體態。
               </p>
