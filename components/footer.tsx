@@ -94,7 +94,7 @@ export function Footer() {
             <LineConsultButton
               className="mt-4 inline-flex items-center justify-center rounded-full bg-[#06C755] px-6 py-3 text-sm font-bold text-white transition-opacity hover:opacity-90"
             >
-              前往美麗好診所諮詢
+              Line預約諮詢
             </LineConsultButton>
           </div>
         </div>

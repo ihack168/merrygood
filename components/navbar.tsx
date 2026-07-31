@@ -348,7 +348,7 @@ export function Navbar() {
                 shadow-[0_20px_50px_rgba(129,216,208,0.35)]
               "
             >
-              前往美麗好診所諮詢
+              Line預約諮詢
             </LineConsultButton>
           </div>
 

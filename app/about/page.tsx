@@ -58,45 +58,60 @@ const clinics = [
 export default function AboutPage() {
   return (
     <div className="bg-white">
-      {/* 頁首介紹 */}
-      <section className="mx-auto max-w-7xl px-6 py-14 sm:py-20 lg:px-8 lg:py-24">
-        <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-emerald-700">
+      {/* 滿版 Hero */}
+      <section className="relative isolate min-h-[calc(100svh-5rem)] overflow-hidden">
+        <Image
+          src={clinicImages[0].src}
+          alt={clinicImages[0].alt}
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center"
+        />
+
+        <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/45 to-black/15" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-black/10" />
+
+        <div className="relative z-10 mx-auto flex min-h-[calc(100svh-5rem)] max-w-7xl items-center px-6 py-16 lg:px-8">
+          <div className="max-w-3xl">
+            <p className="text-sm font-bold uppercase tracking-[0.28em] text-emerald-300 sm:text-base">
               About Merrygood Clinic
             </p>
 
-            <h1 className="mt-4 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
+            <h1 className="mt-5 text-4xl font-black tracking-tight text-white drop-shadow-lg sm:text-6xl lg:text-7xl">
               關於美麗好診所
             </h1>
 
-            <p className="mt-6 text-lg leading-9 text-gray-600">
+            <p className="mt-7 max-w-2xl text-lg leading-9 text-white/90 drop-shadow sm:text-xl sm:leading-10">
               美麗好診所為一間專業瘦身、減重、減肥與醫學美容的診所，
               位於台北市區與新竹市區，交通便利。
             </p>
 
-            <p className="mt-4 text-lg leading-9 text-gray-600">
+            <p className="mt-4 max-w-2xl text-lg leading-9 text-white/85 drop-shadow sm:text-xl sm:leading-10">
               我們以專業的醫療團隊，搭配親切且重視隱私的服務，
               陪伴每個追求瘦身、健康與美麗的你，逐步達成理想目標。
             </p>
-          </div>
 
-          <div className="relative aspect-[4/3] overflow-hidden rounded-3xl">
-            <Image
-              src={clinicImages[0].src}
-              alt={clinicImages[0].alt}
-              fill
-              priority
-              sizes="(max-width: 1024px) 100vw, 50vw"
-              className="object-cover"
-            />
+            <div className="mt-9 flex flex-wrap gap-3">
+              <span className="rounded-full border border-white/30 bg-white/15 px-5 py-2.5 text-sm font-bold text-white backdrop-blur-md">
+                專業醫療團隊
+              </span>
+
+              <span className="rounded-full border border-white/30 bg-white/15 px-5 py-2.5 text-sm font-bold text-white backdrop-blur-md">
+                重視個人隱私
+              </span>
+
+              <span className="rounded-full border border-white/30 bg-white/15 px-5 py-2.5 text-sm font-bold text-white backdrop-blur-md">
+                台北・新竹院區
+              </span>
+            </div>
           </div>
         </div>
       </section>
 
       {/* 院區資訊 */}
       <section className="border-y border-gray-100 bg-gray-50">
-        <div className="mx-auto max-w-7xl px-6 py-14 sm:py-20 lg:px-8">
+        <div className="mx-auto max-w-7xl px-6 py-16 sm:py-20 lg:px-8 lg:py-24">
           <div className="max-w-2xl">
             <p className="text-sm font-semibold uppercase tracking-[0.22em] text-emerald-700">
               Clinic Locations
@@ -115,7 +130,7 @@ export default function AboutPage() {
             {clinics.map((clinic) => (
               <article
                 key={clinic.name}
-                className="rounded-3xl border border-gray-200 bg-white p-7 shadow-sm sm:p-8"
+                className="rounded-3xl border border-gray-200 bg-white p-7 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg sm:p-8"
               >
                 <h3 className="text-2xl font-bold text-gray-900">
                   {clinic.name}
@@ -139,7 +154,7 @@ export default function AboutPage() {
       </section>
 
       {/* 院所理念 */}
-      <section className="mx-auto max-w-5xl px-6 py-14 sm:py-20 lg:px-8 lg:py-24">
+      <section className="mx-auto max-w-5xl px-6 py-16 sm:py-20 lg:px-8 lg:py-24">
         <div className="text-center">
           <p className="text-sm font-semibold uppercase tracking-[0.22em] text-emerald-700">
             Environment & Facilities
@@ -171,7 +186,7 @@ export default function AboutPage() {
       </section>
 
       {/* 院所圖片 */}
-      <section className="mx-auto max-w-7xl px-6 pb-14 sm:pb-20 lg:px-8 lg:pb-24">
+      <section className="mx-auto max-w-7xl px-6 pb-16 sm:pb-20 lg:px-8 lg:pb-24">
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {clinicImages.map((image, index) => (
             <div
