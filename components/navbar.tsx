@@ -90,7 +90,7 @@ export function Navbar() {
           <nav
             aria-label="主要導覽"
             className={`
-              pointer-events-auto mt-3 flex h-[72px] items-center justify-between
+              pointer-events-auto mt-3 flex h-[66px] items-center justify-between
               rounded-2xl border px-4 transition-all duration-300 sm:px-5
               ${
                 scrolled
@@ -110,15 +110,15 @@ export function Navbar() {
                 <Image
                   src="/images/logo.png"
                   alt={`${brandName} Logo`}
-                  width={46}
-                  height={46}
+                  width={48}
+                  height={48}
                   priority
-                  className="relative h-[46px] w-[46px] rounded-full border border-border/60 bg-white object-cover shadow-sm"
+                  className="relative h-12 w-12 rounded-full border border-border/60 bg-white object-cover shadow-sm"
                 />
               </div>
 
               <div className="min-w-0 leading-none">
-                <span className="block truncate text-lg font-black tracking-tight text-foreground sm:text-xl">
+                <span className="block truncate text-xl font-black tracking-tight text-foreground sm:text-2xl">
                   {brandName}
                 </span>
 
@@ -138,8 +138,8 @@ export function Navbar() {
                     href={item.href}
                     aria-current={active ? "page" : undefined}
                     className={`
-                      relative whitespace-nowrap rounded-full px-3.5 py-2.5
-                      text-base font-bold transition-colors duration-200
+                      relative whitespace-nowrap rounded-full px-4 py-2
+                      text-lg font-bold transition-colors duration-200
                       ${
                         active
                           ? "bg-primary/10 text-primary"
@@ -158,7 +158,7 @@ export function Navbar() {
                 className="
                   inline-flex min-h-10 items-center justify-center
                   whitespace-nowrap rounded-full bg-[#06C755]
-                  px-6 py-3 text-base font-bold text-white
+                  px-6 py-2.5 text-base font-bold text-white
                   shadow-[0_10px_24px_rgba(6,199,85,0.22)]
                   transition duration-200
                   hover:-translate-y-0.5 hover:bg-[#05b94f]
