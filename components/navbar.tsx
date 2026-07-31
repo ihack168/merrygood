@@ -155,7 +155,7 @@ export function Navbar() {
                 }
               `}
             >
-              關於本站
+              關於我們
 
               <span
                 className={`
@@ -331,7 +331,7 @@ export function Navbar() {
                 }
               `}
             >
-              關於本站
+              關於我們
               <span className="text-primary">→</span>
             </Link>
           </div>

@@ -54,7 +54,7 @@ export function Footer() {
               className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted-foreground"
             >
               <Link href="/about" className="hover:text-primary">
-                關於本站
+                關於我們
               </Link>
 
               <Link href="/blog" className="hover:text-primary">
