@@ -253,17 +253,11 @@ export function Navbar() {
         `}
       >
         <div className="border-b border-border/70 pb-6">
-          <p className="text-xs font-black uppercase tracking-[0.2em] text-primary">
-            Merrygood Health
-          </p>
 
           <p className="mt-3 text-2xl font-black tracking-tight text-foreground">
             {brandName}
           </p>
 
-          <p className="mt-2 text-sm leading-7 text-muted-foreground">
-            健康減重、體重管理、飲食控制與減重醫療資訊。
-          </p>
         </div>
 
         <div className="flex flex-col py-4">
