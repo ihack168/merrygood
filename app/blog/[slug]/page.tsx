@@ -565,11 +565,11 @@ export default async function PostPage({
         }}
       />
 
-      <main className="px-5 pb-20 pt-28 md:px-6 md:pt-32">
+      <main className="px-5 pb-16 pt-6 md:px-6 md:pt-8">
         <div className="mx-auto max-w-3xl">
           <nav
             aria-label="麵包屑導覽"
-            className="mb-7 flex items-center gap-2 overflow-hidden text-xs text-muted-foreground"
+            className="mb-4 flex items-center gap-2 overflow-hidden text-xs text-muted-foreground"
           >
             <Link href="/" className="transition-colors hover:text-primary">
               首頁
@@ -605,11 +605,11 @@ export default async function PostPage({
             </div>
           )}
 
-          <h1 className="mb-5 text-4xl font-bold leading-tight tracking-tight text-foreground md:text-5xl">
+          <h1 className="mb-4 text-4xl font-bold leading-tight tracking-tight text-foreground md:text-5xl">
             {post.title}
           </h1>
 
-          <div className="mb-10 flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-border pb-6 text-sm text-muted-foreground">
+          <div className="mb-6 flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-border pb-4 text-sm text-muted-foreground">
             <span>
               撰文者：
               <Link
@@ -644,7 +644,7 @@ export default async function PostPage({
           </div>
 
           {mainImageUrl && (
-            <figure className="mb-16 overflow-hidden rounded-[2rem] border border-border bg-white shadow-[0_20px_70px_rgba(120,80,70,0.12)]">
+            <figure className="mb-10 overflow-hidden rounded-[2rem] border border-border bg-white shadow-[0_20px_70px_rgba(120,80,70,0.12)]">
               <img
                 src={mainImageUrl}
                 alt={post.title}

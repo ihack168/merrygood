@@ -209,9 +209,9 @@ export default async function BlogPage({
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <main className="relative overflow-hidden px-6 pb-24 pt-32">
+      <main className="relative overflow-hidden px-6 pb-16 pt-6 sm:pt-8">
         <div className="mx-auto max-w-6xl">
-          <div className="mb-12 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+          <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <header>
               <h1 className="text-4xl font-bold md:text-6xl">最新文章</h1>
 
@@ -227,7 +227,7 @@ export default async function BlogPage({
             </p>
           </div>
 
-          <div className="mb-12">
+          <div className="mb-8">
             <div className="flex flex-wrap gap-3">
               {visibleTags.map((tagItem) => (
                 <Link
@@ -337,7 +337,7 @@ export default async function BlogPage({
           )}
 
           {totalPages > 1 && (
-            <div className="mt-20 flex flex-wrap items-center justify-center gap-2">
+            <div className="mt-12 flex flex-wrap items-center justify-center gap-2">
               <Link
                 href={buildBlogUrl(selectedTag, Math.max(1, page - 1))}
                 aria-disabled={page === 1}
