@@ -67,46 +67,41 @@ export default function Home() {
         }}
       />
 
-      {/* 1. Hero */}
-      <section className="pb-4 md:pb-6">
-        <HeroSection />
-      </section>
+      <HeroSection />
 
-      {/* 2. 文章列表 */}
       <LatestPostsSection />
 
-      {/* 3. 健康減重與體重管理資訊 */}
       <section
         aria-labelledby="weight-management-introduction"
-        className="mx-auto max-w-5xl px-6 py-16"
+        className="mx-auto max-w-5xl px-6 py-8"
       >
-        <div className="rounded-3xl border border-border/70 bg-card/80 p-6 shadow-sm backdrop-blur md:p-10">
+        <div className="rounded-3xl border border-border/70 bg-card/80 p-6 shadow-sm backdrop-blur md:p-8">
           <div className="text-center">
-            <p className="text-sm font-bold uppercase tracking-[0.2em] text-primary">
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary sm:text-sm">
               HEALTHY WEIGHT MANAGEMENT
             </p>
 
             <h2
               id="weight-management-introduction"
-              className="mt-3 text-2xl font-black text-foreground md:text-4xl"
+              className="mt-2 text-2xl font-black text-foreground md:text-4xl"
             >
               健康減重與體重管理資訊
             </h2>
 
-            <p className="mx-auto mt-5 max-w-3xl text-base leading-8 text-muted-foreground">
+            <p className="mx-auto mt-4 max-w-3xl text-base leading-8 text-muted-foreground">
               本站整理健康減重、體重控制、飲食管理、運動習慣與減重醫療相關資訊，
               協助讀者建立正確觀念。實際減重方式仍應依個人身體狀況，
               由合格醫師、營養師或其他醫療專業人員進行評估。
             </p>
           </div>
 
-          <div className="mt-8 grid gap-4 md:grid-cols-3">
+          <div className="mt-6 grid gap-4 md:grid-cols-3">
             <article className="rounded-2xl border border-border/70 bg-background/70 p-5">
               <h3 className="text-lg font-black text-foreground">
                 體重管理
               </h3>
 
-              <p className="mt-3 text-sm leading-7 text-muted-foreground">
+              <p className="mt-2 text-sm leading-7 text-muted-foreground">
                 了解體重變化、生活習慣、熱量攝取與健康目標之間的關係。
               </p>
             </article>
@@ -116,7 +111,7 @@ export default function Home() {
                 飲食與運動
               </h3>
 
-              <p className="mt-3 text-sm leading-7 text-muted-foreground">
+              <p className="mt-2 text-sm leading-7 text-muted-foreground">
                 整理飲食控制、營養分配、日常活動與規律運動相關知識。
               </p>
             </article>
@@ -126,7 +121,7 @@ export default function Home() {
                 減重醫療資訊
               </h3>
 
-              <p className="mt-3 text-sm leading-7 text-muted-foreground">
+              <p className="mt-2 text-sm leading-7 text-muted-foreground">
                 介紹減重門診、專業評估及處方藥物使用時應注意的事項。
               </p>
             </article>
