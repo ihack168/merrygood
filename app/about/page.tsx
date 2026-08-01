@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import Image from "next/image"
+import { MapPin } from "lucide-react"
 
 import { LineConsultButton } from "@/components/line-consult-button"
 
@@ -48,10 +49,14 @@ const clinics = [
   {
     name: "台北院區",
     address: "台北市南京東路一段42號3樓",
+    image: "/images/clinic-location.jpg",
+    imageAlt: "美麗好診所台北院區環境",
   },
   {
     name: "新竹院區",
     address: "新竹市北大路40巷30號",
+    image: "/images/clinic-location.jpg",
+    imageAlt: "美麗好診所新竹院區環境",
   },
 ]
 
@@ -132,22 +137,51 @@ export default function AboutPage() {
             {clinics.map((clinic) => (
               <article
                 key={clinic.name}
-                className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-md sm:p-6"
+                className="group relative min-h-[340px] overflow-hidden rounded-[1.75rem] border border-white/50 bg-gray-900 shadow-[0_18px_50px_-24px_rgba(15,23,42,0.45)] transition duration-500 hover:-translate-y-1 hover:shadow-[0_26px_70px_-26px_rgba(15,23,42,0.5)] sm:min-h-[380px]"
               >
-                <h3 className="text-xl font-bold text-gray-900 sm:text-2xl">
-                  {clinic.name}
-                </h3>
+                <Image
+                  src={clinic.image}
+                  alt={clinic.imageAlt}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover object-center transition duration-700 group-hover:scale-105"
+                />
 
-                <p className="mt-2 text-sm leading-7 text-gray-600 sm:text-base">
-                  {clinic.address}
-                </p>
+                <div
+                  aria-hidden="true"
+                  className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-black/5"
+                />
 
-                <div className="mt-4">
-                  <LineConsultButton
-                    className="inline-flex min-h-10 items-center justify-center rounded-full bg-[#06C755] px-5 py-2.5 text-sm font-bold text-white shadow-[0_8px_20px_rgba(6,199,85,0.24)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#05b94f] hover:shadow-[0_12px_26px_rgba(6,199,85,0.32)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#06C755] focus-visible:ring-offset-2"
-                  >
-                    Line 預約諮詢
-                  </LineConsultButton>
+                <div
+                  aria-hidden="true"
+                  className="absolute inset-0 ring-1 ring-inset ring-white/15"
+                />
+
+                <div className="absolute inset-x-0 bottom-0 p-5 sm:p-6">
+                  <p className="text-xs font-black uppercase tracking-[0.22em] text-emerald-300">
+                    Merrygood Clinic
+                  </p>
+
+                  <h3 className="mt-2 text-2xl font-black tracking-tight text-white sm:text-3xl">
+                    {clinic.name}
+                  </h3>
+
+                  <div className="mt-3 flex items-start gap-2 text-sm leading-7 text-white/85 sm:text-base">
+                    <MapPin
+                      size={18}
+                      aria-hidden="true"
+                      className="mt-1 shrink-0 text-emerald-300"
+                    />
+                    <span>{clinic.address}</span>
+                  </div>
+
+                  <div className="mt-5">
+                    <LineConsultButton
+                      className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#06C755] px-6 py-2.5 text-sm font-black text-white shadow-[0_10px_26px_rgba(6,199,85,0.28)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#05b94f] hover:shadow-[0_14px_32px_rgba(6,199,85,0.36)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#06C755] focus-visible:ring-offset-2"
+                    >
+                      Line 預約諮詢
+                    </LineConsultButton>
+                  </div>
                 </div>
               </article>
             ))}
