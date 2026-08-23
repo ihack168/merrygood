@@ -55,7 +55,7 @@ const clinics = [
   {
     name: "新竹院區",
     address: "新竹市北大路40巷30號",
-    image: "/images/clinic-location.jpg",
+    image: "/images/location-hsinchu.jpg",
     imageAlt: "美麗好診所新竹院區環境",
   },
 ]
