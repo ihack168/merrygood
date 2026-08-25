@@ -264,7 +264,8 @@ function MeasurementChart({
   const paddingBottom = 52
 
   const minAge = 0
-  const maxAge = 84
+  // 國健署兒童與青少年生長曲線涵蓋 0～20 歲（240 個月）。
+  const maxAge = 20 * 12
 
   const points = useMemo(() => {
     return patient.measurements
@@ -505,9 +506,10 @@ function MeasurementChart({
   )
 
   const xTicks = Array.from(
-    { length: 8 },
+    { length: 11 },
     (_, index) => {
-      const month = index * 12
+      // 每 2 歲一格，避免 0～20 歲標籤過度擁擠。
+      const month = index * 24
 
       return {
         month,
@@ -526,13 +528,13 @@ function MeasurementChart({
 
           <p className="mt-1 text-xs text-slate-500">
             {metric === "bmi"
-              ? "顯示國民健康署 BMI 過輕、過重及肥胖判定界線，並疊加病童量測紀錄。"
-              : "顯示國民健康署 P3、P15、P50、P85、P97 生長曲線，並疊加病童量測紀錄。"}
+              ? `顯示國民健康署${patient.biologicalSex === "male" ? "男生" : "女生"} BMI 過輕、過重及肥胖判定界線，並疊加病童量測紀錄。`
+              : `顯示國民健康署${patient.biologicalSex === "male" ? "男生" : "女生"} P3、P15、P50、P85、P97 生長曲線，並疊加病童量測紀錄。`}
           </p>
         </div>
 
         <span className="w-fit rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-700">
-          國健署 0～7 歲標準
+          國健署 0～20 歲・{patient.biologicalSex === "male" ? "男生" : "女生"}標準
         </span>
       </div>
 
@@ -2114,7 +2116,7 @@ export default function GrowthChartPage() {
                   <input
                     type="number"
                     min="20"
-                    max="80"
+                    max="250"
                     step="0.1"
                     value={
                       patientForm.birthHeight

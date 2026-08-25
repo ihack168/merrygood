@@ -22,6 +22,9 @@ type ChartPoint = {
 const chartWidth = 900
 const chartHeight = 440
 
+// 正式參考數值到 18.5 歲（222 個月），臨床圖紙座標軸顯示到 20 歲。
+const chartMaximumMonth = 20 * 12
+
 const padding = {
   top: 28,
   right: 34,
@@ -160,13 +163,13 @@ export function GrowthChart({
         }
       })
       .filter((point): point is ChartPoint => point !== null)
+      .filter(
+        (point) =>
+          point.month >= 0 &&
+          point.month <= chartMaximumMonth,
+      )
       .sort((a, b) => a.month - b.month)
   }, [measurements, metricInformation])
-
-  const allMonths = [
-    ...referenceData.map((item) => item.month),
-    ...patientPoints.map((item) => item.month),
-  ]
 
   const allValues = [
     ...referenceData.flatMap((item) => [
@@ -179,8 +182,8 @@ export function GrowthChart({
     ...patientPoints.map((item) => item.value),
   ].filter(Number.isFinite)
 
-  const maximumMonth = Math.max(84, ...allMonths, 1)
-  const minimumMonth = Math.min(0, ...allMonths, 0)
+  const maximumMonth = chartMaximumMonth
+  const minimumMonth = 0
 
   const rawMinimumValue = allValues.length > 0 ? Math.min(...allValues) : 0
   const rawMaximumValue = allValues.length > 0 ? Math.max(...allValues) : 100
@@ -216,8 +219,9 @@ export function GrowthChart({
 
   const patientPath = createPath(patientPoints, scaleX, scaleY)
 
-  const xTicks = Array.from({ length: 8 }, (_, index) => {
-    return Math.round((maximumMonth / 7) * index)
+  const xTicks = Array.from({ length: 11 }, (_, index) => {
+    // 0、2、4……20 歲，避免標籤過度擁擠。
+    return index * 24
   })
 
   const yTicks = Array.from({ length: 6 }, (_, index) => {
