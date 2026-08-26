@@ -259,7 +259,8 @@ function MeasurementChart({
   const chartWidth = 760
   const chartHeight = 420
   const paddingLeft = 64
-  const paddingRight = 52
+  // 右側預留空間，顯示第二組 Y 軸刻度數字。
+  const paddingRight = 64
   const paddingTop = 32
   const paddingBottom = 52
 
@@ -365,14 +366,13 @@ function MeasurementChart({
     > = {
       p3: {
         label: "P3",
-        stroke: "#94a3b8",
-        strokeWidth: 1.5,
-        dash: "5 4",
+        stroke: "#dc2626",
+        strokeWidth: 2,
       },
       p15: {
         label: "P15",
-        stroke: "#64748b",
-        strokeWidth: 1.5,
+        stroke: "#eab308",
+        strokeWidth: 2,
       },
       p50: {
         label: "P50",
@@ -381,14 +381,13 @@ function MeasurementChart({
       },
       p85: {
         label: "P85",
-        stroke: "#64748b",
-        strokeWidth: 1.5,
+        stroke: "#2563eb",
+        strokeWidth: 2,
       },
       p97: {
         label: "P97",
-        stroke: "#94a3b8",
-        strokeWidth: 1.5,
-        dash: "5 4",
+        stroke: "#f97316",
+        strokeWidth: 2,
       },
     }
 
@@ -447,14 +446,21 @@ function MeasurementChart({
         ? 2
         : 1
 
+  // 身高與體重每 5 單位一格；BMI 每 1 單位一格。
+  // 上下限也對齊刻度，避免出現 41、70、99 等不規則數字。
+  const yTickStep = metric === "bmi" ? 1 : 5
+
   const minValue = Math.max(
     0,
-    Math.floor(rawMinValue - valuePadding),
+    Math.floor(
+      (rawMinValue - valuePadding) / yTickStep,
+    ) * yTickStep,
   )
 
-  const maxValue = Math.ceil(
-    rawMaxValue + valuePadding,
-  )
+  const maxValue =
+    Math.ceil(
+      (rawMaxValue + valuePadding) / yTickStep,
+    ) * yTickStep
 
   const plotWidth =
     chartWidth - paddingLeft - paddingRight
@@ -489,18 +495,17 @@ function MeasurementChart({
     )
     .join(" ")
 
-  const yTicks = Array.from(
-    { length: 6 },
-    (_, index) => {
-      const ratio = index / 5
+  const yTickCount =
+    Math.round((maxValue - minValue) / yTickStep) + 1
 
-      const value =
-        maxValue -
-        ratio * (maxValue - minValue)
+  const yTicks = Array.from(
+    { length: yTickCount },
+    (_, index) => {
+      const value = maxValue - index * yTickStep
 
       return {
         value,
-        y: paddingTop + ratio * plotHeight,
+        y: mapY(value),
       }
     },
   )
@@ -528,13 +533,13 @@ function MeasurementChart({
 
           <p className="mt-1 text-xs text-slate-500">
             {metric === "bmi"
-              ? `顯示國民健康署${patient.biologicalSex === "male" ? "男生" : "女生"} BMI 過輕、過重及肥胖判定界線，並疊加病童量測紀錄。`
-              : `顯示國民健康署${patient.biologicalSex === "male" ? "男生" : "女生"} P3、P15、P50、P85、P97 生長曲線，並疊加病童量測紀錄。`}
+              ? `顯示臺灣${patient.biologicalSex === "male" ? "男生" : "女生"} BMI 過輕、過重及肥胖判定界線，並疊加病童量測紀錄。`
+              : `顯示臺灣${patient.biologicalSex === "male" ? "男生" : "女生"} P3、P15、P50、P85、P97 生長曲線，並疊加病童量測紀錄。`}
           </p>
         </div>
 
         <span className="w-fit rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-700">
-          國健署 0～20 歲・{patient.biologicalSex === "male" ? "男生" : "女生"}標準
+          臺灣 0～18.5 歲參考・{patient.biologicalSex === "male" ? "男生" : "女生"}
         </span>
       </div>
 
@@ -558,7 +563,7 @@ function MeasurementChart({
         ))}
 
         <div className="flex items-center gap-2 text-xs font-medium text-slate-600">
-          <span className="block h-[3px] w-7 bg-blue-600" />
+          <span className="block h-[3px] w-7 bg-purple-600" />
           病童量測
         </div>
       </div>
@@ -599,6 +604,18 @@ function MeasurementChart({
               >
                 {tick.value.toFixed(
                   metric === "height" ? 0 : 1,
+                )}
+              </text>
+
+              <text
+                x={chartWidth - paddingRight + 12}
+                y={tick.y + 4}
+                textAnchor="start"
+                fontSize="11"
+                fill="#64748b"
+              >
+                {tick.value.toFixed(
+                  metric === "bmi" ? 1 : 0,
                 )}
               </text>
             </g>
@@ -686,7 +703,7 @@ function MeasurementChart({
             <polyline
               points={patientPolylinePoints}
               fill="none"
-              stroke="#2563eb"
+              stroke="#7c3aed"
               strokeWidth="3"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -704,7 +721,7 @@ function MeasurementChart({
                   cy={mapY(point.value)}
                   r={latest ? 7 : 5}
                   fill={
-                    latest ? "#dc2626" : "#2563eb"
+                    latest ? "#dc2626" : "#7c3aed"
                   }
                   stroke="#ffffff"
                   strokeWidth="3"
