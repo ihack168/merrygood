@@ -264,6 +264,9 @@ function MeasurementChart({
   const paddingTop = 32
   const paddingBottom = 52
 
+  const [focusMeasurements, setFocusMeasurements] =
+    useState(false)
+
   const minAge = 0
   // 國健署兒童與青少年生長曲線涵蓋 0～20 歲（240 個月）。
   const maxAge = 20 * 12
@@ -450,17 +453,100 @@ function MeasurementChart({
   // 上下限也對齊刻度，避免出現 41、70、99 等不規則數字。
   const yTickStep = metric === "bmi" ? 1 : 5
 
-  const minValue = Math.max(
+  const fullMinValue = Math.max(
     0,
     Math.floor(
       (rawMinValue - valuePadding) / yTickStep,
     ) * yTickStep,
   )
 
-  const maxValue =
+  const fullMaxValue =
     Math.ceil(
       (rawMaxValue + valuePadding) / yTickStep,
     ) * yTickStep
+
+  const canFocus = points.length > 0
+  const isFocused = focusMeasurements && canFocus
+
+  const patientMinAge = canFocus
+    ? Math.min(...points.map((point) => point.ageMonths))
+    : minAge
+
+  const patientMaxAge = canFocus
+    ? Math.max(...points.map((point) => point.ageMonths))
+    : maxAge
+
+  const patientAgeSpan = patientMaxAge - patientMinAge
+  const focusAgePadding = Math.max(
+    6,
+    Math.ceil(patientAgeSpan * 0.2),
+  )
+
+  let focusMinAge = Math.max(
+    minAge,
+    patientMinAge - focusAgePadding,
+  )
+
+  let focusMaxAge = Math.min(
+    maxAge,
+    patientMaxAge + focusAgePadding,
+  )
+
+  // 只有一筆或量測日期很接近時，至少顯示兩年的視窗。
+  if (focusMaxAge - focusMinAge < 24) {
+    const centerAge = (patientMinAge + patientMaxAge) / 2
+    focusMinAge = Math.max(minAge, centerAge - 12)
+    focusMaxAge = Math.min(maxAge, centerAge + 12)
+
+    if (focusMinAge === minAge) {
+      focusMaxAge = Math.min(maxAge, minAge + 24)
+    }
+
+    if (focusMaxAge === maxAge) {
+      focusMinAge = Math.max(minAge, maxAge - 24)
+    }
+  }
+
+  const displayMinAge = isFocused ? focusMinAge : minAge
+  const displayMaxAge = isFocused ? focusMaxAge : maxAge
+
+  const patientRawMinValue = canFocus
+    ? Math.min(...patientValues)
+    : rawMinValue
+
+  const patientRawMaxValue = canFocus
+    ? Math.max(...patientValues)
+    : rawMaxValue
+
+  const patientValueSpan =
+    patientRawMaxValue - patientRawMinValue
+
+  const focusValuePadding = Math.max(
+    yTickStep * 2,
+    patientValueSpan * 0.2,
+  )
+
+  const focusMinValue = Math.max(
+    0,
+    Math.floor(
+      (patientRawMinValue - focusValuePadding) /
+        yTickStep,
+    ) * yTickStep,
+  )
+
+  const focusMaxValue =
+    Math.ceil(
+      (patientRawMaxValue + focusValuePadding) /
+        yTickStep,
+    ) * yTickStep
+
+  const minValue = isFocused
+    ? focusMinValue
+    : fullMinValue
+
+  const maxValue = isFocused
+    ? Math.max(focusMaxValue, focusMinValue + yTickStep)
+    : fullMaxValue
 
   const plotWidth =
     chartWidth - paddingLeft - paddingRight
@@ -471,7 +557,8 @@ function MeasurementChart({
   const mapX = (ageMonths: number) => {
     return (
       paddingLeft +
-      ((ageMonths - minAge) / (maxAge - minAge)) *
+      ((ageMonths - displayMinAge) /
+        Math.max(displayMaxAge - displayMinAge, 1)) *
         plotWidth
     )
   }
@@ -510,11 +597,32 @@ function MeasurementChart({
     },
   )
 
+  const displayAgeSpan = displayMaxAge - displayMinAge
+
+  const xTickStep = !isFocused
+    ? 24
+    : displayAgeSpan <= 24
+      ? 3
+      : displayAgeSpan <= 48
+        ? 6
+        : displayAgeSpan <= 96
+          ? 12
+          : 24
+
+  const firstXTick =
+    Math.ceil(displayMinAge / xTickStep) * xTickStep
+
   const xTicks = Array.from(
-    { length: 11 },
+    {
+      length: Math.max(
+        0,
+        Math.floor(
+          (displayMaxAge - firstXTick) / xTickStep,
+        ) + 1,
+      ),
+    },
     (_, index) => {
-      // 每 2 歲一格，避免 0～20 歲標籤過度擁擠。
-      const month = index * 24
+      const month = firstXTick + index * xTickStep
 
       return {
         month,
@@ -522,6 +630,22 @@ function MeasurementChart({
       }
     },
   )
+
+  const clipPathId = `growth-plot-${patient.id}-${metric}`.replace(
+    /[^a-zA-Z0-9_-]/g,
+    "-",
+  )
+
+  const formatAgeTick = (month: number) => {
+    const years = Math.floor(month / 12)
+    const remainingMonths = Math.round(month % 12)
+
+    if (remainingMonths === 0) {
+      return `${years} 歲`
+    }
+
+    return `${years}歲${remainingMonths}月`
+  }
 
   return (
     <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
@@ -538,9 +662,29 @@ function MeasurementChart({
           </p>
         </div>
 
-        <span className="w-fit rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-700">
-          臺灣 0～18.5 歲參考・{patient.biologicalSex === "male" ? "男生" : "女生"}
-        </span>
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={() =>
+              setFocusMeasurements((current) => !current)
+            }
+            disabled={!canFocus}
+            aria-pressed={isFocused}
+            className={`rounded-full px-3 py-2 text-xs font-bold transition ${
+              isFocused
+                ? "bg-purple-600 text-white hover:bg-purple-700"
+                : "border border-purple-200 bg-purple-50 text-purple-700 hover:bg-purple-100"
+            } disabled:cursor-not-allowed disabled:border-slate-200 disabled:bg-slate-100 disabled:text-slate-400`}
+          >
+            {isFocused ? "顯示完整曲線" : "聚焦量測點"}
+          </button>
+
+          <span className="w-fit rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-700">
+            {isFocused
+              ? "量測點放大檢視"
+              : `臺灣 0～18.5 歲參考・${patient.biologicalSex === "male" ? "男生" : "女生"}`}
+          </span>
+        </div>
       </div>
 
       <div className="flex flex-wrap gap-4 border-b border-slate-100 px-5 py-3">
@@ -575,6 +719,18 @@ function MeasurementChart({
           role="img"
           aria-label={title}
         >
+          <defs>
+            <clipPath id={clipPathId}>
+              <rect
+                x={paddingLeft}
+                y={paddingTop}
+                width={plotWidth}
+                height={plotHeight}
+                rx="12"
+              />
+            </clipPath>
+          </defs>
+
           <rect
             x={paddingLeft}
             y={paddingTop}
@@ -639,7 +795,7 @@ function MeasurementChart({
                 fontSize="11"
                 fill="#64748b"
               >
-                {tick.month / 12} 歲
+                {formatAgeTick(tick.month)}
               </text>
             </g>
           ))}
@@ -657,6 +813,7 @@ function MeasurementChart({
             {unit}
           </text>
 
+          <g clipPath={`url(#${clipPathId})`}>
           {officialCurves.map((curve) => {
             const curvePolylinePoints =
               curve.points
@@ -683,7 +840,7 @@ function MeasurementChart({
                   strokeLinejoin="round"
                 />
 
-                {lastPoint && (
+                {lastPoint && !isFocused && (
                   <text
                     x={mapX(lastPoint.month) + 6}
                     y={mapY(lastPoint.value) + 4}
@@ -750,6 +907,7 @@ function MeasurementChart({
               </g>
             )
           })}
+          </g>
         </svg>
       </div>
 
