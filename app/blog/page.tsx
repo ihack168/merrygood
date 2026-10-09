@@ -1,8 +1,12 @@
+import { cache } from "react"
+import { unstable_cache } from "next/cache"
+import { notFound } from "next/navigation"
 import { client } from "@/lib/sanity"
 import Link from "next/link"
 import type { Metadata } from "next"
 
-export const dynamic = "force-dynamic"
+export const runtime = "nodejs"
+// The page remains dynamic; processed listing data is cached for one hour.
 
 const POSTS_PER_PAGE = 15
 
@@ -25,7 +29,7 @@ interface RawPost {
   publishedAt: string
 }
 
-interface Post extends RawPost {
+interface Post extends Omit<RawPost, "htmlContent" | "imageUrl" | "mainImage"> {
   thumbnail: string
 }
 
@@ -82,10 +86,14 @@ function processPost(post: RawPost): Post {
     typeof post.mainImage === "string" ? optimizeSanityImageUrl(post.mainImage) : ""
 
   return {
-    ...post,
+    id: post.id,
+    title: post.title,
+    slug: post.slug,
+    videoId: post.videoId,
+    publishedAt: post.publishedAt,
     thumbnail: extractedImg || mainImage || youtubeThumb || "",
     description: extractedDesc,
-    tags: Array.isArray(post.tags) ? post.tags : [],
+    tags: cleanTags(post.tags),
   }
 }
 
@@ -97,13 +105,115 @@ function buildBlogUrl(tag: string, page: number) {
   return qs ? `/blog?${qs}` : "/blog"
 }
 
+function decodeSlug(slug: string): string {
+  try {
+    return decodeURIComponent(slug)
+  } catch {
+    return slug
+  }
+}
+
+function articlePath(slug: string): string {
+  return `/blog/${encodeURIComponent(decodeSlug(slug))}`
+}
+
+type BlogSearchParams = {
+  tag?: string | string[];
+  page?: string | string[];
+};
+
+function cleanTags(tags: unknown): string[] {
+  if (!Array.isArray(tags)) return [];
+  // Keep the original tag spelling so the GROQ filter matches it exactly.
+  return [...new Set(tags.filter(
+    (tag): tag is string => typeof tag === "string" && tag.trim().length > 0
+  ))];
+}
+
+// One shared catalog: count tags only when this cache is refreshed.
+const getTagCatalog = cache(unstable_cache(
+  async (): Promise<TagItem[]> => {
+    const rows = await client.fetch<{ tags?: string[] }[]>(
+      `*[_type == "post" && defined(slug.current) && slug.current != ""]{"tags": coalesce(categories[]->title, tags)}`,
+      {},
+      // The outer unstable_cache stores the processed result for one hour.
+      { cache: "no-store" }
+    );
+    const counts = new Map<string, number>();
+    for (const row of rows) {
+      for (const tag of cleanTags(row.tags)) {
+        if (tag !== "全部") counts.set(tag, (counts.get(tag) || 0) + 1);
+      }
+    }
+    const tags = Array.from(counts, ([name, count]) => ({ name, count }))
+      .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
+    return [{ name: "全部", count: rows.length }, ...tags];
+  },
+  ["merrygood-blog-tag-catalog-v1"],
+  { revalidate: 3600 }
+));
+
+// Only validated tag/page combinations reach this cache.
+// Store compact cards, not article HTML, and process HTML only on cache refresh.
+const getPostCards = unstable_cache(
+  async (selectedTag: string, page: number): Promise<Post[]> => {
+    const start = (page - 1) * POSTS_PER_PAGE;
+    const end = start + POSTS_PER_PAGE;
+    const rows = await client.fetch<RawPost[]>(
+      `*[_type == "post" && defined(slug.current) && slug.current != ""
+        && ($selectedTag == "全部" || $selectedTag in coalesce(categories[]->title, tags))]
+      | order(coalesce(publishedAt, _createdAt) desc, _id asc) [$start...$end] {
+        "id": _id,
+        title,
+        "slug": slug.current,
+        description,
+        imageUrl,
+        "mainImage": mainImage.asset->url,
+        htmlContent,
+        "videoId": youtubeVideoId,
+        "tags": coalesce(categories[]->title, tags),
+        "publishedAt": coalesce(publishedAt, _createdAt)
+      }`,
+      { selectedTag, start, end },
+      { cache: "no-store" }
+    );
+    return rows.map(processPost);
+  },
+  ["merrygood-blog-post-cards-v1"],
+  { revalidate: 3600 }
+);
+
+function parseSelection(params: BlogSearchParams) {
+  if (Array.isArray(params.tag) || Array.isArray(params.page)) notFound();
+  const selectedTag = params.tag || "全部";
+  const pageText = params.page || "1";
+  if (!/^[0-9]+$/.test(pageText)) notFound();
+  const page = Number(pageText);
+  if (!Number.isSafeInteger(page) || page < 1) notFound();
+  return { selectedTag, page };
+}
+
+function validateSelection(
+  selectedTag: string,
+  page: number,
+  allTags: TagItem[]
+) {
+  const selected = allTags.find((tag) => tag.name === selectedTag);
+  if (!selected) notFound();
+  const totalPosts = selected.count;
+  const totalPages = Math.max(1, Math.ceil(totalPosts / POSTS_PER_PAGE));
+  if (page > totalPages) notFound();
+  return { totalPosts, totalPages };
+}
+
 export async function generateMetadata({
   searchParams,
 }: {
-  searchParams: Promise<{ tag?: string }>
+  searchParams: Promise<BlogSearchParams>
 }): Promise<Metadata> {
-  const { tag } = await searchParams
-  const selectedTag = tag || "全部"
+  const { selectedTag, page } = parseSelection(await searchParams)
+  const allTags = await getTagCatalog()
+  validateSelection(selectedTag, page, allTags)
 
   const title = selectedTag === "全部" ? "最新文章" : `${selectedTag} 相關文章`
 
@@ -112,10 +222,7 @@ export async function generateMetadata({
       ? "減重管理、體重控制與熱門減重商品資訊整理。"
       : `${siteName}「${selectedTag}」主題文章整理，減重管理與體重控制相關知識。`
 
-  const url =
-    selectedTag === "全部"
-      ? `${siteUrl}/blog`
-      : `${siteUrl}/blog?tag=${encodeURIComponent(selectedTag)}`
+  const url = `${siteUrl}${buildBlogUrl(selectedTag, page)}`
 
   return {
     title,
@@ -140,56 +247,12 @@ export async function generateMetadata({
 export default async function BlogPage({
   searchParams,
 }: {
-  searchParams: Promise<{ tag?: string; page?: string }>
+  searchParams: Promise<BlogSearchParams>
 }) {
-  const { tag, page: pageParam } = await searchParams
-  const selectedTag = tag || "全部"
-  const page = Math.max(1, parseInt(pageParam || "1", 10) || 1)
-
-  const tagFilter = selectedTag !== "全部" ? `&& $selectedTag in tags` : ""
-  const start = (page - 1) * POSTS_PER_PAGE
-  const end = start + POSTS_PER_PAGE
-
-  const [allTagsRaw, totalPosts, rawPosts] = await Promise.all([
-    client.fetch(`*[_type == "post"]{ tags }`, {}, { cache: "no-store" }),
-    client.fetch(
-      `count(*[_type == "post" ${tagFilter}])`,
-      { selectedTag },
-      { cache: "no-store" }
-    ),
-    client.fetch(
-      `*[_type == "post" ${tagFilter}] | order(coalesce(publishedAt, _createdAt) desc) [$start...$end] {
-        "id": _id,
-        title,
-        "slug": slug.current,
-        description,
-        "imageUrl": imageUrl,
-        "mainImage": mainImage.asset->url,
-        htmlContent,
-        "videoId": youtubeVideoId,
-        "tags": tags,
-        "publishedAt": coalesce(publishedAt, _createdAt)
-      }`,
-      { start, end, selectedTag },
-      { cache: "no-store" }
-    ),
-  ])
-
-  const tagCountMap = new Map<string, number>()
-  allTagsRaw.forEach((post: { tags?: string[] }) => {
-    if (!Array.isArray(post.tags)) return
-    post.tags.forEach((t) => {
-      const cleanTag = String(t || "").trim()
-      if (!cleanTag) return
-      tagCountMap.set(cleanTag, (tagCountMap.get(cleanTag) || 0) + 1)
-    })
-  })
-
-  const sortedTags = Array.from(tagCountMap.entries())
-    .map(([name, count]) => ({ name, count }))
-    .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name))
-
-  const allTags: TagItem[] = [{ name: "全部", count: allTagsRaw.length }, ...sortedTags]
+  const { selectedTag, page } = parseSelection(await searchParams)
+  const allTags = await getTagCatalog()
+  const { totalPosts, totalPages } = validateSelection(selectedTag, page, allTags)
+  const posts = await getPostCards(selectedTag, page)
 
   const topTags = allTags.filter((t) => t.name !== "全部").slice(0, TOP_TAG_LIMIT)
 
@@ -203,9 +266,6 @@ export default async function BlogPage({
     ...topTags,
     ...(selectedTagItem ? [selectedTagItem] : []),
   ]
-
-  const posts = rawPosts.map(processPost)
-  const totalPages = Math.ceil(totalPosts / POSTS_PER_PAGE) || 1
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -265,7 +325,7 @@ export default async function BlogPage({
               {posts.map((post) => (
                 <article key={post.id} className="overflow-hidden rounded-2xl border">
                   <div className="relative h-56 w-full overflow-hidden">
-                    <Link href={`/blog/${post.slug}`}>
+                    <Link href={articlePath(post.slug)}>
                       {post.thumbnail ? (
                         <img
                           src={post.thumbnail}
@@ -298,7 +358,7 @@ export default async function BlogPage({
                       </div>
                     )}
 
-                    <Link href={`/blog/${post.slug}`}>
+                    <Link href={articlePath(post.slug)}>
                       <h2 className="text-xl font-bold">{post.title}</h2>
                     </Link>
 
@@ -306,7 +366,7 @@ export default async function BlogPage({
 
                     <div className="mt-6">
                       <Link
-                        href={`/blog/${post.slug}`}
+                        href={articlePath(post.slug)}
                         className="inline-flex items-center text-sm font-semibold text-primary"
                       >
                         閱讀文章

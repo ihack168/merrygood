@@ -1,3 +1,4 @@
+import { cache } from "react"
 import { client } from "@/lib/sanity"
 import { createImageUrlBuilder } from "@sanity/image-url"
 import { PortableText } from "@portabletext/react"
@@ -7,8 +8,9 @@ import Link from "next/link"
 import type { Metadata } from "next"
 import { sanitizePostHtml } from "@/lib/content-cleanup"
 
-export const revalidate = 0
-export const dynamic = "force-dynamic"
+export const revalidate = 3600
+export const dynamicParams = true
+export const runtime = "nodejs"
 
 const siteName = "美麗好減肥減重－體重管理資訊站"
 const shortSiteName = "美麗好減肥減重"
@@ -18,8 +20,8 @@ const defaultAuthorName = "美麗好"
 const builder = createImageUrlBuilder(client)
 
 function urlFor(source: unknown) {
-  if (!source) return { url: () => "" }
-  return builder.image(source)
+  if (!source) throw new Error("Missing image source")
+  return builder.image(source as Parameters<typeof builder.image>[0])
 }
 
 function optimizeSanityImages(html?: string) {
@@ -200,6 +202,44 @@ interface PostResult extends PostMetadataResult {
   body?: unknown
 }
 
+function decodeSlug(slug: string): string {
+  try {
+    return decodeURIComponent(slug)
+  } catch {
+    return slug
+  }
+}
+
+function slugCandidates(slug: string): string[] {
+  const decoded = decodeSlug(slug)
+  return [...new Set([slug, decoded, encodeURIComponent(decoded)])]
+}
+
+function articlePath(slug: string): string {
+  return `/blog/${encodeURIComponent(decodeSlug(slug))}`
+}
+
+const getPost = cache(async (slug: string) => {
+  return client.fetch<PostResult | null>(
+    `*[_type == "post" && slug.current in $slugCandidates][0]{
+      _id,
+      title,
+      description,
+      "slug": slug.current,
+      publishedAt,
+      _updatedAt,
+      mainImage,
+      body,
+      htmlContent,
+      "authorName": author->name,
+      "authorSlug": author->slug.current,
+      "tags": coalesce(categories[]->title, tags)
+    }`,
+    { slugCandidates: slugCandidates(slug) },
+    { next: { revalidate: 3600 } }
+  )
+})
+
 const ptComponents = {
   types: {
     image: ({ value }: { value: any }) => {
@@ -239,21 +279,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params
 
-  const post = await client.fetch<PostMetadataResult | null>(
-    `*[_type == "post" && slug.current == $slug][0]{
-      title,
-      description,
-      htmlContent,
-      publishedAt,
-      _updatedAt,
-      mainImage,
-      "authorName": author->name,
-      "authorSlug": author->slug.current,
-      "tags": coalesce(categories[]->title, tags)
-    }`,
-    { slug },
-    { cache: "no-store" }
-  )
+  const post = await getPost(slug)
 
   if (!post?.title) {
     return {
@@ -271,7 +297,7 @@ export async function generateMetadata({
     post.title
   )
 
-  const canonicalUrl = `${siteUrl}/blog/${slug}`
+  const canonicalUrl = `${siteUrl}${articlePath(post.slug)}`
 
   const firstHtmlImage = extractFirstImageFromHtml(post.htmlContent)
 
@@ -371,24 +397,7 @@ export default async function PostPage({
 }) {
   const { slug } = await params
 
-  const post = await client.fetch<PostResult | null>(
-    `*[_type == "post" && slug.current == $slug][0]{
-      _id,
-      title,
-      description,
-      "slug": slug.current,
-      publishedAt,
-      _updatedAt,
-      mainImage,
-      body,
-      htmlContent,
-      "authorName": author->name,
-      "authorSlug": author->slug.current,
-      "tags": coalesce(categories[]->title, tags)
-    }`,
-    { slug },
-    { cache: "no-store" }
-  )
+  const post = await getPost(slug)
 
   if (!post?.title) notFound()
 
@@ -417,7 +426,7 @@ export default async function PostPage({
 
   const publishedDate = formatDate(publishedIso)
   const modifiedDate = formatDate(modifiedIso)
-  const canonicalUrl = `${siteUrl}/blog/${slug}`
+  const canonicalUrl = `${siteUrl}${articlePath(post.slug)}`
 
   const mainImageUrl = post.mainImage
     ? urlFor(post.mainImage)
@@ -469,7 +478,7 @@ export default async function PostPage({
       postId: post._id,
       tags,
     },
-    { cache: "no-store" }
+    { next: { revalidate: 3600 } }
   )
 
   const blogPostingJsonLd = {
@@ -756,7 +765,7 @@ export default async function PostPage({
                 {relatedPosts.map((relatedPost) => (
                   <article key={relatedPost._id}>
                     <Link
-                      href={`/blog/${relatedPost.slug}`}
+                      href={articlePath(relatedPost.slug)}
                       className="flex items-center justify-between gap-5 px-5 py-4 transition-colors hover:bg-primary/5"
                     >
                       <h3 className="font-semibold leading-7 text-foreground">
@@ -789,4 +798,19 @@ export default async function PostPage({
 
     </div>
   )
+}
+
+// Pass decoded params to Next.js to avoid double-encoded prerendered URLs.
+export async function generateStaticParams() {
+  const posts = await client.fetch<{ slug: string }[]>(
+    `*[_type == "post" && defined(slug.current) && slug.current != ""]{
+      "slug": slug.current
+    }`,
+    {},
+    { next: { revalidate: 3600 } }
+  )
+  const slugs = posts
+    .filter((post) => typeof post.slug === "string" && Boolean(post.slug))
+    .map((post) => decodeSlug(post.slug))
+  return [...new Set(slugs)].map((slug) => ({ slug }))
 }
