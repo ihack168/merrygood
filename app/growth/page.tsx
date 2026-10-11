@@ -6,6 +6,7 @@ import {
   useMemo,
   useState,
 } from "react"
+import { GrowthBackup } from "./components/GrowthBackup"
 import { GrowthLogoutButton } from "@/components/growth-logout-button"
 import { createClient } from "@/lib/supabase/client"
 import {
@@ -1402,6 +1403,8 @@ export default function GrowthChartPage() {
           </div>
         </div>
       </header>
+
+      <GrowthBackup onRestored={() => loadPatients(selectedPatientId)} disabled={saving || loadingPatients} />
 
       {dataError && (
         <div className="mx-auto mt-5 max-w-[1500px] px-4 sm:px-6 lg:px-8">
