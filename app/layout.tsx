@@ -3,6 +3,7 @@ import { Noto_Sans_TC, Geist_Mono } from "next/font/google"
 import Script from "next/script"
 
 import { Footer } from "@/components/footer"
+import { FooterVisibility } from "@/components/footer-visibility"
 import { Navbar } from "@/components/navbar"
 
 import "./globals.css"
@@ -229,7 +230,9 @@ export default function RootLayout({
 
         <main className="flex-1 pt-20">{children}</main>
 
-        <Footer />
+        <FooterVisibility>
+          <Footer />
+        </FooterVisibility>
       </body>
     </html>
   )
