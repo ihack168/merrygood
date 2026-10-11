@@ -1404,7 +1404,6 @@ export default function GrowthChartPage() {
         </div>
       </header>
 
-      <GrowthBackup onRestored={() => loadPatients(selectedPatientId)} disabled={saving || loadingPatients} />
 
       {dataError && (
         <div className="mx-auto mt-5 max-w-[1500px] px-4 sm:px-6 lg:px-8">
@@ -2621,6 +2620,24 @@ export default function GrowthChartPage() {
           </div>
         </div>
       )}
+      <div className="mx-auto max-w-[1500px] px-4 pb-8 sm:px-6 lg:px-8">
+        <details className="group rounded-2xl border border-slate-200 bg-white">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-2xl px-5 py-4 text-sm text-slate-600 hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 [&::-webkit-details-marker]:hidden">
+            <span className="font-semibold">資料備份與還原</span>
+            <span className="flex shrink-0 items-center gap-2 text-xs">
+              <span className="group-open:hidden">展開功能</span>
+              <span className="hidden group-open:inline">收合功能</span>
+              <span aria-hidden="true" className="transition-transform group-open:rotate-180">⌄</span>
+            </span>
+          </summary>
+          <div className="border-t border-slate-100 pb-5">
+            <GrowthBackup
+              onRestored={() => loadPatients(selectedPatientId)}
+              disabled={saving || loadingPatients}
+            />
+          </div>
+        </details>
+      </div>
     </main>
   )
 }
