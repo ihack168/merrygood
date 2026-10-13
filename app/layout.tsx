@@ -204,7 +204,6 @@ export default function RootLayout({
       <body className="flex min-h-screen flex-col bg-background font-sans text-foreground antialiased">
         {/* The existing route wrapper hides shared site chrome only on /growth. */}
         <FooterVisibility>
-        <Navbar />
           <Navbar />
         </FooterVisibility>
 
@@ -233,7 +232,6 @@ export default function RootLayout({
           strategy="afterInteractive"
         />
 
-        <main className="flex-1 pt-20">{children}</main>
         <SiteMain>{children}</SiteMain>
 
         <FooterVisibility>
