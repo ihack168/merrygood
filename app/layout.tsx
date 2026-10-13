@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { Noto_Sans_TC, Geist_Mono } from "next/font/google"
 import Script from "next/script"
 
+import { SiteMain } from "@/components/site-main"
 import { Footer } from "@/components/footer"
 import { FooterVisibility } from "@/components/footer-visibility"
 import { Navbar } from "@/components/navbar"
@@ -229,6 +230,7 @@ export default function RootLayout({
         />
 
         <main className="flex-1 pt-20">{children}</main>
+        <SiteMain>{children}</SiteMain>
 
         <FooterVisibility>
           <Footer />
