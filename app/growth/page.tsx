@@ -671,11 +671,11 @@ function MeasurementChart({
             }
             disabled={!canFocus}
             aria-pressed={isFocused}
-            className={`rounded-full px-3 py-2 text-xs font-bold transition ${
+            className={`min-h-[48px] rounded-xl border px-5 py-3 text-base font-bold shadow-sm transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-purple-200 ${
               isFocused
-                ? "bg-purple-600 text-white hover:bg-purple-700"
-                : "border border-purple-200 bg-purple-50 text-purple-700 hover:bg-purple-100"
-            } disabled:cursor-not-allowed disabled:border-slate-200 disabled:bg-slate-100 disabled:text-slate-400`}
+                ? "border-purple-800 bg-purple-800 text-white ring-2 ring-purple-200 hover:bg-purple-900"
+                : "border-purple-600 bg-purple-600 text-white hover:bg-purple-700"
+            } disabled:cursor-not-allowed disabled:border-slate-200 disabled:bg-slate-100 disabled:text-slate-400 disabled:shadow-none disabled:ring-0`}
           >
             {isFocused ? "顯示完整曲線" : "聚焦量測點"}
           </button>
@@ -1379,14 +1379,6 @@ export default function GrowthChartPage() {
             >
               ＋ 新增病歷
             </button>
-            <button
-              type="button"
-              disabled={!selectedPatient}
-              onClick={() => setShowMeasurementModal(true)}
-              className="rounded-xl border border-emerald-600 bg-emerald-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              ＋ 新增測量記錄
-            </button>
           </div>
         </div>
       </header>
@@ -1553,15 +1545,22 @@ export default function GrowthChartPage() {
                       </p>
                     </div>
 
-                    <button
-                      type="button"
-                      onClick={() =>
-                        openEditPatientModal(selectedPatient)
-                      }
-                      className="w-fit rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 transition hover:bg-slate-50"
-                    >
-                      編輯基本資料
-                    </button>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setShowMeasurementModal(true)}
+                        className="min-h-[44px] rounded-xl border border-emerald-600 bg-emerald-600 px-5 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-emerald-200"
+                      >
+                        ＋ 新增測量記錄
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => openEditPatientModal(selectedPatient)}
+                        className="min-h-[44px] rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 transition hover:bg-slate-50"
+                      >
+                        編輯基本資料
+                      </button>
+                    </div>
                   </div>
                 </div>
 
