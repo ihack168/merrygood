@@ -202,7 +202,11 @@ export default function RootLayout({
       className={`${notoSansTC.variable} ${geistMono.variable}`}
     >
       <body className="flex min-h-screen flex-col bg-background font-sans text-foreground antialiased">
+        {/* The existing route wrapper hides shared site chrome only on /growth. */}
+        <FooterVisibility>
         <Navbar />
+          <Navbar />
+        </FooterVisibility>
 
         <Script
           id="organization-jsonld"
